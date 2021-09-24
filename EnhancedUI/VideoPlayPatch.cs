@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
@@ -8,6 +8,7 @@ using VRageRender;
 
 namespace EnhancedUI
 {
+    //Patch to allow loading HTML files using the video player.
     [HarmonyPatch]
     internal static class VideoPlayPatch
     {
