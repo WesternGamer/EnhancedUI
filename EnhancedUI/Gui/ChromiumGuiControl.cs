@@ -16,6 +16,8 @@ namespace EnhancedUI.Gui
 
         private uint _videoId;
 
+        public bool IsBrowserInitialized => _browserHost.Browser.IsBrowserInitialized;
+
         public readonly MyGuiControlRotatingWheel Wheel = new (Vector2.Zero)
         {
             Visible = false
