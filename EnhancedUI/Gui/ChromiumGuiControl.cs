@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using CefSharp;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
@@ -37,7 +37,7 @@ namespace EnhancedUI.Gui
 
         private void BrowserHostOnReady()
         {
-            _browserHost.Navigate("https://www.google.com/?hl=en");
+            _browserHost.Navigate("file:///C:/redmrp/resources/redemrp_identity/html/ui.html");
             _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
         }
 

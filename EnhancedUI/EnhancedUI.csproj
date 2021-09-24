@@ -122,4 +122,8 @@
         <PackageReference Include="CefSharp.OffScreen" Version="93.1.140" />
         <PackageReference Include="Lib.Harmony" Version="2.1.1" />
     </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="call &quot;$(SolutionDir)PostBuild.bat&quot;" />
+    </Target>
 </Project>
