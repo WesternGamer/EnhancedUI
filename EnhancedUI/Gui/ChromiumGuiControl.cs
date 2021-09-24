@@ -37,7 +37,7 @@ namespace EnhancedUI.Gui
 
         private void BrowserHostOnReady()
         {
-            _browserHost.Navigate("file:///C:/redmrp/resources/redemrp_identity/html/ui.html");
+            _browserHost.Navigate("file:///C:/redmrp/resources/redemrp_clothing/ui/index.html");
             _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
         }
 
@@ -73,6 +73,11 @@ namespace EnhancedUI.Gui
             MyRenderProxy.UpdateVideo(_videoId);
             MyRenderProxy.DrawVideo(_videoId, GetScreenSize(), new (Vector4.One),
                 MyVideoRectangleFitMode.AutoFit, false);
+        }
+
+        public void ReloadPage()
+        {
+            _browserHost.Browser.Reload();
         }
     }
 }
