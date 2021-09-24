@@ -16,6 +16,7 @@ namespace EnhancedUI.Gui
 
         private uint _videoId;
 
+        //Returns false if the browser is not initalized else it returns true.
         public bool IsBrowserInitialized => _browserHost.Browser.IsBrowserInitialized;
 
         public readonly MyGuiControlRotatingWheel Wheel = new (Vector2.Zero)
@@ -39,10 +40,11 @@ namespace EnhancedUI.Gui
 
         private void BrowserHostOnReady()
         {
-            _browserHost.Navigate("file:///C:/redmrp/resources/redemrp_clothing/ui/index.html");
+            _browserHost.Navigate("file:///C:/redmrp/resources/redemrp_identity/html/ui.html");
             _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
         }
 
+        //Removes the browser instance when ChromiumGuiControl is no longer needed.
         public override void OnRemoving()
         {
             base.OnRemoving();
@@ -57,6 +59,7 @@ namespace EnhancedUI.Gui
             return _browserHost.VideoData;
         }
 
+        //Returns the screen size as a VRageMath.Rectangle.
         private Rectangle GetScreenSize()
         {
             var pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(GetPositionAbsoluteTopLeft());
@@ -66,6 +69,7 @@ namespace EnhancedUI.Gui
             return new (pos.X, pos.Y, size.X, size.Y);
         }
 
+        //Draws the HTML file on the screen using the video player.
         public override void Draw(float transitionAlpha, float backgroundTransitionAlpha)
         {
             if (!MyRenderProxy.IsVideoValid(_videoId))
@@ -77,6 +81,7 @@ namespace EnhancedUI.Gui
                 MyVideoRectangleFitMode.AutoFit, false);
         }
 
+        //Reloads the HTML page.
         public void ReloadPage()
         {
             _browserHost.Browser.Reload();

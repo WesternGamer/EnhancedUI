@@ -61,7 +61,7 @@ namespace EnhancedUI.Gui
     {
         private static void Postfix()
         {
-            //Checks if Ctrl+R is pressed.
+            //Checks if Ctrl+R is pressed and that the embedded browser is initialized.
             if(MyInput.Static.IsAnyCtrlKeyPressed() && MyInput.Static.IsNewKeyPressed(MyKeys.R) && CreateControlPanelPatch.control.IsBrowserInitialized)
             {
                 //Reloads the HTML page.
