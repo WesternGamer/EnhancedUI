@@ -11,7 +11,7 @@ using VRage.Plugins;
 
 namespace EnhancedUI
 {
-    public class Main : IHandleInputPlugin
+    public class Main : IPlugin
     {
         public void Dispose()
         {
@@ -36,24 +36,6 @@ namespace EnhancedUI
 
         public void Update()
         {
-        }
-
-        private bool _isOpen;
-        public void HandleInput()
-        {
-            if (!MyInput.Static.IsAnyCtrlKeyPressed() || !MyInput.Static.IsKeyPress(MyKeys.C) || _isOpen)
-                return;
-
-            var screen = new TestGuiScreen();
-            screen.Closed += ScreenOnClosed;
-            MyScreenManager.AddScreen(screen);
-            _isOpen = true;
-        }
-
-        private void ScreenOnClosed(MyGuiScreenBase source, bool isUnloading)
-        {
-            source.Closed -= ScreenOnClosed;
-            _isOpen = false;
         }
     }
 }

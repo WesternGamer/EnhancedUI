@@ -14,6 +14,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Reference Include="EmptyKeys.UserInterface, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>$(SolutionDir)GameBinaries\EmptyKeys.UserInterface.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
         <Reference Include="Sandbox.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>$(SolutionDir)GameBinaries\Sandbox.Common.dll</HintPath>
@@ -32,13 +36,16 @@
         <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>$(SolutionDir)GameBinaries\SharpDX.dll</HintPath>
+            <Private>False</Private>
         </Reference>
         <Reference Include="SharpDX.Direct3D11, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>$(SolutionDir)GameBinaries\SharpDX.Direct3D11.dll</HintPath>
+            <Private>False</Private>
         </Reference>
         <Reference Include="SharpDX.DXGI, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
           <HintPath>$(SolutionDir)GameBinaries\SharpDX.DXGI.dll</HintPath>
+          <Private>False</Private>
         </Reference>
         <Reference Include="SpaceEngineers.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
             <SpecificVersion>False</SpecificVersion>

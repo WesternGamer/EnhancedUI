@@ -1,6 +1,7 @@
-﻿using Sandbox.Graphics;
+﻿using System;
+using CefSharp;
+using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
-using VRage.Utils;
 using VRageMath;
 using VRageRender;
 using VRageRender.Messages;
@@ -15,12 +16,23 @@ namespace EnhancedUI.Gui
 
         private uint _videoId;
 
+        public readonly MyGuiControlRotatingWheel Wheel = new (Vector2.Zero)
+        {
+            Visible = false
+        };
+
         public ChromiumGuiControl()
         {
             var rect = GetScreenSize();
             _browserHost = new (new (rect.Width, rect.Height));
             _browserHost.Ready += BrowserHostOnReady;
+            _browserHost.Browser.LoadingStateChanged += BrowserOnLoadingStateChanged;
             Player = new (new (rect.Width, rect.Height), DataGetter);
+        }
+
+        private void BrowserOnLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        {
+            Wheel.Visible = e.IsLoading;
         }
 
         private void BrowserHostOnReady()
@@ -33,6 +45,7 @@ namespace EnhancedUI.Gui
         {
             base.OnRemoving();
             _browserHost.Ready -= BrowserHostOnReady;
+            _browserHost.Browser.LoadingStateChanged -= BrowserOnLoadingStateChanged;
             _browserHost.Dispose();
             MyRenderProxy.CloseVideo(_videoId);
         }
@@ -44,8 +57,10 @@ namespace EnhancedUI.Gui
 
         private Rectangle GetScreenSize()
         {
-            var pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(Position);
-            var size = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(Size);
+            var pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(GetPositionAbsoluteTopLeft());
+
+            var size = (Vector2I)MyGuiManager.GetScreenSizeFromNormalizedSize(Size);
+
             return new (pos.X, pos.Y, size.X, size.Y);
         }
 
