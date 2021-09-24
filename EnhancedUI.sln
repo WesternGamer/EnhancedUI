@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnchancedUI", "EnchancedUI\EnchancedUI.csproj", "{0315930C-BB29-4303-8C62-65782E886CAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnhancedUI", "EnhancedUI\EnhancedUI.csproj", "{0315930C-BB29-4303-8C62-65782E886CAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
