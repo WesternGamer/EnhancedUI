@@ -87,6 +87,7 @@ namespace EnhancedUI.Gui
             _browserHost.Browser.Reload();
         }
 
+        //Clears the cookies from the CEF browser.
         public void ClearCookies()
         {
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
