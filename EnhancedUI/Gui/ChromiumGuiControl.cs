@@ -2,6 +2,7 @@ using System;
 using CefSharp;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
+using VRage.Input;
 using VRageMath;
 using VRageRender;
 using VRageRender.Messages;
@@ -91,6 +92,20 @@ namespace EnhancedUI.Gui
         public void ClearCookies()
         {
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
+        }
+
+        public override MyGuiControlBase HandleInput()
+        {
+            if (!MyInput.Static.IsAnyCtrlKeyPressed() || !MyInput.Static.IsNewKeyPressed(MyKeys.R) ||
+                !IsBrowserInitialized)
+                return null!;
+
+            //Reloads the HTML page.
+            ReloadPage();
+            if (MyInput.Static.IsAnyShiftKeyPressed())
+                ClearCookies();
+
+            return null!;
         }
     }
 }

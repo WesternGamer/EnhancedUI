@@ -17,8 +17,6 @@ namespace EnhancedUI.Gui
     [HarmonyPatch(typeof(MyGuiScreenTerminal), "CreateControlPanelPageControls")]
     internal static class CreateControlPanelPatch
     {
-        public static ChromiumGuiControl control;
-
         private static bool Prefix(MyGuiControlTabPage page, Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlKeyboard)
         {
             //Code for a reload button
@@ -29,9 +27,9 @@ namespace EnhancedUI.Gui
             page.TextEnum = MySpaceTexts.ControlPanel;
             page.TextScale = 0.7005405f;
 
-            control = new ChromiumGuiControl
+            var control = new ChromiumGuiControl
             {
-                //Arguements
+                //Arguments
                 Position = new (0f, 0.005f),
                 Size = new (0.9f, 0.7f)
             };
@@ -53,26 +51,5 @@ namespace EnhancedUI.Gui
         {
             control.ReloadPage();
         }*/
-    }
-
-    //Patch to allow reloading of HTML page.
-    [HarmonyPatch(typeof(MyGuiScreenTerminal), "HandleUnhandledInput")]
-    internal static class HandleUnhandledInputPatch
-    {
-        private static void Postfix()
-        {
-            //Checks if Ctrl+R is pressed and that the embedded browser is initialized.
-            if(MyInput.Static.IsAnyCtrlKeyPressed() && MyInput.Static.IsNewKeyPressed(MyKeys.R) && CreateControlPanelPatch.control.IsBrowserInitialized)
-            {
-                //Reloads the HTML page.
-                CreateControlPanelPatch.control.ReloadPage();
-            }
-            //Checks if Ctrl+Shift+R is pressed and that the embedded browser is initialized.
-            if (MyInput.Static.IsAnyCtrlKeyPressed() && MyInput.Static.IsAnyShiftKeyPressed() && MyInput.Static.IsNewKeyPressed(MyKeys.R) && CreateControlPanelPatch.control.IsBrowserInitialized)
-            {
-                //Clears cookies
-                CreateControlPanelPatch.control.ClearCookies();
-            }
-        }
     }
 }
