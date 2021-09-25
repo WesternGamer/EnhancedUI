@@ -124,6 +124,7 @@
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="call &quot;$(SolutionDir)PostBuild.bat&quot;" />
+        <Exec Command="xcopy /u /y $(TargetDir)* $(SolutionDir)GameBinaries\Plugins\Local\EnhancedUI" />
+        <Exec Command="start steam://rungameid/244850" />
     </Target>
 </Project>
