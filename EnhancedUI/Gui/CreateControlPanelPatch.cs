@@ -31,7 +31,8 @@ namespace EnhancedUI.Gui
             {
                 //Arguments
                 Position = new (0f, 0.005f),
-                Size = new (0.9f, 0.7f)
+                Size = new (0.9f, 0.7f),
+                Url = "youtube.com"
             };
 
             //Adds the gui elements to the screen
