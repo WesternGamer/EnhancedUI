@@ -67,9 +67,10 @@ namespace EnhancedUI.Gui
                 //Reloads the HTML page.
                 CreateControlPanelPatch.control.ReloadPage();
             }
+            //Checks if Ctrl+Shift+R is pressed and that the embedded browser is initialized.
             if (MyInput.Static.IsAnyCtrlKeyPressed() && MyInput.Static.IsAnyShiftKeyPressed() && MyInput.Static.IsNewKeyPressed(MyKeys.R) && CreateControlPanelPatch.control.IsBrowserInitialized)
             {
-                //Clears cache cookies and browser data.
+                //Clears cookies
                 CreateControlPanelPatch.control.ClearCookies();
             }
         }
