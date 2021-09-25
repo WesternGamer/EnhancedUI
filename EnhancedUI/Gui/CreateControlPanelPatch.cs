@@ -67,6 +67,11 @@ namespace EnhancedUI.Gui
                 //Reloads the HTML page.
                 CreateControlPanelPatch.control.ReloadPage();
             }
+            if (MyInput.Static.IsAnyCtrlKeyPressed() && MyInput.Static.IsAnyShiftKeyPressed() && MyInput.Static.IsNewKeyPressed(MyKeys.R) && CreateControlPanelPatch.control.IsBrowserInitialized)
+            {
+                //Clears cache cookies and browser data.
+                CreateControlPanelPatch.control.ClearCookies();
+            }
         }
     }
 }

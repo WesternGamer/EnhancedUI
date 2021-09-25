@@ -86,5 +86,10 @@ namespace EnhancedUI.Gui
         {
             _browserHost.Browser.Reload();
         }
+
+        public void ClearCookies()
+        {
+            Cef.GetGlobalCookieManager().DeleteCookies("", "");
+        }
     }
 }
