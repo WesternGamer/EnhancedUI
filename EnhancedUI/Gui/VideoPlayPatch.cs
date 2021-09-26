@@ -2,11 +2,10 @@ using System;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
-using EnhancedUI.Gui;
 using HarmonyLib;
 using VRageRender;
 
-namespace EnhancedUI
+namespace EnhancedUI.Gui
 {
     // Patch to allow loading HTML files using the video player
     [HarmonyPatch]
@@ -20,6 +19,7 @@ namespace EnhancedUI
 
         public const string VIDEO_NAME = "CefFrame";
 
+        // ReSharper disable once UnusedMember.Local
         private static MethodBase TargetMethod()
         {
             return AccessTools.Method(_factoryType, "Play");
@@ -27,6 +27,7 @@ namespace EnhancedUI
 
         [HandleProcessCorruptedStateExceptions]
         [SecurityCritical]
+        // ReSharper disable once UnusedMember.Local
         private static bool Prefix(uint id, string videoFile)
         {
             if (videoFile != VIDEO_NAME)

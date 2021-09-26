@@ -13,30 +13,30 @@ namespace EnhancedUI.Gui
 {
     public class ChromiumGuiControl : MyGuiControlBase
     {
-        private BrowserHost? _browserHost;
+        private Chromium? chromium;
         public static BatchDataPlayer? Player;
 
-        private uint _videoId;
+        private uint videoId;
 
         //Returns false if the browser is not initialized else it returns true.
-        private bool IsBrowserInitialized => _browserHost?.Browser.IsBrowserInitialized ?? false;
+        private bool IsBrowserInitialized => chromium?.Browser.IsBrowserInitialized ?? false;
 
         public readonly MyGuiControlRotatingWheel Wheel = new(Vector2.Zero)
         {
             Visible = false
         };
 
-        private readonly WebContent _content;
-        private readonly string _name;
+        private readonly WebContent content;
+        private readonly string name;
 
-        private bool _capsLock;
-        private MyKeys _lastKey;
-        private int _delay;
+        private bool capsLock;
+        private MyKeys lastKey;
+        private int delay;
 
         public ChromiumGuiControl(WebContent content, string name)
         {
-            _content = content;
-            _name = name;
+            this.content = content;
+            this.name = name;
         }
 
         protected override void OnSizeChanged()
@@ -50,48 +50,48 @@ namespace EnhancedUI.Gui
 
         private void CreatePlayerIfNeeded()
         {
-            if (_browserHost != null)
+            if (chromium != null)
                 return;
 
             var rect = GetVideoScreenRectangle();
-            _browserHost = new(new(rect.Width, rect.Height));
+            chromium = new Chromium(new Vector2I(rect.Width, rect.Height));
 
-            _browserHost.Ready += BrowserHostOnReady;
-            _browserHost.Browser.LoadingStateChanged += BrowserOnLoadingStateChanged;
+            chromium.Ready += OnChromiumReady;
+            chromium.Browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
 
-            Player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), _browserHost.GetVideoData);
+            Player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
         }
 
         public override void OnRemoving()
         {
             base.OnRemoving();
 
-            if (_browserHost == null)
+            if (chromium == null)
                 return;
 
-            _browserHost.Ready -= BrowserHostOnReady;
-            _browserHost.Browser.LoadingStateChanged -= BrowserOnLoadingStateChanged;
+            chromium.Ready -= OnChromiumReady;
+            chromium.Browser.LoadingStateChanged -= OnBrowserLoadingStateChanged;
 
-            _browserHost.Dispose();
-            MyRenderProxy.CloseVideo(_videoId);
+            chromium.Dispose();
+            MyRenderProxy.CloseVideo(videoId);
 
             Player = null;
-            _browserHost = null;
+            chromium = null;
         }
 
-        private void BrowserOnLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        private void OnBrowserLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
             Wheel.Visible = e.IsLoading;
         }
 
-        private void BrowserHostOnReady()
+        private void OnChromiumReady()
         {
-            if (_browserHost == null)
+            if (chromium == null)
                 throw new Exception("This should not happen");
 
-            var url = _content.FormatIndexUrl(_name);
-            _browserHost.Navigate(url);
-            _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
+            var url = content.FormatIndexUrl(name);
+            chromium.Navigate(url);
+            videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
         }
 
         // Removes the browser instance when ChromiumGuiControl is no longer needed.
@@ -110,25 +110,25 @@ namespace EnhancedUI.Gui
         // Renders the HTML document on the screen using the video player
         public override void Draw(float transitionAlpha, float backgroundTransitionAlpha)
         {
-            if (!MyRenderProxy.IsVideoValid(_videoId))
+            if (!MyRenderProxy.IsVideoValid(videoId))
                 return;
 
-            if (_browserHost == null)
+            if (chromium == null)
                 throw new Exception("This should not happen");
 
-            _browserHost.Draw();
-            MyRenderProxy.UpdateVideo(_videoId);
-            MyRenderProxy.DrawVideo(_videoId, GetVideoScreenRectangle(), new(Vector4.One),
+            chromium.Draw();
+            MyRenderProxy.UpdateVideo(videoId);
+            MyRenderProxy.DrawVideo(videoId, GetVideoScreenRectangle(), new(Vector4.One),
                 MyVideoRectangleFitMode.AutoFit, false);
         }
 
         // Reloads the HTML document
         private void ReloadPage()
         {
-            if (_browserHost == null)
+            if (chromium == null)
                 throw new Exception("This should not happen");
 
-            _browserHost.Browser.Reload();
+            chromium.Browser.Reload();
         }
 
         // Clears the cookies from the CEF browser
@@ -153,14 +153,14 @@ namespace EnhancedUI.Gui
                 return base.HandleInput();
             }
 
-            if (_browserHost == null)
+            if (this.chromium == null)
                 throw new Exception("This should not happen");
 
-            var browser = _browserHost.Browser;
+            var browser = this.chromium.Browser;
             var browserHost = browser.GetBrowser().GetHost();
 
             if (input.IsKeyPress(MyKeys.CapsLock))
-                _capsLock = !_capsLock;
+                capsLock = !capsLock;
 
             var modifiers = GetModifiers();
 
@@ -169,7 +169,7 @@ namespace EnhancedUI.Gui
 
             if (pressedKeys.Count == 0)
             {
-                _lastKey = MyKeys.None;
+                lastKey = MyKeys.None;
             }
 
             foreach (var key in pressedKeys)
@@ -177,20 +177,20 @@ namespace EnhancedUI.Gui
                 if (key == MyKeys.Escape)
                     continue;
 
-                if (key == _lastKey)
+                if (key == lastKey)
                 {
-                    if (_delay > 0)
+                    if (delay > 0)
                     {
-                        _delay--;
+                        delay--;
                         continue;
                     }
 
-                    _delay = 5;
+                    delay = 5;
                 }
                 else
                 {
-                    _lastKey = key;
-                    _delay = 20;
+                    lastKey = key;
+                    delay = 20;
                 }
 
                 var keyChar = (char)key;
@@ -276,7 +276,7 @@ namespace EnhancedUI.Gui
         {
             var input = MyInput.Static;
             return (
-                (_capsLock ? CefEventFlags.CapsLockOn : 0) |
+                (capsLock ? CefEventFlags.CapsLockOn : 0) |
                 (input.IsAnyShiftKeyPressed() ? CefEventFlags.ShiftDown : 0) |
                 (input.IsAnyCtrlKeyPressed() ? CefEventFlags.ControlDown : 0) |
                 (input.IsAnyAltKeyPressed() ? CefEventFlags.AltDown : 0) |

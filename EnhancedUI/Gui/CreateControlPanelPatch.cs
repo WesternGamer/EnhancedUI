@@ -9,24 +9,23 @@ namespace EnhancedUI.Gui
 {
     //Replaces the controls on the Control Panel section of the terminal.
     [HarmonyPatch(typeof(MyGuiScreenTerminal), "CreateControlPanelPageControls")]
+    // ReSharper disable once UnusedType.Global
     internal static class CreateControlPanelPatch
     {
         private const string NAME = "Terminal";
-        private static WebContent Content = new WebContent();
+        private static readonly WebContent _content = new();
 
+        // ReSharper disable once UnusedMember.Local
         private static bool Prefix(
             MyGuiControlTabPage page,
+            // ReSharper disable once InconsistentNaming
             Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlKeyboard)
         {
-            // Code for a reload button
-            //MyGuiControlButton refreshButton = new MyGuiControlButton(new Vector2(0, 0.0f), VRage.Game.MyGuiControlButtonStyleEnum.Default, null, null, MyGuiDrawAlignEnum.HORISONTAL_CENTER_AND_VERTICAL_CENTER, "Reload HTML page.", new System.Text.StringBuilder("Reload Page"), onButtonClick: new Action<MyGuiControlButton>(ReloadAction));
-            //page.Controls.Add(refreshButton);
-
             page.Name = "PageControlPanel";
             page.TextEnum = MySpaceTexts.ControlPanel;
             page.TextScale = 0.7005405f;
 
-            var control = new ChromiumGuiControl(Content, NAME)
+            var control = new ChromiumGuiControl(_content, NAME)
             {
                 Position = new(0f, 0.005f),
                 Size = new(0.9f, 0.7f)
@@ -39,12 +38,5 @@ namespace EnhancedUI.Gui
             ___m_defaultFocusedControlKeyboard[MyTerminalPageEnum.ControlPanel] = control;
             return false;
         }
-
-        /* Code for reloading the page with the reload button
-        private static void ReloadAction(MyGuiControlButton myGuiControlButton)
-        {
-            control.ReloadPage();
-        }
-        */
     }
 }
