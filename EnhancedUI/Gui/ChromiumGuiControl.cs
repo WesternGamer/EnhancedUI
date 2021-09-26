@@ -5,7 +5,6 @@ using System.Linq;
 using CefSharp;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
-using VRage;
 using VRage.Collections;
 using VRage.Input;
 using VRageMath;
@@ -30,30 +29,25 @@ namespace EnhancedUI.Gui
             Visible = false
         };
 
-        private bool _focused;
-        private bool _capsLock;
-
-        private struct KeyState
-        {
-            public int Repeats;
-            public int Delay;
-        }
-
-        private readonly CachingDictionary<MyKeys, KeyState> _keyStates = new();
-
         private readonly WebContent _content;
         private readonly string _name;
+
+        private bool _capsLock;
+        private MyKeys _lastKey;
+        private int _delay;
 
         public ChromiumGuiControl(WebContent content, string name)
         {
             _content = content;
             _name = name;
 
-            var rect = GetScreenSize();
+            var rect = GetVideoScreenRectangle();
             _browserHost = new(new(rect.Width, rect.Height));
+
             _browserHost.Ready += BrowserHostOnReady;
             _browserHost.Browser.LoadingStateChanged += BrowserOnLoadingStateChanged;
-            Player = new(new(rect.Width, rect.Height), DataGetter);
+
+            Player = new(new(rect.Width, rect.Height), _browserHost.GetVideoData);
         }
 
         private void BrowserOnLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
@@ -72,19 +66,16 @@ namespace EnhancedUI.Gui
         public override void OnRemoving()
         {
             base.OnRemoving();
+
             _browserHost.Ready -= BrowserHostOnReady;
             _browserHost.Browser.LoadingStateChanged -= BrowserOnLoadingStateChanged;
+
             _browserHost.Dispose();
             MyRenderProxy.CloseVideo(_videoId);
         }
 
-        private byte[] DataGetter()
-        {
-            return _browserHost.VideoData;
-        }
-
         // Returns the on-screen rectangle of the video player (browser) in pixels
-        private Rectangle GetScreenSize()
+        private Rectangle GetVideoScreenRectangle()
         {
             var pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(GetPositionAbsoluteTopLeft());
 
@@ -101,7 +92,7 @@ namespace EnhancedUI.Gui
 
             _browserHost.Draw();
             MyRenderProxy.UpdateVideo(_videoId);
-            MyRenderProxy.DrawVideo(_videoId, GetScreenSize(), new(Vector4.One),
+            MyRenderProxy.DrawVideo(_videoId, GetVideoScreenRectangle(), new(Vector4.One),
                 MyVideoRectangleFitMode.AutoFit, false);
         }
 
@@ -115,13 +106,6 @@ namespace EnhancedUI.Gui
         public void ClearCookies()
         {
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
-        }
-
-        public override void OnFocusChanged(bool focus)
-        {
-            base.OnFocusChanged(focus);
-
-            _focused = focus;
         }
 
         public override MyGuiControlBase HandleInput()
@@ -151,35 +135,30 @@ namespace EnhancedUI.Gui
             var pressedKeys = new List<MyKeys>();
             input.GetPressedKeys(pressedKeys);
 
+            if (pressedKeys.Count == 0)
+            {
+                _lastKey = MyKeys.None;
+            }
+
             foreach (var key in pressedKeys)
             {
                 if (key == MyKeys.Escape)
                     continue;
 
-                var skip = false;
-
-                if (!_keyStates.TryGetValue(key, out var state))
+                if (key == _lastKey)
                 {
-                    state.Repeats = 1;
-                    state.Delay = 60 / 2;
+                    if (_delay > 0)
+                    {
+                        _delay--;
+                        continue;
+                    }
+                    _delay = 5;
                 }
                 else
                 {
-                    if (state.Delay > 0)
-                    {
-                        state.Delay -= 1;
-                        skip = true;
-                    }
-                    else
-                    {
-                        state.Repeats += 1;
-                        state.Delay = 60 / 10;
-                    }
+                    _lastKey = key;
+                    _delay = 20;
                 }
-                _keyStates[key] = state;
-
-                if (skip)
-                    continue;
 
                 var keyChar = (char)key;
 
@@ -210,13 +189,6 @@ namespace EnhancedUI.Gui
                     Modifiers = modifiers
                 });
             }
-            _keyStates.ApplyChanges();
-
-            foreach(var key in _keyStates.Keys.Where(key => !pressedKeys.Contains(key)))
-            {
-                _keyStates.Remove(key);
-            }
-            _keyStates.ApplyRemovals();
 
             var mousePosition = input.GetMousePosition();
             var hasValidMousePosition = mousePosition.X >= 0 && mousePosition.Y >= 0;
@@ -225,7 +197,7 @@ namespace EnhancedUI.Gui
                 return base.HandleInput();
 
             // Correct for left-top corner (position)
-            var vr = GetScreenSize();
+            var vr = GetVideoScreenRectangle();
             mousePosition.X -= vr.Left;
             mousePosition.Y -= vr.Top;
 

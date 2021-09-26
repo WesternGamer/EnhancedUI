@@ -26,6 +26,11 @@ namespace EnhancedUI
             Browser.LifeSpanHandler = new LifespanHandler();
         }
 
+        public byte[] GetVideoData()
+        {
+            return VideoData;
+        }
+
         private void BrowserOnBrowserInitialized(object sender, EventArgs e)
         {
             Ready.InvokeIfNotNull();
