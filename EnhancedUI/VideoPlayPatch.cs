@@ -8,7 +8,7 @@ using VRageRender;
 
 namespace EnhancedUI
 {
-    //Patch to allow loading HTML files using the video player.
+    // Patch to allow loading HTML files using the video player
     [HarmonyPatch]
     internal static class VideoPlayPatch
     {

@@ -18,7 +18,8 @@ namespace EnhancedUI
     {
         private static readonly Func<Device> _deviceInstance =
             AccessTools.MethodDelegate<Func<Device>>(AccessTools.PropertyGetter(
-                Type.GetType("VRage.Platform.Windows.Render.MyPlatformRender, VRage.Platform.Windows", true), "DeviceInstance"));
+                Type.GetType("VRage.Platform.Windows.Render.MyPlatformRender, VRage.Platform.Windows", true),
+                "DeviceInstance"));
 
         private readonly Vector2I _size;
         private readonly Func<byte[]> _dataGetter;
@@ -51,7 +52,7 @@ namespace EnhancedUI
                 },
                 OptionFlags = ResourceOptionFlags.None,
             };
-            _texture = new (_deviceInstance(), texture2DDescription);
+            _texture = new(_deviceInstance(), texture2DDescription);
             var shaderResourceViewDescription = new ShaderResourceViewDescription
             {
                 Format = Format.B8G8R8A8_UNorm_SRgb,
@@ -62,7 +63,7 @@ namespace EnhancedUI
                     MostDetailedMip = 0
                 }
             };
-            _srv = new (_deviceInstance(), _texture, shaderResourceViewDescription);
+            _srv = new(_deviceInstance(), _texture, shaderResourceViewDescription);
             _texture.DebugName = _srv.DebugName = "BatchDataPlayer.Texture";
         }
 
