@@ -114,7 +114,7 @@ namespace EnhancedUI.Gui
         private Vector2I GetMousePos()
         {
             var mousePosition = MyInput.Static.GetMousePosition();
-            var vr = GetScreenSize();
+            var vr = GetVideoScreenRectangle();
             mousePosition.X -= vr.Left;
             mousePosition.Y -= vr.Top;
 

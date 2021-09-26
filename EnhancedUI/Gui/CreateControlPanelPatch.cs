@@ -13,7 +13,7 @@ namespace EnhancedUI.Gui
         private static ChromiumGuiControl? _currentControl;
         private const string NAME = "Terminal";
         private static WebContent Content = new WebContent();
-      
+
         //Replaces the controls on the Control Panel section of the terminal.
         [HarmonyPatch("CreateControlPanelPageControls")]
         [HarmonyPrefix]
@@ -27,7 +27,7 @@ namespace EnhancedUI.Gui
             page.TextEnum = MySpaceTexts.ControlPanel;
             page.TextScale = 0.7005405f;
 
-            var control = new ChromiumGuiControl(Content, NAME)
+            _currentControl = new (Content, NAME)
             {
                 Position = new(0f, 0.005f),
                 Size = new(0.9f, 0.7f)
