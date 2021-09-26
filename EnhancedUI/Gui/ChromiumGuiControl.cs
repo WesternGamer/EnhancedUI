@@ -91,7 +91,7 @@ namespace EnhancedUI.Gui
 
             var url = content.FormatIndexUrl(name);
             chromium.Navigate(url);
-            videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
+            videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoName, 0);
         }
 
         // Removes the browser instance when ChromiumGuiControl is no longer needed.
@@ -104,7 +104,7 @@ namespace EnhancedUI.Gui
 
             var size = (Vector2I)MyGuiManager.GetScreenSizeFromNormalizedSize(Size);
 
-            return new(pos.X, pos.Y, size.X, size.Y);
+            return new Rectangle(pos.X, pos.Y, size.X, size.Y);
         }
 
         // Renders the HTML document on the screen using the video player
@@ -118,7 +118,7 @@ namespace EnhancedUI.Gui
 
             chromium.Draw();
             MyRenderProxy.UpdateVideo(videoId);
-            MyRenderProxy.DrawVideo(videoId, GetVideoScreenRectangle(), new(Vector4.One),
+            MyRenderProxy.DrawVideo(videoId, GetVideoScreenRectangle(), new Color(Vector4.One),
                 MyVideoRectangleFitMode.AutoFit, false);
         }
 
@@ -153,10 +153,10 @@ namespace EnhancedUI.Gui
                 return base.HandleInput();
             }
 
-            if (this.chromium == null)
+            if (chromium == null)
                 throw new Exception("This should not happen");
 
-            var browser = this.chromium.Browser;
+            var browser = chromium.Browser;
             var browserHost = browser.GetBrowser().GetHost();
 
             if (input.IsKeyPress(MyKeys.CapsLock))
@@ -168,9 +168,7 @@ namespace EnhancedUI.Gui
             input.GetPressedKeys(pressedKeys);
 
             if (pressedKeys.Count == 0)
-            {
                 lastKey = MyKeys.None;
-            }
 
             foreach (var key in pressedKeys)
             {
@@ -195,7 +193,7 @@ namespace EnhancedUI.Gui
 
                 var keyChar = (char)key;
 
-                browserHost.SendKeyEvent(new()
+                browserHost.SendKeyEvent(new KeyEvent
                 {
                     WindowsKeyCode = keyChar, // Space
                     FocusOnEditableField = true,
@@ -204,7 +202,7 @@ namespace EnhancedUI.Gui
                     Modifiers = modifiers
                 });
 
-                browserHost.SendKeyEvent(new()
+                browserHost.SendKeyEvent(new KeyEvent
                 {
                     WindowsKeyCode = keyChar, // Space
                     FocusOnEditableField = true,
@@ -213,7 +211,7 @@ namespace EnhancedUI.Gui
                     Modifiers = modifiers
                 });
 
-                browserHost.SendKeyEvent(new()
+                browserHost.SendKeyEvent(new KeyEvent
                 {
                     WindowsKeyCode = keyChar, // Space
                     FocusOnEditableField = true,
@@ -239,33 +237,18 @@ namespace EnhancedUI.Gui
             var wheelDelta = MyInput.Static.DeltaMouseScrollWheelValue();
 
             if (wheelDelta != 0)
-            {
                 browser.SendMouseWheelEvent(intMousePosition.X, intMousePosition.Y, 0, wheelDelta, modifiers);
-            }
             else
-            {
                 browserHost.SendMouseMoveEvent(intMousePosition.X, intMousePosition.Y, false, modifiers);
-            }
 
             if (input.IsLeftMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Left, false,
-                    1, modifiers);
-            }
+                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Left, false, 1, modifiers);
 
             if (input.IsMiddleMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Middle,
-                    false,
-                    1, modifiers);
-            }
+                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Middle, false, 1, modifiers);
 
             if (input.IsRightMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Right,
-                    false,
-                    1, modifiers);
-            }
+                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Right, false, 1, modifiers);
 
             // TODO: Double-click, drag&drop, context menu
 
@@ -275,14 +258,13 @@ namespace EnhancedUI.Gui
         private CefEventFlags GetModifiers()
         {
             var input = MyInput.Static;
-            return (
-                (capsLock ? CefEventFlags.CapsLockOn : 0) |
-                (input.IsAnyShiftKeyPressed() ? CefEventFlags.ShiftDown : 0) |
-                (input.IsAnyCtrlKeyPressed() ? CefEventFlags.ControlDown : 0) |
-                (input.IsAnyAltKeyPressed() ? CefEventFlags.AltDown : 0) |
-                (input.IsLeftMousePressed() ? CefEventFlags.LeftMouseButton : 0) |
-                (input.IsMiddleMousePressed() ? CefEventFlags.MiddleMouseButton : 0) |
-                (input.IsRightMousePressed() ? CefEventFlags.RightMouseButton : 0));
+            return (capsLock ? CefEventFlags.CapsLockOn : 0) |
+                   (input.IsAnyShiftKeyPressed() ? CefEventFlags.ShiftDown : 0) |
+                   (input.IsAnyCtrlKeyPressed() ? CefEventFlags.ControlDown : 0) |
+                   (input.IsAnyAltKeyPressed() ? CefEventFlags.AltDown : 0) |
+                   (input.IsLeftMousePressed() ? CefEventFlags.LeftMouseButton : 0) |
+                   (input.IsMiddleMousePressed() ? CefEventFlags.MiddleMouseButton : 0) |
+                   (input.IsRightMousePressed() ? CefEventFlags.RightMouseButton : 0);
         }
     }
 }

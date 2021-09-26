@@ -4,6 +4,7 @@ using Sandbox.Game.Gui;
 using Sandbox.Game.Localization;
 using Sandbox.Graphics.GUI;
 using VRage.Game.ModAPI;
+using VRageMath;
 
 namespace EnhancedUI.Gui
 {
@@ -12,8 +13,8 @@ namespace EnhancedUI.Gui
     // ReSharper disable once UnusedType.Global
     internal static class CreateControlPanelPatch
     {
-        private const string NAME = "Terminal";
-        private static readonly WebContent _content = new();
+        private const string Name = "Terminal";
+        private static readonly WebContent Content = new();
 
         // ReSharper disable once UnusedMember.Local
         private static bool Prefix(
@@ -25,10 +26,10 @@ namespace EnhancedUI.Gui
             page.TextEnum = MySpaceTexts.ControlPanel;
             page.TextScale = 0.7005405f;
 
-            var control = new ChromiumGuiControl(_content, NAME)
+            var control = new ChromiumGuiControl(Content, Name)
             {
-                Position = new(0f, 0.005f),
-                Size = new(0.9f, 0.7f)
+                Position = new Vector2(0f, 0.005f),
+                Size = new Vector2(0.9f, 0.7f)
             };
 
             // Adds the GUI elements to the screen

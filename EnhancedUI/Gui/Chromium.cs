@@ -9,11 +9,12 @@ namespace EnhancedUI.Gui
 {
     public class Chromium : IDisposable
     {
-        private byte[] videoData;
+        private readonly byte[] videoData;
 
         public event Action? Ready;
 
         public readonly ChromiumWebBrowser Browser;
+
         public Chromium(Vector2I size)
         {
             videoData = new byte[size.X * size.Y * 4];
@@ -51,7 +52,7 @@ namespace EnhancedUI.Gui
 
         private void BrowserOnPaint(object sender, OnPaintEventArgs e)
         {
-            Marshal.Copy(e.BufferHandle, this.videoData, 0, e.Width * e.Height * 4);
+            Marshal.Copy(e.BufferHandle, videoData, 0, e.Width * e.Height * 4);
             e.Handled = true;
         }
 
@@ -71,11 +72,17 @@ namespace EnhancedUI.Gui
             }
 
             bool ILifeSpanHandler.DoClose(IWebBrowser browserControl, IBrowser browser)
-            { return false; }
+            {
+                return false;
+            }
 
-            void ILifeSpanHandler.OnBeforeClose(IWebBrowser browserControl, IBrowser browser) { }
+            void ILifeSpanHandler.OnBeforeClose(IWebBrowser browserControl, IBrowser browser)
+            {
+            }
 
-            void ILifeSpanHandler.OnAfterCreated(IWebBrowser browserControl, IBrowser browser) { }
+            void ILifeSpanHandler.OnAfterCreated(IWebBrowser browserControl, IBrowser browser)
+            {
+            }
         }
     }
 }

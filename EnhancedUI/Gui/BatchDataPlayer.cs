@@ -13,7 +13,7 @@ namespace EnhancedUI.Gui
 {
     public class BatchDataPlayer : IVideoPlayer
     {
-        private static readonly Func<Device> _deviceInstance =
+        private static readonly Func<Device> DeviceInstance =
             AccessTools.MethodDelegate<Func<Device>>(AccessTools.PropertyGetter(
                 Type.GetType("VRage.Platform.Windows.Render.MyPlatformRender, VRage.Platform.Windows", true),
                 "DeviceInstance"));
@@ -46,10 +46,10 @@ namespace EnhancedUI.Gui
                     Count = 1,
                     Quality = 0
                 },
-                OptionFlags = ResourceOptionFlags.None,
+                OptionFlags = ResourceOptionFlags.None
             };
 
-            texture = new Texture2D(_deviceInstance(), texture2DDescription)
+            texture = new Texture2D(DeviceInstance(), texture2DDescription)
             {
                 DebugName = "BatchDataPlayer.Texture"
             };
@@ -65,7 +65,7 @@ namespace EnhancedUI.Gui
                 }
             };
 
-            shaderResourceView = new ShaderResourceView(_deviceInstance(), texture, shaderResourceViewDescription)
+            shaderResourceView = new ShaderResourceView(DeviceInstance(), texture, shaderResourceViewDescription)
             {
                 DebugName = texture.DebugName
             };
