@@ -1,34 +1,36 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using CefSharp;
 using CefSharp.OffScreen;
 using VRageMath;
-using VRageRender;
 
-namespace EnhancedUI
+namespace EnhancedUI.Gui
 {
-    public class BrowserHost : IDisposable
+    public class Chromium : IDisposable
     {
-        public byte[] VideoData { get; private set; }
+        private byte[] videoData;
 
         public event Action? Ready;
 
         public readonly ChromiumWebBrowser Browser;
-        public BrowserHost(Vector2I size)
+        public Chromium(Vector2I size)
         {
-            VideoData = new byte[size.X * size.Y * 4];
-            Browser = new ()
+            videoData = new byte[size.X * size.Y * 4];
+
+            Browser = new ChromiumWebBrowser
             {
-                Size = new (size.X, size.Y)
+                Size = new Size(size.X, size.Y),
+                LifeSpanHandler = new LifespanHandler()
             };
+
             Browser.Paint += BrowserOnPaint;
             Browser.BrowserInitialized += BrowserOnBrowserInitialized;
-            Browser.LifeSpanHandler = new LifespanHandler();
         }
 
         public byte[] GetVideoData()
         {
-            return VideoData;
+            return videoData;
         }
 
         private void BrowserOnBrowserInitialized(object sender, EventArgs e)
@@ -49,10 +51,7 @@ namespace EnhancedUI
 
         private void BrowserOnPaint(object sender, OnPaintEventArgs e)
         {
-            var videoData = VideoData;
-            Marshal.Copy(e.BufferHandle, videoData, 0, e.Width * e.Height * 4);
-            VideoData = videoData;
-
+            Marshal.Copy(e.BufferHandle, this.videoData, 0, e.Width * e.Height * 4);
             e.Handled = true;
         }
 

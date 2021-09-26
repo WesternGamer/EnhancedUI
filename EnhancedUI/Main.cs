@@ -2,15 +2,13 @@
 using System.Reflection;
 using CefSharp;
 using CefSharp.OffScreen;
-using EnhancedUI.Gui;
 using HarmonyLib;
-using Sandbox.Graphics.GUI;
 using VRage.FileSystem;
-using VRage.Input;
 using VRage.Plugins;
 
 namespace EnhancedUI
 {
+    // ReSharper disable once UnusedType.Global
     public class Main : IPlugin
     {
         public void Dispose()

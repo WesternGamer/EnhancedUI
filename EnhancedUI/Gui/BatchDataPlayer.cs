@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using HarmonyLib;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -12,7 +9,7 @@ using VRageMath;
 using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 
-namespace EnhancedUI
+namespace EnhancedUI.Gui
 {
     public class BatchDataPlayer : IVideoPlayer
     {
@@ -21,16 +18,15 @@ namespace EnhancedUI
                 Type.GetType("VRage.Platform.Windows.Render.MyPlatformRender, VRage.Platform.Windows", true),
                 "DeviceInstance"));
 
-        private readonly Vector2I _size;
-        private readonly Func<byte[]> _dataGetter;
-        private Texture2D _texture;
-        private ShaderResourceView _srv;
-#pragma warning disable 8618
+        private readonly Vector2I videoSize;
+        private readonly Func<byte[]> dataGetter;
+        private Texture2D? texture;
+        private ShaderResourceView? shaderResourceView;
+
         public BatchDataPlayer(Vector2I size, Func<byte[]> dataGetter)
-#pragma warning restore 8618
         {
-            _size = size;
-            _dataGetter = dataGetter;
+            videoSize = size;
+            this.dataGetter = dataGetter;
         }
 
         public void Init(string filename)
@@ -52,7 +48,12 @@ namespace EnhancedUI
                 },
                 OptionFlags = ResourceOptionFlags.None,
             };
-            _texture = new(_deviceInstance(), texture2DDescription);
+
+            texture = new Texture2D(_deviceInstance(), texture2DDescription)
+            {
+                DebugName = "BatchDataPlayer.Texture"
+            };
+
             var shaderResourceViewDescription = new ShaderResourceViewDescription
             {
                 Format = Format.B8G8R8A8_UNorm_SRgb,
@@ -63,15 +64,19 @@ namespace EnhancedUI
                     MostDetailedMip = 0
                 }
             };
-            _srv = new(_deviceInstance(), _texture, shaderResourceViewDescription);
-            _texture.DebugName = _srv.DebugName = "BatchDataPlayer.Texture";
+
+            shaderResourceView = new ShaderResourceView(_deviceInstance(), texture, shaderResourceViewDescription)
+            {
+                DebugName = texture.DebugName
+            };
         }
 
         public void Dispose()
         {
             Stop();
-            _srv.Dispose();
-            _texture.Dispose();
+
+            shaderResourceView?.Dispose();
+            texture?.Dispose();
         }
 
         public void Play()
@@ -86,30 +91,30 @@ namespace EnhancedUI
 
         public void Update(object context)
         {
-            if (CurrentState == VideoState.Playing && _dataGetter() is { } data)
+            if (CurrentState == VideoState.Playing && dataGetter() is { } data)
                 OnFrame((DeviceContext)context, data);
         }
 
         private void OnFrame(DeviceContext context, byte[] data)
         {
-            var dataBox = context.MapSubresource(_texture, 0, MapMode.WriteDiscard, MapFlags.None);
+            var dataBox = context.MapSubresource(texture, 0, MapMode.WriteDiscard, MapFlags.None);
 
             if (dataBox.IsEmpty)
                 return;
 
             Utilities.Write(dataBox.DataPointer, data, 0, data.Length);
 
-            context.UnmapSubresource(_texture, 0);
+            context.UnmapSubresource(texture, 0);
         }
 
-        public int VideoWidth => _size.X;
+        public int VideoWidth => videoSize.X;
 
-        public int VideoHeight => _size.Y;
+        public int VideoHeight => videoSize.Y;
 
         public float Volume { get; set; }
 
         public VideoState CurrentState { get; private set; }
 
-        public IntPtr TextureSrv => _srv.NativePointer;
+        public IntPtr TextureSrv => shaderResourceView?.NativePointer ?? IntPtr.Zero;
     }
 }
