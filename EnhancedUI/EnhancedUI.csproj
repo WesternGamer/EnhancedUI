@@ -57,6 +57,7 @@
             <HintPath>$(SolutionDir)GameBinaries\SpaceEngineers.ObjectBuilders.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="System.Web" />
         <Reference Include="VRage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>$(SolutionDir)GameBinaries\VRage.dll</HintPath>
@@ -124,7 +125,7 @@
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="xcopy /u /y $(TargetDir)* $(SolutionDir)GameBinaries\Plugins\Local\EnhancedUI" />
+        <Exec Command="xcopy /s /e /r /y $(TargetDir)* $(SolutionDir)GameBinaries\Plugins\Local\EnhancedUI" />
         <Exec Command="start steam://rungameid/244850" />
     </Target>
 </Project>

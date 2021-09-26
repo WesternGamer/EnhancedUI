@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using CefSharp;
@@ -24,22 +25,10 @@ namespace EnhancedUI.Gui
         //Returns false if the browser is not initialized else it returns true.
         public bool IsBrowserInitialized => _browserHost.Browser.IsBrowserInitialized;
 
-        public readonly MyGuiControlRotatingWheel Wheel = new (Vector2.Zero)
+        public readonly MyGuiControlRotatingWheel Wheel = new(Vector2.Zero)
         {
             Visible = false
         };
-
-        public string? Url
-        {
-            get => _url;
-            set
-            {
-                _url = value;
-                if (!IsBrowserInitialized || string.IsNullOrEmpty(_url))
-                    return;
-                _browserHost.Navigate(_url!);
-            }
-        }
 
         private bool _focused;
         private bool _capsLock;
@@ -51,15 +40,20 @@ namespace EnhancedUI.Gui
         }
 
         private readonly CachingDictionary<MyKeys, KeyState> _keyStates = new();
-        private string? _url;
 
-        public ChromiumGuiControl()
+        private readonly WebContent _content;
+        private readonly string _name;
+
+        public ChromiumGuiControl(WebContent content, string name)
         {
+            _content = content;
+            _name = name;
+
             var rect = GetScreenSize();
-            _browserHost = new (new (rect.Width, rect.Height));
+            _browserHost = new(new(rect.Width, rect.Height));
             _browserHost.Ready += BrowserHostOnReady;
             _browserHost.Browser.LoadingStateChanged += BrowserOnLoadingStateChanged;
-            Player = new (new (rect.Width, rect.Height), DataGetter);
+            Player = new(new(rect.Width, rect.Height), DataGetter);
         }
 
         private void BrowserOnLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
@@ -69,13 +63,12 @@ namespace EnhancedUI.Gui
 
         private void BrowserHostOnReady()
         {
-            if (!string.IsNullOrEmpty(_url))
-                _browserHost.Navigate(_url!);
-
+            var url = _content.FormatIndexUrl(_name);
+            _browserHost.Navigate(url);
             _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
         }
 
-        //Removes the browser instance when ChromiumGuiControl is no longer needed.
+        // Removes the browser instance when ChromiumGuiControl is no longer needed.
         public override void OnRemoving()
         {
             base.OnRemoving();
@@ -90,17 +83,17 @@ namespace EnhancedUI.Gui
             return _browserHost.VideoData;
         }
 
-        //Returns the screen size as a VRageMath.Rectangle.
+        // Returns the on-screen rectangle of the video player (browser) in pixels
         private Rectangle GetScreenSize()
         {
             var pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(GetPositionAbsoluteTopLeft());
 
             var size = (Vector2I)MyGuiManager.GetScreenSizeFromNormalizedSize(Size);
 
-            return new (pos.X, pos.Y, size.X, size.Y);
+            return new(pos.X, pos.Y, size.X, size.Y);
         }
 
-        //Draws the HTML file on the screen using the video player.
+        // Renders the HTML document on the screen using the video player
         public override void Draw(float transitionAlpha, float backgroundTransitionAlpha)
         {
             if (!MyRenderProxy.IsVideoValid(_videoId))
@@ -108,17 +101,17 @@ namespace EnhancedUI.Gui
 
             _browserHost.Draw();
             MyRenderProxy.UpdateVideo(_videoId);
-            MyRenderProxy.DrawVideo(_videoId, GetScreenSize(), new (Vector4.One),
+            MyRenderProxy.DrawVideo(_videoId, GetScreenSize(), new(Vector4.One),
                 MyVideoRectangleFitMode.AutoFit, false);
         }
 
-        //Reloads the HTML page.
+        // Reloads the HTML document
         public void ReloadPage()
         {
             _browserHost.Browser.Reload();
         }
 
-        //Clears the cookies from the CEF browser.
+        // Clears the cookies from the CEF browser
         public void ClearCookies()
         {
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
