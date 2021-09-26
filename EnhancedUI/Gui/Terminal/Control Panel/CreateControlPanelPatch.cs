@@ -6,7 +6,7 @@ using Sandbox.Graphics.GUI;
 using VRage.Game.ModAPI;
 using VRageMath;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.Terminal.ControlPanel
 {
     //Replaces the controls on the Control Panel section of the terminal.
     [HarmonyPatch(typeof(MyGuiScreenTerminal), "CreateControlPanelPageControls")]
