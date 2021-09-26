@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using CefSharp;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
-using VRage;
 using VRage.Collections;
 using VRage.Input;
 using VRageMath;
@@ -14,7 +12,7 @@ using Rectangle = VRageMath.Rectangle;
 
 namespace EnhancedUI.Gui
 {
-    public class ChromiumGuiControl : MyGuiControlBase
+    public partial class ChromiumGuiControl : MyGuiControlBase
     {
         private readonly BrowserHost _browserHost;
         public static BatchDataPlayer? Player;
@@ -40,17 +38,6 @@ namespace EnhancedUI.Gui
                 _browserHost.Navigate(_url!);
             }
         }
-
-        private bool _focused;
-        private bool _capsLock;
-
-        private struct KeyState
-        {
-            public int Repeats;
-            public int Delay;
-        }
-
-        private readonly CachingDictionary<MyKeys, KeyState> _keyStates = new();
         private string? _url;
 
         public ChromiumGuiControl()
@@ -73,16 +60,21 @@ namespace EnhancedUI.Gui
                 _browserHost.Navigate(_url!);
 
             _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
+            RegisterEvents();
         }
 
         //Removes the browser instance when ChromiumGuiControl is no longer needed.
         public override void OnRemoving()
         {
             base.OnRemoving();
+            if (IsBrowserInitialized)
+            {
+                MyRenderProxy.CloseVideo(_videoId);
+                UnregisterEvents();
+            }
             _browserHost.Ready -= BrowserHostOnReady;
             _browserHost.Browser.LoadingStateChanged -= BrowserOnLoadingStateChanged;
             _browserHost.Dispose();
-            MyRenderProxy.CloseVideo(_videoId);
         }
 
         private byte[] DataGetter()
@@ -124,13 +116,6 @@ namespace EnhancedUI.Gui
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
         }
 
-        public override void OnFocusChanged(bool focus)
-        {
-            base.OnFocusChanged(focus);
-
-            _focused = focus;
-        }
-
         public override MyGuiControlBase HandleInput()
         {
             if (!IsBrowserInitialized)
@@ -138,156 +123,15 @@ namespace EnhancedUI.Gui
 
             var input = MyInput.Static;
 
-            if (input.IsAnyCtrlKeyPressed() && input.IsNewKeyPressed(MyKeys.R))
-            {
-                ReloadPage();
-                if (MyInput.Static.IsAnyShiftKeyPressed())
-                    ClearCookies();
-
-                return base.HandleInput();
-            }
-
-            var browser = _browserHost.Browser;
-            var browserHost = browser.GetBrowser().GetHost();
-
-            if (input.IsKeyPress(MyKeys.CapsLock))
-                _capsLock = !_capsLock;
-
-            var modifiers = GetModifiers();
-
-            var pressedKeys = new List<MyKeys>();
-            input.GetPressedKeys(pressedKeys);
-
-            foreach (var key in pressedKeys)
-            {
-                if (key == MyKeys.Escape)
-                    continue;
-
-                var skip = false;
-
-                if (!_keyStates.TryGetValue(key, out var state))
-                {
-                    state.Repeats = 1;
-                    state.Delay = 60 / 2;
-                }
-                else
-                {
-                    if (state.Delay > 0)
-                    {
-                        state.Delay -= 1;
-                        skip = true;
-                    }
-                    else
-                    {
-                        state.Repeats += 1;
-                        state.Delay = 60 / 10;
-                    }
-                }
-                _keyStates[key] = state;
-
-                if (skip)
-                    continue;
-
-                var keyChar = (char)key;
-
-                browserHost.SendKeyEvent(new()
-                {
-                    WindowsKeyCode = keyChar, // Space
-                    FocusOnEditableField = true,
-                    IsSystemKey = false,
-                    Type = KeyEventType.KeyDown,
-                    Modifiers = modifiers
-                });
-
-                browserHost.SendKeyEvent(new()
-                {
-                    WindowsKeyCode = keyChar, // Space
-                    FocusOnEditableField = true,
-                    IsSystemKey = false,
-                    Type = KeyEventType.Char,
-                    Modifiers = modifiers
-                });
-
-                browserHost.SendKeyEvent(new()
-                {
-                    WindowsKeyCode = keyChar, // Space
-                    FocusOnEditableField = true,
-                    IsSystemKey = false,
-                    Type = KeyEventType.KeyUp,
-                    Modifiers = modifiers
-                });
-            }
-            _keyStates.ApplyChanges();
-
-            foreach(var key in _keyStates.Keys.Where(key => !pressedKeys.Contains(key)))
-            {
-                _keyStates.Remove(key);
-            }
-            _keyStates.ApplyRemovals();
-
-            var mousePosition = input.GetMousePosition();
-            var hasValidMousePosition = mousePosition.X >= 0 && mousePosition.Y >= 0;
-
-            if (!hasValidMousePosition)
+            if (!input.IsAnyCtrlKeyPressed() || !input.IsNewKeyPressed(MyKeys.R))
                 return base.HandleInput();
 
-            // Correct for left-top corner (position)
-            var vr = GetScreenSize();
-            mousePosition.X -= vr.Left;
-            mousePosition.Y -= vr.Top;
-
-            // Correct for aspect ratio and scale (if any)
-            mousePosition /= Rectangle.Size;
-
-            var intMousePosition = new Vector2I(mousePosition + new Vector2(0.5f, 0.5f));
-
-            var wheelDelta = MyInput.Static.DeltaMouseScrollWheelValue();
-
-            if (wheelDelta != 0)
-            {
-                browser.SendMouseWheelEvent(intMousePosition.X, intMousePosition.Y, 0, wheelDelta, modifiers);
-            }
-            else
-            {
-                browserHost.SendMouseMoveEvent(intMousePosition.X, intMousePosition.Y, false, modifiers);
-            }
-
-            if (input.IsLeftMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Left, false,
-                    1, modifiers);
-            }
-
-            if (input.IsMiddleMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Middle,
-                    false,
-                    1, modifiers);
-            }
-
-            if (input.IsRightMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Right,
-                    false,
-                    1, modifiers);
-            }
-
-            // TODO: Double-click, drag&drop, context menu
+            ReloadPage();
+            if (MyInput.Static.IsAnyShiftKeyPressed())
+                ClearCookies();
 
             return base.HandleInput();
-        }
 
-        private CefEventFlags GetModifiers()
-        {
-            var input = MyInput.Static;
-            return (
-                (_capsLock ? CefEventFlags.CapsLockOn : 0) |
-                (input.IsAnyShiftKeyPressed() ? CefEventFlags.ShiftDown : 0) |
-                (input.IsAnyCtrlKeyPressed() ? CefEventFlags.ControlDown : 0) |
-                (input.IsAnyAltKeyPressed() ? CefEventFlags.AltDown : 0) |
-                (input.IsLeftMousePressed() ? CefEventFlags.LeftMouseButton : 0) |
-                (input.IsMiddleMousePressed() ? CefEventFlags.MiddleMouseButton : 0) |
-                (input.IsRightMousePressed() ? CefEventFlags.RightMouseButton : 0));
         }
     }
 }
