@@ -2,7 +2,7 @@
 
 Highly functional Terminal UI based on Web technology.
 
-## Install the client plugin
+## Install the client plugin (Coming Soon)
 
 1. Install the [Plugin Loader](https://steamcommunity.com/sharedfiles/filedetails/?id=2407984968)
 2. Start the game
@@ -18,10 +18,10 @@ TODO: Separate this section into a file as it grows.
 
 ### Prerequisites
 
-- .NET SDK 5.0
-- .NET Framework 4.8
-- [Space Engineers](https://spaceengineersgame.com)
-- [JetBrains Rider](https://jetbrains.com) or Visual Studio
+- [.NET SDK 5.0](https://dotnet.microsoft.com/download/dotnet/thank-you/sdk-5.0.401-windows-x64-installer)
+- [.NET Framework 4.8](https://dotnet.microsoft.com/download/dotnet-framework/thank-you/net48-web-installer)
+- [Space Engineers](https://www.spaceengineersgame.com/store/) You can also get it directy from [Steam](https://store.steampowered.com/app/244850/Space_Engineers/).
+- [JetBrains Rider](https://www.jetbrains.com/rider/) or [Visual Studio](https://visualstudio.microsoft.com/)
 - [Plugin Loader](https://steamcommunity.com/sharedfiles/filedetails/?id=2407984968)
 
 ### Steps
