@@ -1,9 +1,23 @@
-body {
-    background: transparent;
-    font-size: xx-large;
+@font-face {
+    font-family: 'SpaceEngineers';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Awesome-Font'), local('Awesome-Font-Regular'), url("space_engineers-webfont.woff") format('woff');
 }
 
-h1 {
-    color: yellow;
-    font-size: 48px;
+html {
+    background: transparent url("checkerboard.png");
+    font-family: SpaceEngineers, serif;
+    color: lightcyan;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.full {
+    border: 1px solid yellow;
 }
