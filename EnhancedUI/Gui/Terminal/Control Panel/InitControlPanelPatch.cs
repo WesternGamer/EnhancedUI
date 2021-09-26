@@ -2,7 +2,7 @@
 using System.Reflection;
 using HarmonyLib;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.Terminal.ControlPanel
 {
     [HarmonyPatch]
     // ReSharper disable once UnusedType.Global
