@@ -30,18 +30,6 @@ namespace EnhancedUI.Gui
             Visible = false
         };
 
-        public string? Url
-        {
-            get => _url;
-            set
-            {
-                _url = value;
-                if (!IsBrowserInitialized || string.IsNullOrEmpty(_url))
-                    return;
-                _browserHost.Navigate(_url!);
-            }
-        }
-
         private bool _focused;
         private bool _capsLock;
 
@@ -117,13 +105,13 @@ namespace EnhancedUI.Gui
                 MyVideoRectangleFitMode.AutoFit, false);
         }
 
-        //Reloads the HTML page.
+        // Reloads the HTML document
         public void ReloadPage()
         {
             _browserHost.Browser.Reload();
         }
 
-        //Clears the cookies from the CEF browser.
+        // Clears the cookies from the CEF browser
         public void ClearCookies()
         {
             Cef.GetGlobalCookieManager().DeleteCookies("", "");

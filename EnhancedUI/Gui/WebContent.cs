@@ -6,35 +6,22 @@ namespace EnhancedUI.Gui
 {
     public class WebContent
     {
-        private readonly string rootDir;
-        private readonly string rootUrl;
+        private readonly string baseUrl;
 
         public WebContent()
         {
-            /*  Static content files are loaded form the EnhancedUI folder.
-             *
-             *  In production it will be deployed by PluginLoader.
-             *  In development it should be linked to a project or build folder.
-             *
+            /* Document and resources are loaded from the Content folder next to the plugin DLL.
+             * If no Content folder found, then from the development server: http://127.0.0.1:3000
              */
-            rootDir = Path.Combine(FileSystem.GetPluginsDir(), "EnhancedUI");
-            rootUrl = "file://" + HttpUtility.UrlPathEncode(rootDir.Replace('\\', '/'));
-        }
-
-        private string FormatIndexPath(string name)
-        {
-            return Path.Combine(rootDir, $"{name}.html");
-        }
-
-        public bool HasIndex(string name)
-        {
-            var path = FormatIndexPath(name);
-            return File.Exists(path);
+            var contentDir = Path.Combine(FileSystem.GetPluginsDir(), "Content");
+            baseUrl = Directory.Exists(contentDir)
+                ? "file://" + HttpUtility.UrlPathEncode(contentDir.Replace('\\', '/'))
+                : "http://127.0.0.1:3000";
         }
 
         public string FormatIndexUrl(string name)
         {
-            return $"{rootUrl}/{name}.html";
+            return $"{baseUrl}/{name}.html";
         }
     }
 }

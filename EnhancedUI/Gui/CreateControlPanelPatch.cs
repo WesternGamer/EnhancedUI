@@ -18,9 +18,6 @@ namespace EnhancedUI.Gui
             MyGuiControlTabPage page,
             Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlKeyboard)
         {
-            if (!Content.HasIndex(NAME))
-                return true;
-
             // Code for a reload button
             //MyGuiControlButton refreshButton = new MyGuiControlButton(new Vector2(0, 0.0f), VRage.Game.MyGuiControlButtonStyleEnum.Default, null, null, MyGuiDrawAlignEnum.HORISONTAL_CENTER_AND_VERTICAL_CENTER, "Reload HTML page.", new System.Text.StringBuilder("Reload Page"), onButtonClick: new Action<MyGuiControlButton>(ReloadAction));
             //page.Controls.Add(refreshButton);
