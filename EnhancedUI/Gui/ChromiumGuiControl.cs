@@ -91,7 +91,7 @@ namespace EnhancedUI.Gui
 
             var url = content.FormatIndexUrl(name);
             chromium.Navigate(url);
-            videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
+            videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoName, 0);
         }
 
         // Removes the browser instance when ChromiumGuiControl is no longer needed.

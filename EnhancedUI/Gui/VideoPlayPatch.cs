@@ -11,18 +11,18 @@ namespace EnhancedUI.Gui
     [HarmonyPatch]
     internal static class VideoPlayPatch
     {
-        private static readonly Type _factoryType = Type.GetType("VRageRender.MyVideoFactory, VRage.Render11", true);
-        private static readonly Type _playerType = Type.GetType("VRageRender.MyVideoPlayer, VRage.Render11", true);
+        private static readonly Type FactoryType = Type.GetType("VRageRender.MyVideoFactory, VRage.Render11", true);
+        private static readonly Type PlayerType = Type.GetType("VRageRender.MyVideoPlayer, VRage.Render11", true);
 
-        private static readonly MethodBase _getByIdMethod = AccessTools.Method(_factoryType, "GetVideo");
-        private static readonly MethodBase _initMethod = AccessTools.Method(_playerType, "Init");
+        private static readonly MethodBase GetByIdMethod = AccessTools.Method(FactoryType, "GetVideo");
+        private static readonly MethodBase InitMethod = AccessTools.Method(PlayerType, "Init");
 
-        public const string VIDEO_NAME = "CefFrame";
+        public const string VideoName = "CefFrame";
 
         // ReSharper disable once UnusedMember.Local
         private static MethodBase TargetMethod()
         {
-            return AccessTools.Method(_factoryType, "Play");
+            return AccessTools.Method(FactoryType, "Play");
         }
 
         [HandleProcessCorruptedStateExceptions]
@@ -30,10 +30,10 @@ namespace EnhancedUI.Gui
         // ReSharper disable once UnusedMember.Local
         private static bool Prefix(uint id, string videoFile)
         {
-            if (videoFile != VIDEO_NAME)
+            if (videoFile != VideoName)
                 return true;
 
-            var video = _getByIdMethod.Invoke(null, new object[]{id});
+            var video = GetByIdMethod.Invoke(null, new object[]{id});
             if (video is null || ChromiumGuiControl.Player is null)
                 return false;
 
@@ -41,7 +41,7 @@ namespace EnhancedUI.Gui
             {
                 lock (video)
                 {
-                    _initMethod.Invoke(video, new object[] {videoFile, ChromiumGuiControl.Player});
+                    InitMethod.Invoke(video, new object[] {videoFile, ChromiumGuiControl.Player});
                 }
             }
             catch (Exception e)

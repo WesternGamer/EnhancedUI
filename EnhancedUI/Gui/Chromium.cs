@@ -9,7 +9,7 @@ namespace EnhancedUI.Gui
 {
     public class Chromium : IDisposable
     {
-        private byte[] videoData;
+        private readonly byte[] videoData;
 
         public event Action? Ready;
 
