@@ -33,7 +33,7 @@ namespace EnhancedUI.Gui
             if (videoFile != VideoName)
                 return true;
 
-            var video = GetByIdMethod.Invoke(null, new object[]{id});
+            var video = GetByIdMethod.Invoke(null, new object[] { id });
             if (video is null || ChromiumGuiControl.Player is null)
                 return false;
 
@@ -41,7 +41,7 @@ namespace EnhancedUI.Gui
             {
                 lock (video)
                 {
-                    InitMethod.Invoke(video, new object[] {videoFile, ChromiumGuiControl.Player});
+                    InitMethod.Invoke(video, new object[] { videoFile, ChromiumGuiControl.Player });
                 }
             }
             catch (Exception e)

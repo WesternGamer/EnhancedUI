@@ -46,7 +46,7 @@ namespace EnhancedUI.Gui
                     Count = 1,
                     Quality = 0
                 },
-                OptionFlags = ResourceOptionFlags.None,
+                OptionFlags = ResourceOptionFlags.None
             };
 
             texture = new Texture2D(DeviceInstance(), texture2DDescription)

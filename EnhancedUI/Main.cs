@@ -23,7 +23,7 @@ namespace EnhancedUI
             var settings = new CefSettings
             {
                 CachePath = Path.Combine(MyFileSystem.CachePath, "CefCache"),
-                CommandLineArgsDisabled = true,
+                CommandLineArgsDisabled = true
             };
             settings.DisableGpuAcceleration();
 
