@@ -1,4 +1,8 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Web;
+using EnhancedUI.Interop;
+using EnhancedUI.Utils;
 using HarmonyLib;
 using Sandbox.Game.Gui;
 using Sandbox.Game.Localization;
@@ -11,8 +15,6 @@ namespace EnhancedUI.Gui
     internal static class CreateControlPanelPatch
     {
         private static ChromiumGuiControl? _currentControl;
-        private const string NAME = "Terminal";
-        private static WebContent Content = new WebContent();
 
         //Replaces the controls on the Control Panel section of the terminal.
         [HarmonyPatch("CreateControlPanelPageControls")]
@@ -27,11 +29,15 @@ namespace EnhancedUI.Gui
             page.TextEnum = MySpaceTexts.ControlPanel;
             page.TextScale = 0.7005405f;
 
-            _currentControl = new (Content, NAME)
+            _currentControl = new ()
             {
                 Position = new(0f, 0.005f),
-                Size = new(0.9f, 0.7f)
+                Size = new(0.9f, 0.7f),
+                Url = "http://localhost:3000/"
             };
+
+            _currentControl.RegisterJsType("terminal", new Terminal(__instance));
+
             //Adds the gui elements to the screen
             page.Controls.Add(_currentControl);
             page.Controls.Add(_currentControl.Wheel);

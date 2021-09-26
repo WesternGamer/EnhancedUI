@@ -119,9 +119,18 @@
         <PackageReference Include="CefSharp.Common" Version="93.1.140" />
         <PackageReference Include="CefSharp.OffScreen" Version="93.1.140" />
         <PackageReference Include="Lib.Harmony" Version="2.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
         <PackageReference Include="Winook" Version="1.3.2" />
     </ItemGroup>
 
+    <Target Name="BuildFront" BeforeTargets="PostBuild" Condition="'$(Configuration)' == 'Release' ">
+        <PropertyGroup>
+            <FrontDir>$(SolutionDir)front\</FrontDir>
+        </PropertyGroup>
+        <Exec Command="yarn build" WorkingDirectory="$(FrontDir)" />
+        <Exec Command="xcopy /s /e /r /y $(FrontDir)build\* $(SolutionDir)GameBinaries\Plugins\Local\EnhancedUI\Content\" />
+    </Target>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
         <Exec Command="xcopy /s /e /r /y $(TargetDir)* $(SolutionDir)GameBinaries\Plugins\Local\EnhancedUI" />
         <Exec Command="start steam://rungameid/244850" />

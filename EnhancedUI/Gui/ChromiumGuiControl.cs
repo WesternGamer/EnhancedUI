@@ -41,15 +41,11 @@ namespace EnhancedUI.Gui
                 _browserHost.Navigate(_url!);
             }
         }
-        
+
         private string? _url;
-        private readonly WebContent _content;
-        private readonly string _name;
-        
-        public ChromiumGuiControl(WebContent content, string name)
+
+        public ChromiumGuiControl()
         {
-            _content = content;
-            _name = name;
 
             var rect = GetVideoScreenRectangle();
             _browserHost = new(new(rect.Width, rect.Height));
@@ -67,8 +63,9 @@ namespace EnhancedUI.Gui
 
         private void BrowserHostOnReady()
         {
-            var url = _content.FormatIndexUrl(_name);
-            _browserHost.Navigate(url);
+            if (!string.IsNullOrEmpty(_url))
+                _browserHost.Navigate(_url!);
+
             _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
             RegisterEvents();
         }
@@ -121,6 +118,11 @@ namespace EnhancedUI.Gui
         public void ClearCookies()
         {
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
+        }
+
+        public void RegisterJsType(string name, object typeObject)
+        {
+            _browserHost.Browser.JavascriptObjectRepository.Register(name, typeObject, true, BindingOptions.DefaultBinder);
         }
 
         public override MyGuiControlBase HandleInput()

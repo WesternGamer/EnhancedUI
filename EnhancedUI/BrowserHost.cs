@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using CefSharp;
 using CefSharp.OffScreen;
+using EnhancedUI.Interop;
 using VRageMath;
 using VRageRender;
 
