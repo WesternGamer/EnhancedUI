@@ -14,6 +14,9 @@ namespace EnhancedUI
         public event Action? Ready;
 
         public readonly ChromiumWebBrowser Browser;
+
+        public IBrowserHost Host => Browser.GetBrowserHost();
+
         public BrowserHost(Vector2I size)
         {
             VideoData = new byte[size.X * size.Y * 4];
