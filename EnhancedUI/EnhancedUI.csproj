@@ -1,0 +1,131 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <LangVersion>default</LangVersion>
+        <Nullable>enable</Nullable>
+        <OutputPath>bin\</OutputPath>
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="EmptyKeys.UserInterface, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>$(SolutionDir)GameBinaries\EmptyKeys.UserInterface.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\Sandbox.Common.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Game, Version=0.1.6305.30774, Culture=neutral, processorArchitecture=AMD64">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\Sandbox.Game.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Sandbox.Graphics, Version=0.1.6305.30761, Culture=neutral, processorArchitecture=AMD64">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\Sandbox.Graphics.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\SharpDX.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="SharpDX.Direct3D11, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\SharpDX.Direct3D11.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="SharpDX.DXGI, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
+          <HintPath>$(SolutionDir)GameBinaries\SharpDX.DXGI.dll</HintPath>
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="SpaceEngineers.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\SpaceEngineers.Game.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="SpaceEngineers.ObjectBuilders, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\SpaceEngineers.ObjectBuilders.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Web" />
+        <Reference Include="VRage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Audio, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Audio.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Game, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Game.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Game.XmlSerializers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Game.XmlSerializers.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Input, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Input.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Library.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Math, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Math.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Platform.Windows, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Platform.Windows.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Render, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Render.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Render11, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Render11.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Scripting, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Scripting.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="VRage.Steam">
+            <HintPath>$(SolutionDir)GameBinaries\VRage.Steam.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CefSharp.Common" Version="93.1.140" />
+        <PackageReference Include="CefSharp.OffScreen" Version="93.1.140" />
+        <PackageReference Include="Lib.Harmony" Version="2.1.1" />
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="xcopy /s /e /r /y $(TargetDir)* $(SolutionDir)GameBinaries\Plugins\Local\EnhancedUI" />
+        <Exec Command="start steam://rungameid/244850" />
+    </Target>
+</Project>
