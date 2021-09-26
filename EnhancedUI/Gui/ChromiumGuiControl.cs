@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CefSharp;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
@@ -15,6 +16,7 @@ namespace EnhancedUI.Gui
     {
         private Chromium? chromium;
         public static BatchDataPlayer? Player;
+        private static MyKeyThrottler keyThrottler = new();
 
         private uint videoId;
 
@@ -30,8 +32,8 @@ namespace EnhancedUI.Gui
         private readonly string name;
 
         private bool capsLock;
-        private MyKeys lastKey;
-        private int delay;
+        private Vector2I lastValidMousePosition = -Vector2I.One;
+        private List<MyKeys> lastPressedKeys = new();
 
         public ChromiumGuiControl(WebContent content, string name)
         {
@@ -156,8 +158,22 @@ namespace EnhancedUI.Gui
                 return null!;
             }
 
+            if (chromium == null)
+            {
+                throw new Exception("This should not happen");
+            }
+
+            var ret = base.HandleInput();
+            if (ret != null)
+                return ret;
+
             var input = MyInput.Static;
 
+            // Do not handle the ESC key, so the player can exit the menu anytime
+            if (input.IsNewKeyPressed(MyKeys.Escape))
+                return null!;
+
+            // Reload the page with Ctrl-R, also clears cookies with Ctrl-Shift-R
             if (input.IsAnyCtrlKeyPressed() && input.IsNewKeyPressed(MyKeys.R))
             {
                 ReloadPage();
@@ -165,21 +181,18 @@ namespace EnhancedUI.Gui
                 {
                     ClearCookies();
                 }
-
-                return base.HandleInput();
+                return this;
             }
 
-            if (chromium == null)
-            {
-                throw new Exception("This should not happen");
-            }
+            var handled = false;
 
             var browser = chromium.Browser;
             var browserHost = browser.GetBrowser().GetHost();
 
-            if (input.IsKeyPress(MyKeys.CapsLock))
+            if (input.IsNewKeyPressed(MyKeys.CapsLock))
             {
                 capsLock = !capsLock;
+                handled = true;
             }
 
             var modifiers = GetModifiers();
@@ -187,108 +200,109 @@ namespace EnhancedUI.Gui
             var pressedKeys = new List<MyKeys>();
             input.GetPressedKeys(pressedKeys);
 
-            if (pressedKeys.Count == 0)
-            {
-                lastKey = MyKeys.None;
-            }
+            if (pressedKeys.Count > 0)
+                handled = true;
 
             foreach (var key in pressedKeys)
             {
-                if (key == MyKeys.Escape)
+                if (keyThrottler.GetKeyStatus(key) == ThrottledKeyStatus.PRESSED_AND_READY)
                 {
-                    continue;
-                }
-
-                if (key == lastKey)
-                {
-                    if (delay > 0)
+                    var windowsKeyCode = ToWindowsKeyCode(key);
+                    browserHost.SendKeyEvent(new KeyEvent
                     {
-                        delay--;
-                        continue;
-                    }
-
-                    delay = 5;
+                        WindowsKeyCode = windowsKeyCode,
+                        FocusOnEditableField = true,
+                        IsSystemKey = false,
+                        Type = KeyEventType.KeyDown,
+                        Modifiers = modifiers
+                    });
                 }
-                else
-                {
-                    lastKey = key;
-                    delay = 20;
-                }
+            }
 
-                var keyChar = (char)key;
+            foreach (var ch in input.TextInput)
+            {
+                if (char.IsControl(ch) && ch != '\r' && ch != '\t')
+                    continue;
 
                 browserHost.SendKeyEvent(new KeyEvent
                 {
-                    WindowsKeyCode = keyChar, // Space
-                    FocusOnEditableField = true,
-                    IsSystemKey = false,
-                    Type = KeyEventType.KeyDown,
-                    Modifiers = modifiers
-                });
-
-                browserHost.SendKeyEvent(new KeyEvent
-                {
-                    WindowsKeyCode = keyChar, // Space
+                    WindowsKeyCode = ch,
                     FocusOnEditableField = true,
                     IsSystemKey = false,
                     Type = KeyEventType.Char,
                     Modifiers = modifiers
                 });
+            }
 
-                browserHost.SendKeyEvent(new KeyEvent
+            foreach (var lastPressedKey in lastPressedKeys)
+            {
+                if (keyThrottler.GetKeyStatus(lastPressedKey) == ThrottledKeyStatus.UNPRESSED)
                 {
-                    WindowsKeyCode = keyChar, // Space
-                    FocusOnEditableField = true,
-                    IsSystemKey = false,
-                    Type = KeyEventType.KeyUp,
-                    Modifiers = modifiers
-                });
+                    browserHost.SendKeyEvent(new KeyEvent
+                    {
+                        WindowsKeyCode = ToWindowsKeyCode(lastPressedKey),
+                        FocusOnEditableField = true,
+                        IsSystemKey = false,
+                        Type = KeyEventType.KeyUp,
+                        Modifiers = modifiers
+                    });
+                }
             }
 
-            var mousePosition = input.GetMousePosition();
-            var hasValidMousePosition = mousePosition.X >= 0 && mousePosition.Y >= 0;
+            lastPressedKeys = pressedKeys;
 
-            if (!hasValidMousePosition)
+            if (IsMouseOver)
             {
-                return base.HandleInput();
-            }
+                var mousePosition = input.GetMousePosition();
 
-            // Correct for left-top corner (position)
-            var vr = GetVideoScreenRectangle();
-            mousePosition.X -= vr.Left;
-            mousePosition.Y -= vr.Top;
+                // Correct for left-top corner (position)
+                var vr = GetVideoScreenRectangle();
+                mousePosition.X -= vr.Left;
+                mousePosition.Y -= vr.Top;
 
-            var intMousePosition = new Vector2I(mousePosition + new Vector2(0.5f, 0.5f));
+                var intMousePosition = new Vector2I(mousePosition + new Vector2(0.5f, 0.5f));
+                lastValidMousePosition = intMousePosition;
 
-            var wheelDelta = MyInput.Static.DeltaMouseScrollWheelValue();
+                var wheelDelta = MyInput.Static.DeltaMouseScrollWheelValue();
+                if (wheelDelta != 0)
+                {
+                    browser.SendMouseWheelEvent(intMousePosition.X, intMousePosition.Y, 0, wheelDelta, modifiers);
+                }
+                else
+                {
+                    browserHost.SendMouseMoveEvent(intMousePosition.X, intMousePosition.Y, false, modifiers);
+                }
 
-            if (wheelDelta != 0)
-            {
-                browser.SendMouseWheelEvent(intMousePosition.X, intMousePosition.Y, 0, wheelDelta, modifiers);
+                if (input.IsNewLeftMousePressed())
+                {
+                    browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Left, false, 1, modifiers);
+                }
+
+                if (input.IsNewMiddleMousePressed())
+                {
+                    browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Middle, false, 1, modifiers);
+                }
+
+                if (input.IsNewRightMousePressed())
+                {
+                    browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Right, false, 1, modifiers);
+                }
             }
             else
             {
-                browserHost.SendMouseMoveEvent(intMousePosition.X, intMousePosition.Y, false, modifiers);
+                if (lastValidMousePosition.X >= 0)
+                {
+                    browserHost.SendMouseMoveEvent(lastValidMousePosition.X, lastValidMousePosition.Y, true, modifiers);
+                }
+                lastValidMousePosition = -Vector2I.One;
             }
 
-            if (input.IsLeftMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Left, false, 1, modifiers);
-            }
+            return handled ? this : null!;
+        }
 
-            if (input.IsMiddleMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Middle, false, 1, modifiers);
-            }
-
-            if (input.IsRightMousePressed())
-            {
-                browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Right, false, 1, modifiers);
-            }
-
-            // TODO: Double-click, drag&drop, context menu
-
-            return base.HandleInput();
+        private static int ToWindowsKeyCode(MyKeys key)
+        {
+            return (int)key;
         }
 
         private CefEventFlags GetModifiers()
@@ -302,5 +316,22 @@ namespace EnhancedUI.Gui
                    (input.IsMiddleMousePressed() ? CefEventFlags.MiddleMouseButton : 0) |
                    (input.IsRightMousePressed() ? CefEventFlags.RightMouseButton : 0);
         }
-    }
+
+        public void FocusEnded()
+        {
+            OnFocusChanged(false);
+        }
+
+        public override void OnFocusChanged(bool focus)
+        {
+            chromium?.Browser.GetBrowser().GetHost().SetFocus(focus);
+
+            base.OnFocusChanged(focus);
+        }
+
+        private void DebugDraw()
+        {
+            MyGuiManager.DrawBorders(GetPositionAbsoluteTopLeft(), Size, Color.White, 1);
+        }
+   }
 }
