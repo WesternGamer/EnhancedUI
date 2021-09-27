@@ -51,7 +51,9 @@ namespace EnhancedUI.Gui
         private void CreatePlayerIfNeeded()
         {
             if (chromium != null)
+            {
                 return;
+            }
 
             var rect = GetVideoScreenRectangle();
             chromium = new Chromium(new Vector2I(rect.Width, rect.Height));
@@ -67,7 +69,9 @@ namespace EnhancedUI.Gui
             base.OnRemoving();
 
             if (chromium == null)
+            {
                 return;
+            }
 
             chromium.Ready -= OnChromiumReady;
             chromium.Browser.LoadingStateChanged -= OnBrowserLoadingStateChanged;
@@ -87,7 +91,9 @@ namespace EnhancedUI.Gui
         private void OnChromiumReady()
         {
             if (chromium == null)
+            {
                 throw new Exception("This should not happen");
+            }
 
             var url = content.FormatIndexUrl(name);
             chromium.Navigate(url);
@@ -111,10 +117,14 @@ namespace EnhancedUI.Gui
         public override void Draw(float transitionAlpha, float backgroundTransitionAlpha)
         {
             if (!MyRenderProxy.IsVideoValid(videoId))
+            {
                 return;
+            }
 
             if (chromium == null)
+            {
                 throw new Exception("This should not happen");
+            }
 
             chromium.Draw();
             MyRenderProxy.UpdateVideo(videoId);
@@ -126,7 +136,9 @@ namespace EnhancedUI.Gui
         private void ReloadPage()
         {
             if (chromium == null)
+            {
                 throw new Exception("This should not happen");
+            }
 
             chromium.Browser.Reload();
         }
@@ -140,7 +152,9 @@ namespace EnhancedUI.Gui
         public override MyGuiControlBase HandleInput()
         {
             if (!IsBrowserInitialized)
+            {
                 return null!;
+            }
 
             var input = MyInput.Static;
 
@@ -148,19 +162,25 @@ namespace EnhancedUI.Gui
             {
                 ReloadPage();
                 if (MyInput.Static.IsAnyShiftKeyPressed())
+                {
                     ClearCookies();
+                }
 
                 return base.HandleInput();
             }
 
             if (chromium == null)
+            {
                 throw new Exception("This should not happen");
+            }
 
             var browser = chromium.Browser;
             var browserHost = browser.GetBrowser().GetHost();
 
             if (input.IsKeyPress(MyKeys.CapsLock))
+            {
                 capsLock = !capsLock;
+            }
 
             var modifiers = GetModifiers();
 
@@ -168,12 +188,16 @@ namespace EnhancedUI.Gui
             input.GetPressedKeys(pressedKeys);
 
             if (pressedKeys.Count == 0)
+            {
                 lastKey = MyKeys.None;
+            }
 
             foreach (var key in pressedKeys)
             {
                 if (key == MyKeys.Escape)
+                {
                     continue;
+                }
 
                 if (key == lastKey)
                 {
@@ -225,7 +249,9 @@ namespace EnhancedUI.Gui
             var hasValidMousePosition = mousePosition.X >= 0 && mousePosition.Y >= 0;
 
             if (!hasValidMousePosition)
+            {
                 return base.HandleInput();
+            }
 
             // Correct for left-top corner (position)
             var vr = GetVideoScreenRectangle();
@@ -237,18 +263,28 @@ namespace EnhancedUI.Gui
             var wheelDelta = MyInput.Static.DeltaMouseScrollWheelValue();
 
             if (wheelDelta != 0)
+            {
                 browser.SendMouseWheelEvent(intMousePosition.X, intMousePosition.Y, 0, wheelDelta, modifiers);
+            }
             else
+            {
                 browserHost.SendMouseMoveEvent(intMousePosition.X, intMousePosition.Y, false, modifiers);
+            }
 
             if (input.IsLeftMousePressed())
+            {
                 browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Left, false, 1, modifiers);
+            }
 
             if (input.IsMiddleMousePressed())
+            {
                 browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Middle, false, 1, modifiers);
+            }
 
             if (input.IsRightMousePressed())
+            {
                 browserHost.SendMouseClickEvent(intMousePosition.X, intMousePosition.Y, MouseButtonType.Right, false, 1, modifiers);
+            }
 
             // TODO: Double-click, drag&drop, context menu
 

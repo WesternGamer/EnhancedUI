@@ -31,11 +31,15 @@ namespace EnhancedUI.Gui
         private static bool Prefix(uint id, string videoFile)
         {
             if (videoFile != VideoName)
+            {
                 return true;
+            }
 
             var video = GetByIdMethod.Invoke(null, new object[] { id });
             if (video is null || ChromiumGuiControl.Player is null)
+            {
                 return false;
+            }
 
             try
             {

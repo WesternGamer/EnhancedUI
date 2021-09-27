@@ -92,7 +92,9 @@ namespace EnhancedUI.Gui
         public void Update(object context)
         {
             if (CurrentState == VideoState.Playing && dataGetter() is { } data)
+            {
                 OnFrame((DeviceContext)context, data);
+            }
         }
 
         private void OnFrame(DeviceContext context, byte[] data)
@@ -100,7 +102,9 @@ namespace EnhancedUI.Gui
             var dataBox = context.MapSubresource(texture, 0, MapMode.WriteDiscard, MapFlags.None);
 
             if (dataBox.IsEmpty)
+            {
                 return;
+            }
 
             Utilities.Write(dataBox.DataPointer, data, 0, data.Length);
 
