@@ -1,5 +1,6 @@
 using CefSharp;
 using EnhancedUI.Patches;
+using EnhancedUI.Utils;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
 using VRage.Input;
@@ -95,8 +96,8 @@ namespace EnhancedUI.Gui
 
         public override MyGuiControlBase HandleInput()
         {
-            if (!IsBrowserInitialized)
-                return null!;
+            if (!IsBrowserInitialized || !CheckMouseOver())
+                return base.HandleInput();
 
             var input = MyInput.Static;
 
