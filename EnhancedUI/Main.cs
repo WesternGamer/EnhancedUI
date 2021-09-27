@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using CefSharp;
 using CefSharp.OffScreen;
 using EnhancedUI.Utils;
@@ -45,7 +46,7 @@ namespace EnhancedUI
             new Thread(BuildWebServer)
             {
                 Name = "EnchancedUI WebServer",
-                IsBackground = true
+                IsBackground = true,
             }.Start();
 #endif
         }
