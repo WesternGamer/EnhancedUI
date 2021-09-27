@@ -116,8 +116,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Apeira.StyleCop" Version="1.1.0" />
         <PackageReference Include="CefSharp.Common" Version="93.1.140" />
         <PackageReference Include="CefSharp.OffScreen" Version="93.1.140" />
+        <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
         <PackageReference Include="Lib.Harmony" Version="2.1.1" />
         <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />

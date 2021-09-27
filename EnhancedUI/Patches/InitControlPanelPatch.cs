@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using HarmonyLib;
+using JetBrains.Annotations;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Patches
 {
     [HarmonyPatch]
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)]
     internal static class InitControlPanelPatch
     {
         private static MethodBase TargetMethod()

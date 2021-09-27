@@ -1,11 +1,7 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 using CefSharp;
+using EnhancedUI.Patches;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
-using VRage.Collections;
 using VRage.Input;
 using VRageMath;
 using VRageRender;
@@ -17,18 +13,29 @@ namespace EnhancedUI.Gui
     public partial class ChromiumGuiControl : MyGuiControlBase
     {
         private readonly BrowserHost _browserHost;
-        public static BatchDataPlayer? Player;
-
         private uint _videoId;
+        private string? _url;
 
-        //Returns false if the browser is not initialized else it returns true.
+        public ChromiumGuiControl()
+        {
+            var rect = GetVideoScreenRectangle();
+            _browserHost = new (new (rect.Width, rect.Height));
+
+            _browserHost.Ready += BrowserHostOnReady;
+            _browserHost.Browser.LoadingStateChanged += BrowserOnLoadingStateChanged;
+
+            Player = new (new (rect.Width, rect.Height), _browserHost.GetVideoData);
+        }
+
+        public static BatchDataPlayer? Player { get; private set; }
+
+        // Returns false if the browser is not initialized else it returns true.
         public bool IsBrowserInitialized => _browserHost.Browser.IsBrowserInitialized;
 
-        public readonly MyGuiControlRotatingWheel Wheel = new(Vector2.Zero)
+        public MyGuiControlRotatingWheel Wheel { get; } = new (Vector2.Zero)
         {
-            Visible = false
+            Visible = false,
         };
-
 
         public string? Url
         {
@@ -40,34 +47,6 @@ namespace EnhancedUI.Gui
                     return;
                 _browserHost.Navigate(_url!);
             }
-        }
-
-        private string? _url;
-
-        public ChromiumGuiControl()
-        {
-
-            var rect = GetVideoScreenRectangle();
-            _browserHost = new(new(rect.Width, rect.Height));
-
-            _browserHost.Ready += BrowserHostOnReady;
-            _browserHost.Browser.LoadingStateChanged += BrowserOnLoadingStateChanged;
-
-            Player = new(new(rect.Width, rect.Height), _browserHost.GetVideoData);
-        }
-
-        private void BrowserOnLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
-        {
-            Wheel.Visible = e.IsLoading;
-        }
-
-        private void BrowserHostOnReady()
-        {
-            if (!string.IsNullOrEmpty(_url))
-                _browserHost.Navigate(_url!);
-
-            _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
-            RegisterEvents();
         }
 
         // Removes the browser instance when ChromiumGuiControl is no longer needed.
@@ -86,16 +65,6 @@ namespace EnhancedUI.Gui
             _browserHost.Dispose();
         }
 
-        // Returns the on-screen rectangle of the video player (browser) in pixels
-        private Rectangle GetVideoScreenRectangle()
-        {
-            var pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(GetPositionAbsoluteTopLeft());
-
-            var size = (Vector2I)MyGuiManager.GetScreenSizeFromNormalizedSize(Size);
-
-            return new(pos.X, pos.Y, size.X, size.Y);
-        }
-
         // Renders the HTML document on the screen using the video player
         public override void Draw(float transitionAlpha, float backgroundTransitionAlpha)
         {
@@ -104,8 +73,7 @@ namespace EnhancedUI.Gui
 
             _browserHost.Draw();
             MyRenderProxy.UpdateVideo(_videoId);
-            MyRenderProxy.DrawVideo(_videoId, GetVideoScreenRectangle(), new(Vector4.One),
-                MyVideoRectangleFitMode.AutoFit, false);
+            MyRenderProxy.DrawVideo(_videoId, GetVideoScreenRectangle(), new (Vector4.One), MyVideoRectangleFitMode.AutoFit, false);
         }
 
         // Reloads the HTML document
@@ -117,7 +85,7 @@ namespace EnhancedUI.Gui
         // Clears the cookies from the CEF browser
         public void ClearCookies()
         {
-            Cef.GetGlobalCookieManager().DeleteCookies("", "");
+            Cef.GetGlobalCookieManager().DeleteCookies(string.Empty, string.Empty);
         }
 
         public void RegisterJsType(string name, object typeObject)
@@ -140,6 +108,30 @@ namespace EnhancedUI.Gui
                 ClearCookies();
 
             return base.HandleInput();
+        }
+
+        private void BrowserOnLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        {
+            Wheel.Visible = e.IsLoading;
+        }
+
+        private void BrowserHostOnReady()
+        {
+            if (!string.IsNullOrEmpty(_url))
+                _browserHost.Navigate(_url!);
+
+            _videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VIDEO_NAME, 0);
+            RegisterEvents();
+        }
+
+        // Returns the on-screen rectangle of the video player (browser) in pixels
+        private Rectangle GetVideoScreenRectangle()
+        {
+            var pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(GetPositionAbsoluteTopLeft());
+
+            var size = (Vector2I)MyGuiManager.GetScreenSizeFromNormalizedSize(Size);
+
+            return new (pos.X, pos.Y, size.X, size.Y);
         }
     }
 }

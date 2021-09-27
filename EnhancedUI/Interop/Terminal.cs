@@ -14,6 +14,7 @@ namespace EnhancedUI.Interop
         {
             _screenTerminal = screenTerminal;
         }
+
         public Block[] GetBlocks()
         {
             if (MyGuiScreenTerminal.InteractedEntity is MyCubeGrid grid)

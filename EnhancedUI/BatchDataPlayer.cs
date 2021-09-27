@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using HarmonyLib;
 using SharpDX;
 using SharpDX.Direct3D;
@@ -25,6 +22,7 @@ namespace EnhancedUI
         private readonly Func<byte[]> _dataGetter;
         private Texture2D _texture;
         private ShaderResourceView _srv;
+
 #pragma warning disable 8618
         public BatchDataPlayer(Vector2I size, Func<byte[]> dataGetter)
 #pragma warning restore 8618
@@ -32,6 +30,16 @@ namespace EnhancedUI
             _size = size;
             _dataGetter = dataGetter;
         }
+
+        public int VideoWidth => _size.X;
+
+        public int VideoHeight => _size.Y;
+
+        public float Volume { get; set; }
+
+        public VideoState CurrentState { get; private set; }
+
+        public IntPtr TextureSrv => _srv.NativePointer;
 
         public void Init(string filename)
         {
@@ -48,11 +56,11 @@ namespace EnhancedUI
                 SampleDescription =
                 {
                     Count = 1,
-                    Quality = 0
+                    Quality = 0,
                 },
                 OptionFlags = ResourceOptionFlags.None,
             };
-            _texture = new(_deviceInstance(), texture2DDescription);
+            _texture = new (_deviceInstance(), texture2DDescription);
             var shaderResourceViewDescription = new ShaderResourceViewDescription
             {
                 Format = Format.B8G8R8A8_UNorm_SRgb,
@@ -60,10 +68,10 @@ namespace EnhancedUI
                 Texture2D =
                 {
                     MipLevels = 1,
-                    MostDetailedMip = 0
-                }
+                    MostDetailedMip = 0,
+                },
             };
-            _srv = new(_deviceInstance(), _texture, shaderResourceViewDescription);
+            _srv = new (_deviceInstance(), _texture, shaderResourceViewDescription);
             _texture.DebugName = _srv.DebugName = "BatchDataPlayer.Texture";
         }
 
@@ -101,15 +109,5 @@ namespace EnhancedUI
 
             context.UnmapSubresource(_texture, 0);
         }
-
-        public int VideoWidth => _size.X;
-
-        public int VideoHeight => _size.Y;
-
-        public float Volume { get; set; }
-
-        public VideoState CurrentState { get; private set; }
-
-        public IntPtr TextureSrv => _srv.NativePointer;
     }
 }

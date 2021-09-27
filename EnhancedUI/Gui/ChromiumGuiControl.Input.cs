@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Windows.Input;
 using CefSharp;
 using EnhancedUI.Utils;
 using VRage.Input;
@@ -15,7 +14,19 @@ namespace EnhancedUI.Gui
         private readonly MouseHook _mouseHook = new (Process.GetCurrentProcess().Id);
         private readonly KeyboardHook _keyboardHook = new (Process.GetCurrentProcess().Id);
 
-#region Events
+        private static CefEventFlags GetModifiers()
+        {
+            var input = MyInput.Static;
+            return
+                (Control.IsKeyLocked(Keys.CapsLock) ? CefEventFlags.CapsLockOn : 0) |
+                (Control.IsKeyLocked(Keys.NumLock) ? CefEventFlags.NumLockOn : 0) |
+                (input.IsAnyShiftKeyPressed() ? CefEventFlags.ShiftDown : 0) |
+                (input.IsAnyCtrlKeyPressed() ? CefEventFlags.ControlDown : 0) |
+                (input.IsAnyAltKeyPressed() ? CefEventFlags.AltDown : 0) |
+                (input.IsLeftMousePressed() ? CefEventFlags.LeftMouseButton : 0) |
+                (input.IsMiddleMousePressed() ? CefEventFlags.MiddleMouseButton : 0) |
+                (input.IsRightMousePressed() ? CefEventFlags.RightMouseButton : 0);
+        }
 
         private void RegisterEvents()
         {
@@ -34,10 +45,6 @@ namespace EnhancedUI.Gui
             _mouseHook.Uninstall();
             _keyboardHook.Uninstall();
         }
-
-#endregion
-
-#region Mouse
 
         private void MouseHookOnMessageReceived(object sender, MouseMessageEventArgs e)
         {
@@ -84,10 +91,6 @@ namespace EnhancedUI.Gui
             }
         }
 
-#endregion
-
-#region Keyboard
-
         private void KeyboardHookOnMessageReceived(object sender, KeyboardMessageEventArgs e)
         {
             switch (e.Direction)
@@ -95,21 +98,18 @@ namespace EnhancedUI.Gui
                 case KeyDirection.Any:
                     break;
                 case KeyDirection.Up:
-                    _browserHost.Host.SendKeyEvent((int)WM.KEYUP, e.KeyValue, 0);
+                    _browserHost.Host.SendKeyEvent((int)Wm.Keyup, e.KeyValue, 0);
                     break;
                 case KeyDirection.Down:
-                    _browserHost.Host.SendKeyEvent((int)WM.KEYDOWN, e.KeyValue, 0);
+                    _browserHost.Host.SendKeyEvent((int)Wm.Keydown, e.KeyValue, 0);
+
                     // TODO IME text input
-                    _browserHost.Host.SendKeyEvent((int)WM.CHAR, e.KeyValue, 0);
+                    _browserHost.Host.SendKeyEvent((int)Wm.Char, e.KeyValue, 0);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-#endregion
-
-#region Utils
 
         private Vector2I GetMousePos()
         {
@@ -129,21 +129,5 @@ namespace EnhancedUI.Gui
             var pos = GetMousePos();
             return new (pos.X, pos.Y, GetModifiers());
         }
-
-        private static CefEventFlags GetModifiers()
-        {
-            var input = MyInput.Static;
-            return (
-                (Control.IsKeyLocked(Keys.CapsLock) ? CefEventFlags.CapsLockOn : 0) |
-                (Control.IsKeyLocked(Keys.NumLock) ? CefEventFlags.NumLockOn : 0) |
-                (input.IsAnyShiftKeyPressed() ? CefEventFlags.ShiftDown : 0) |
-                (input.IsAnyCtrlKeyPressed() ? CefEventFlags.ControlDown : 0) |
-                (input.IsAnyAltKeyPressed() ? CefEventFlags.AltDown : 0) |
-                (input.IsLeftMousePressed() ? CefEventFlags.LeftMouseButton : 0) |
-                (input.IsMiddleMousePressed() ? CefEventFlags.MiddleMouseButton : 0) |
-                (input.IsRightMousePressed() ? CefEventFlags.RightMouseButton : 0));
-        }
-
-#endregion
     }
 }

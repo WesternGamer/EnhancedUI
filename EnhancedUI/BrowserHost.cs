@@ -2,42 +2,35 @@
 using System.Runtime.InteropServices;
 using CefSharp;
 using CefSharp.OffScreen;
-using EnhancedUI.Interop;
 using VRageMath;
-using VRageRender;
 
 namespace EnhancedUI
 {
     public class BrowserHost : IDisposable
     {
-        public byte[] VideoData { get; private set; }
-
-        public event Action? Ready;
-
-        public readonly ChromiumWebBrowser Browser;
-
-        public IBrowserHost Host => Browser.GetBrowserHost();
-
         public BrowserHost(Vector2I size)
         {
             VideoData = new byte[size.X * size.Y * 4];
             Browser = new ()
             {
-                Size = new (size.X, size.Y)
+                Size = new (size.X, size.Y),
             };
             Browser.Paint += BrowserOnPaint;
             Browser.BrowserInitialized += BrowserOnBrowserInitialized;
             Browser.LifeSpanHandler = new LifespanHandler();
         }
 
+        public event Action? Ready;
+
+        public ChromiumWebBrowser Browser { get; }
+
+        public byte[] VideoData { get; private set; }
+
+        public IBrowserHost Host => Browser.GetBrowserHost();
+
         public byte[] GetVideoData()
         {
             return VideoData;
-        }
-
-        private void BrowserOnBrowserInitialized(object sender, EventArgs e)
-        {
-            Ready.InvokeIfNotNull();
         }
 
         public void Navigate(string url)
@@ -51,6 +44,13 @@ namespace EnhancedUI
                 Browser.GetBrowserHost().Invalidate(PaintElementType.View);
         }
 
+        public void Dispose()
+        {
+            Browser.Paint -= BrowserOnPaint;
+            Browser.BrowserInitialized -= BrowserOnBrowserInitialized;
+            Browser.Dispose();
+        }
+
         private void BrowserOnPaint(object sender, OnPaintEventArgs e)
         {
             var videoData = VideoData;
@@ -60,11 +60,9 @@ namespace EnhancedUI
             e.Handled = true;
         }
 
-        public void Dispose()
+        private void BrowserOnBrowserInitialized(object sender, EventArgs e)
         {
-            Browser.Paint -= BrowserOnPaint;
-            Browser.BrowserInitialized -= BrowserOnBrowserInitialized;
-            Browser.Dispose();
+            Ready.InvokeIfNotNull();
         }
 
         private class LifespanHandler : ILifeSpanHandler
@@ -76,11 +74,17 @@ namespace EnhancedUI
             }
 
             bool ILifeSpanHandler.DoClose(IWebBrowser browserControl, IBrowser browser)
-            { return false; }
+            {
+                return false;
+            }
 
-            void ILifeSpanHandler.OnBeforeClose(IWebBrowser browserControl, IBrowser browser) { }
+            void ILifeSpanHandler.OnBeforeClose(IWebBrowser browserControl, IBrowser browser)
+            {
+            }
 
-            void ILifeSpanHandler.OnAfterCreated(IWebBrowser browserControl, IBrowser browser) { }
+            void ILifeSpanHandler.OnAfterCreated(IWebBrowser browserControl, IBrowser browser)
+            {
+            }
         }
     }
 }

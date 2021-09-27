@@ -1,23 +1,24 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using CefSharp;
 using CefSharp.OffScreen;
-using EnhancedUI.Gui;
 using EnhancedUI.Utils;
 using HarmonyLib;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Internal;
-using Sandbox.Graphics.GUI;
 using VRage.FileSystem;
-using VRage.Input;
 using VRage.Plugins;
+
+[assembly: SuppressMessage("Apeira.StyleCop", "SA1600", Justification = "Documentation is not nessesary for plugins, because they cannot have dependecies")]
+[assembly: SuppressMessage("Apeira.StyleCop", "SA1601", Justification = "Documentation is not nessesary for plugins, because they cannot have dependecies")]
 
 namespace EnhancedUI
 {
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)]
     public class Main : IPlugin
     {
         public void Dispose()
