@@ -103,8 +103,12 @@ namespace EnhancedUI.Gui
                 case KeyDirection.Down:
                     _browserHost.Host.SendKeyEvent((int)Wm.Keydown, e.KeyValue, 0);
 
-                    // TODO IME text input
-                    _browserHost.Host.SendKeyEvent((int)Wm.Char, e.KeyValue, 0);
+                    foreach (var c in KeyConverter.KeyCodeToUnicode(e.KeyValue))
+                    {
+                        // TODO IME text input
+                        _browserHost.Host.SendKeyEvent((int)Wm.Char, c, 0);
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
