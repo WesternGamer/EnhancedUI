@@ -47,7 +47,9 @@ namespace EnhancedUI.Gui
         public void Draw()
         {
             if (Browser.IsBrowserInitialized)
+            {
                 Browser.GetBrowserHost().Invalidate(PaintElementType.View);
+            }
         }
 
         private void BrowserOnPaint(object sender, OnPaintEventArgs e)
