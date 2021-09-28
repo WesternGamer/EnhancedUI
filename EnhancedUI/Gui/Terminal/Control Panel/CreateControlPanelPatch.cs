@@ -13,7 +13,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
     // ReSharper disable once UnusedType.Global
     internal static class CreateControlPanelPatch
     {
-        private const string Name = "Terminal";
+        private const string Name = "ControlPanel";
         private static readonly WebContent Content = new();
 
         // ReSharper disable once UnusedMember.Local

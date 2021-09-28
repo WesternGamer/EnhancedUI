@@ -57,7 +57,7 @@
             <HintPath>$(SolutionDir)GameBinaries\SpaceEngineers.ObjectBuilders.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="System.Web"/>
+        <Reference Include="System.Web" />
         <Reference Include="VRage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>$(SolutionDir)GameBinaries\VRage.dll</HintPath>
@@ -119,13 +119,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CefSharp.Common" Version="93.1.140"/>
-        <PackageReference Include="CefSharp.OffScreen" Version="93.1.140"/>
-        <PackageReference Include="Lib.Harmony" Version="2.1.1"/>
+        <PackageReference Include="CefSharp.Common" Version="93.1.140" />
+        <PackageReference Include="CefSharp.OffScreen" Version="93.1.140" />
+        <PackageReference Include="Lib.Harmony" Version="2.1.1" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="xcopy /s /e /r /y $(TargetDir)* $(SolutionDir)GameBinaries\Plugins\Local\EnhancedUI"/>
-        <Exec Command="start steam://rungameid/244850"/>
+        <Exec Command="xcopy /s /e /r /y $(TargetDir)* $(SolutionDir)GameBinaries\Plugins\Local\EnhancedUI" />
+        <Exec Command="start steam://rungameid/244850" />
     </Target>
 </Project>

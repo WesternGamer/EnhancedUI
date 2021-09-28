@@ -3,33 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Terminal</title>
-    <script src="common.js"></script>
-    <link rel="stylesheet" href="common.css"/>
+    <link rel="stylesheet" href="normalize.css"/>
+    <link rel="stylesheet" href="index.css"/>
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="index.js"></script>
 </head>
 <body>
 
-<div class="full">
+<div class="fullscreen">
 
-    <h1>TERMINAL</h1>
+    <h1 class="show">OVERLAY</h1>
 
-    Window inner size: <p id="window-size"></p> pixels
+    <p class="show">
+    Window inner size: <span id="window-size"></span> pixels
+    </p>
 
-    <p>
+    <p class="hide">
     <textarea cols="30" rows="5">
 Hello 1
 Hello 2
     </textarea>
     </p>
 
-    <p>
+    <p class="hide">
         <button type="button">Click Me!</button>
     </p>
 
-    <p>
+    <p class="hide">
         <a href="https://google.com">Google</a>
     </p>
 
-    <ul>
+    <ul class="hide">
         <li>X</li>
         <li>X</li>
         <li>X</li>
@@ -123,7 +127,7 @@ Hello 2
         <li>X</li>
     </ul>
 
-    <p>END</p>
+    <p class="hide">BOTTOM</p>
 
 </div>
 
