@@ -19,7 +19,9 @@ namespace EnhancedUI.Patches
         // Replaces the controls on the Control Panel section of the terminal.
         [HarmonyPatch("CreateControlPanelPageControls")]
         [HarmonyPrefix]
+        #pragma warning disable SA1313
         private static bool CreatePrefix(MyGuiScreenTerminal __instance, MyGuiControlTabPage page, Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlKeyboard)
+        #pragma warning restore SA1313
         {
             // Code for a reload button
             // MyGuiControlButton refreshButton = new MyGuiControlButton(new Vector2(0, 0.0f), VRage.Game.MyGuiControlButtonStyleEnum.Default, null, null, MyGuiDrawAlignEnum.HORISONTAL_CENTER_AND_VERTICAL_CENTER, "Reload HTML page.", new System.Text.StringBuilder("Reload Page"), onButtonClick: new Action<MyGuiControlButton>(ReloadAction));
