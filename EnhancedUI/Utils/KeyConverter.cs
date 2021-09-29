@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -21,7 +22,8 @@ namespace EnhancedUI.Utils
             }
 
             var scanCode = MapVirtualKey(virtualKeyCode, 0);
-            var inputLocaleIdentifier = GetKeyboardLayout(0);
+            var windowThreadProcessId = GetWindowThreadProcessId(Process.GetCurrentProcess().MainWindowHandle, IntPtr.Zero);
+            var inputLocaleIdentifier = GetKeyboardLayout(windowThreadProcessId);
 
             ToUnicodeEx(virtualKeyCode, scanCode, keyboardState, _result, 5, 0, inputLocaleIdentifier);
 
@@ -47,6 +49,9 @@ namespace EnhancedUI.Utils
 
         [DllImport("user32.dll")]
         private static extern unsafe int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte* lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
+
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr lpdwProcessId);
 #pragma warning restore SA1305
     }
 }
