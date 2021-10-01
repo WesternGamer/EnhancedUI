@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
 using HarmonyLib;
+using VRage.Utils;
 using VRageRender;
 
 namespace EnhancedUI.Gui
@@ -17,7 +19,33 @@ namespace EnhancedUI.Gui
         private static readonly MethodBase GetByIdMethod = AccessTools.Method(FactoryType, "GetVideo");
         private static readonly MethodBase InitMethod = AccessTools.Method(PlayerType, "Init");
 
-        public const string VideoName = "CefFrame";
+        private static readonly Dictionary<string, BatchDataPlayer> Players = new Dictionary<string, BatchDataPlayer>();
+
+        public const string VideoNamePrefix = "EnhancedUI_";
+
+        public static void RegisterVideoPlayer(string name, BatchDataPlayer player)
+        {
+            name = VideoNamePrefix + name;
+
+            if (Players.ContainsKey(name))
+            {
+                throw new Exception($"Video player already registered: {name}");
+            }
+
+            Players[name] = player;
+        }
+
+        public static void UnregisterVideoPlayer(string name)
+        {
+            name = VideoNamePrefix + name;
+
+            if (!Players.ContainsKey(name))
+            {
+                return;
+            }
+
+            Players.Remove(name);
+        }
 
         // ReSharper disable once UnusedMember.Local
         private static MethodBase TargetMethod()
@@ -30,14 +58,15 @@ namespace EnhancedUI.Gui
         // ReSharper disable once UnusedMember.Local
         private static bool Prefix(uint id, string videoFile)
         {
-            if (videoFile != VideoName)
+            if (!Players.TryGetValue(videoFile, out var player))
             {
                 return true;
             }
 
             var video = GetByIdMethod.Invoke(null, new object[] { id });
-            if (video is null || ChromiumGuiControl.Player is null)
+            if (video is null)
             {
+                MyLog.Default.Error($"No EnhancedUI video found: videoFile={videoFile}, id={id}");
                 return false;
             }
 
@@ -45,13 +74,17 @@ namespace EnhancedUI.Gui
             {
                 lock (video)
                 {
-                    InitMethod.Invoke(video, new object[] { videoFile, ChromiumGuiControl.Player });
+                    InitMethod.Invoke(video, new object[] { videoFile, player });
                 }
             }
             catch (Exception e)
             {
-                MyRenderProxy.Log.WriteLine(e);
+                MyLog.Default.Error($"Failed to Init EnhancedUI video player: videoFile={videoFile}; id={id}");
+                MyLog.Default.Error(e.ToString());
+                return false;
             }
+
+            MyLog.Default.Info($"Initialized EnhancedUI video player: videoFile={videoFile}; id={id}");
 
             return false;
         }

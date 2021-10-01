@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using CefSharp;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
@@ -15,8 +14,8 @@ namespace EnhancedUI.Gui
     public class ChromiumGuiControl : MyGuiControlBase
     {
         private Chromium? chromium;
-        public static BatchDataPlayer? Player;
-        private static MyKeyThrottler keyThrottler = new();
+        private BatchDataPlayer? player;
+        private static readonly MyKeyThrottler KeyThrottler = new();
 
         private uint videoId;
 
@@ -63,7 +62,8 @@ namespace EnhancedUI.Gui
             chromium.Ready += OnChromiumReady;
             chromium.Browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
 
-            Player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
+            player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
+            VideoPlayPatch.RegisterVideoPlayer(name, player);
         }
 
         public override void OnRemoving()
@@ -81,7 +81,9 @@ namespace EnhancedUI.Gui
             chromium.Dispose();
             MyRenderProxy.CloseVideo(videoId);
 
-            Player = null;
+            VideoPlayPatch.UnregisterVideoPlayer(name);
+
+            player = null;
             chromium = null;
         }
 
@@ -99,7 +101,7 @@ namespace EnhancedUI.Gui
 
             var url = content.FormatIndexUrl(name);
             chromium.Navigate(url);
-            videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoName, 0);
+            videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoNamePrefix + name, 0);
         }
 
         // Removes the browser instance when ChromiumGuiControl is no longer needed.
@@ -205,7 +207,7 @@ namespace EnhancedUI.Gui
 
             foreach (var key in pressedKeys)
             {
-                if (keyThrottler.GetKeyStatus(key) == ThrottledKeyStatus.PRESSED_AND_READY)
+                if (KeyThrottler.GetKeyStatus(key) == ThrottledKeyStatus.PRESSED_AND_READY)
                 {
                     var windowsKeyCode = ToWindowsKeyCode(key);
                     browserHost.SendKeyEvent(new KeyEvent
@@ -236,7 +238,7 @@ namespace EnhancedUI.Gui
 
             foreach (var lastPressedKey in lastPressedKeys)
             {
-                if (keyThrottler.GetKeyStatus(lastPressedKey) == ThrottledKeyStatus.UNPRESSED)
+                if (KeyThrottler.GetKeyStatus(lastPressedKey) == ThrottledKeyStatus.UNPRESSED)
                 {
                     browserHost.SendKeyEvent(new KeyEvent
                     {

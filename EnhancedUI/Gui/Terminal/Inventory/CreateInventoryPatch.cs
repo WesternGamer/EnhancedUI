@@ -11,7 +11,7 @@ namespace EnhancedUI.Gui.Terminal.Inventory
     [HarmonyPatch(typeof(MyGuiScreenTerminal), "CreateInventoryPageControls")]
     internal static class CreateInventoryPatch
     {
-        private const string Name = "Terminal";
+        private const string Name = "Inventory";
         private static readonly WebContent Content = new();
 
         // ReSharper disable once UnusedMember.Local
