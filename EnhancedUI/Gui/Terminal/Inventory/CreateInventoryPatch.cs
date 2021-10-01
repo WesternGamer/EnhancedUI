@@ -9,6 +9,7 @@ using VRageMath;
 namespace EnhancedUI.Gui.Terminal.Inventory
 {
     [HarmonyPatch(typeof(MyGuiScreenTerminal), "CreateInventoryPageControls")]
+    // ReSharper disable once UnusedType.Global
     internal static class CreateInventoryPatch
     {
         private const string Name = "Inventory";

@@ -15,9 +15,6 @@ namespace EnhancedUI.Gui.Terminal.Inventory
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static bool Prefix()
-        {
-            return false;
-        }
+        private static bool Prefix() => false;
     }
 }
