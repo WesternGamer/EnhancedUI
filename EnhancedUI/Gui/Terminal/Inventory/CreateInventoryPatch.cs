@@ -25,7 +25,8 @@ namespace EnhancedUI.Gui.Terminal.Inventory
             page.TextEnum = MySpaceTexts.Inventory;
             page.TextScale = 0.7005405f;
 
-            var control = new ChromiumGuiControl(Content, Name)
+            var proxy = new InventoryProxy();
+            var control = new ChromiumGuiControl(Content, Name, proxy)
             {
                 Position = new Vector2(0f, 0.005f),
                 Size = new Vector2(0.9f, 0.7f)

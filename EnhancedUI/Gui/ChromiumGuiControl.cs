@@ -33,11 +33,13 @@ namespace EnhancedUI.Gui
         private bool capsLock;
         private Vector2I lastValidMousePosition = -Vector2I.One;
         private List<MyKeys> lastPressedKeys = new();
+        private readonly object proxy;
 
-        public ChromiumGuiControl(WebContent content, string name)
+        public ChromiumGuiControl(WebContent content, string name, object proxy)
         {
             this.content = content;
             this.name = name;
+            this.proxy = proxy;
         }
 
         protected override void OnSizeChanged()
@@ -57,7 +59,7 @@ namespace EnhancedUI.Gui
             }
 
             var rect = GetVideoScreenRectangle();
-            chromium = new Chromium(new Vector2I(rect.Width, rect.Height));
+            chromium = new Chromium(new Vector2I(rect.Width, rect.Height), proxy);
 
             chromium.Ready += OnChromiumReady;
             chromium.Browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
@@ -139,12 +141,12 @@ namespace EnhancedUI.Gui
         // Reloads the HTML document
         private void ReloadPage()
         {
-            if (chromium == null)
-            {
-                throw new Exception("This should not happen");
-            }
+            chromium?.Browser.Reload();
+        }
 
-            chromium.Browser.Reload();
+        private void OpenWebDeveloperTools()
+        {
+            chromium?.Browser.ShowDevTools();
         }
 
         // Clears the cookies from the CEF browser
@@ -183,6 +185,13 @@ namespace EnhancedUI.Gui
                 {
                     ClearCookies();
                 }
+                return this;
+            }
+
+            // Open the Web Developer Tools on F12
+            if (input.IsNewKeyPressed(MyKeys.F12))
+            {
+                OpenWebDeveloperTools();
                 return this;
             }
 
