@@ -33,11 +33,13 @@ namespace EnhancedUI.Gui
         private bool capsLock;
         private Vector2I lastValidMousePosition = -Vector2I.One;
         private List<MyKeys> lastPressedKeys = new();
+        private readonly IBrowserViewModel viewModel;
 
-        public ChromiumGuiControl(WebContent content, string name)
+        public ChromiumGuiControl(WebContent content, string name, IBrowserViewModel viewModel)
         {
             this.content = content;
             this.name = name;
+            this.viewModel = viewModel;
         }
 
         protected override void OnSizeChanged()
@@ -57,10 +59,12 @@ namespace EnhancedUI.Gui
             }
 
             var rect = GetVideoScreenRectangle();
-            chromium = new Chromium(new Vector2I(rect.Width, rect.Height));
+            chromium = new Chromium(new Vector2I(rect.Width, rect.Height), viewModel);
 
             chromium.Ready += OnChromiumReady;
             chromium.Browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
+
+            viewModel.SetBrowser(chromium.Browser);
 
             player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
             VideoPlayPatch.RegisterVideoPlayer(name, player);
@@ -74,6 +78,8 @@ namespace EnhancedUI.Gui
             {
                 return;
             }
+
+            viewModel.SetBrowser(null);
 
             chromium.Ready -= OnChromiumReady;
             chromium.Browser.LoadingStateChanged -= OnBrowserLoadingStateChanged;
@@ -139,12 +145,12 @@ namespace EnhancedUI.Gui
         // Reloads the HTML document
         private void ReloadPage()
         {
-            if (chromium == null)
-            {
-                throw new Exception("This should not happen");
-            }
+            viewModel.Reload();
+        }
 
-            chromium.Browser.Reload();
+        private void OpenWebDeveloperTools()
+        {
+            chromium?.Browser.ShowDevTools();
         }
 
         // Clears the cookies from the CEF browser
@@ -183,6 +189,13 @@ namespace EnhancedUI.Gui
                 {
                     ClearCookies();
                 }
+                return this;
+            }
+
+            // Open the Web Developer Tools on F12
+            if (input.IsNewKeyPressed(MyKeys.F12))
+            {
+                OpenWebDeveloperTools();
                 return this;
             }
 
