@@ -33,13 +33,13 @@ namespace EnhancedUI.Gui
         private bool capsLock;
         private Vector2I lastValidMousePosition = -Vector2I.One;
         private List<MyKeys> lastPressedKeys = new();
-        private readonly object proxy;
+        private readonly IBrowserViewModel viewModel;
 
-        public ChromiumGuiControl(WebContent content, string name, object proxy)
+        public ChromiumGuiControl(WebContent content, string name, IBrowserViewModel viewModel)
         {
             this.content = content;
             this.name = name;
-            this.proxy = proxy;
+            this.viewModel = viewModel;
         }
 
         protected override void OnSizeChanged()
@@ -59,10 +59,12 @@ namespace EnhancedUI.Gui
             }
 
             var rect = GetVideoScreenRectangle();
-            chromium = new Chromium(new Vector2I(rect.Width, rect.Height), proxy);
+            chromium = new Chromium(new Vector2I(rect.Width, rect.Height), viewModel);
 
             chromium.Ready += OnChromiumReady;
             chromium.Browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
+
+            viewModel.SetBrowser(chromium.Browser);
 
             player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
             VideoPlayPatch.RegisterVideoPlayer(name, player);
@@ -76,6 +78,8 @@ namespace EnhancedUI.Gui
             {
                 return;
             }
+
+            viewModel.SetBrowser(null);
 
             chromium.Ready -= OnChromiumReady;
             chromium.Browser.LoadingStateChanged -= OnBrowserLoadingStateChanged;
@@ -141,7 +145,7 @@ namespace EnhancedUI.Gui
         // Reloads the HTML document
         private void ReloadPage()
         {
-            chromium?.Browser.Reload();
+            viewModel.Reload();
         }
 
         private void OpenWebDeveloperTools()

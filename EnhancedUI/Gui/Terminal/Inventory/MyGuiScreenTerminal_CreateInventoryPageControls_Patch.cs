@@ -10,7 +10,8 @@ namespace EnhancedUI.Gui.Terminal.Inventory
 {
     [HarmonyPatch(typeof(MyGuiScreenTerminal), "CreateInventoryPageControls")]
     // ReSharper disable once UnusedType.Global
-    internal static class CreateInventoryPatch
+    // ReSharper disable once InconsistentNaming
+    internal static class MyGuiScreenTerminal_CreateInventoryPageControls_Patch
     {
         private const string Name = "Inventory";
         private static readonly WebContent Content = new();
@@ -25,7 +26,7 @@ namespace EnhancedUI.Gui.Terminal.Inventory
             page.TextEnum = MySpaceTexts.Inventory;
             page.TextScale = 0.7005405f;
 
-            var proxy = new InventoryProxy();
+            var proxy = new InventoryBrowserViewModel();
             var control = new ChromiumGuiControl(Content, Name, proxy)
             {
                 Position = new Vector2(0f, 0.005f),

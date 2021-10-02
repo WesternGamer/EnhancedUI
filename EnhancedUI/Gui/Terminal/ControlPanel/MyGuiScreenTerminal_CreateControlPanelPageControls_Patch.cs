@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
 using Sandbox.Game.Gui;
 using Sandbox.Game.Localization;
@@ -10,7 +11,8 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 {
     [HarmonyPatch(typeof(MyGuiScreenTerminal), "CreateControlPanelPageControls")]
     // ReSharper disable once UnusedType.Global
-    internal static class CreateControlPanelPatch
+    // ReSharper disable once InconsistentNaming
+    internal static class MyGuiScreenTerminal_CreateControlPanelPageControls_Patch
     {
         private const string Name = "ControlPanel";
         private static readonly WebContent Content = new();
@@ -25,8 +27,8 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
             page.TextEnum = MySpaceTexts.ControlPanel;
             page.TextScale = 0.7005405f;
 
-            var proxy = new ControlPanelProxy();
-            var control = new ChromiumGuiControl(Content, Name, proxy)
+            var viewModel = new ControlPanelBrowserViewModel();
+            var control = new ChromiumGuiControl(Content, Name, viewModel)
             {
                 Position = new Vector2(0f, 0.005f),
                 Size = new Vector2(0.9f, 0.7f)

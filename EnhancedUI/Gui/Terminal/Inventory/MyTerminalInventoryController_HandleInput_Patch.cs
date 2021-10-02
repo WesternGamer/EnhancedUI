@@ -6,7 +6,8 @@ namespace EnhancedUI.Gui.Terminal.Inventory
 {
     [HarmonyPatch]
     // ReSharper disable once UnusedType.Global
-    internal static class InputInventoryPatch
+    // ReSharper disable once InconsistentNaming
+    internal static class MyTerminalInventoryController_HandleInput_Patch
     {
         // ReSharper disable once UnusedMember.Local
         private static MethodBase TargetMethod()
