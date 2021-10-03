@@ -12,7 +12,7 @@ html {
 }
 
 body {
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 .fullscreen {
@@ -26,4 +26,17 @@ body {
 
 .hide {
     display: none;
+}
+
+label {
+    padding-left: 0.5ch;
+}
+
+.block {
+    margin-bottom: 2vh;
+}
+
+.block .property {
+    margin-top: 0.5vh;
+    margin-left: 2vw;
 }

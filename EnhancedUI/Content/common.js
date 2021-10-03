@@ -1,9 +1,6 @@
-$(document).ready(function () {
-    $("#window-size").text(`${window.innerWidth}x${window.innerHeight}`);
-    initializeProxy().then(_ => null);
-});
+$(document).ready(async function () {
+    await CefSharp.BindObjectAsync("state");
+    state.NotifyBound();
 
-async function initializeProxy() {
-    await CefSharp.BindObjectAsync("model");
-    model.MarkLoaded();
-}
+    $("#window-size").text(`${window.innerWidth}x${window.innerHeight}`);
+});

@@ -24,7 +24,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
             var block = MyGuiScreenTerminal.InteractedEntity as MyTerminalBlock;
             if (block != null)
             {
-                ControlPanelBrowserViewModel.Instance?.Load(block);
+                ControlPanelState.Instance?.Update(block);
             }
 
             return false;
