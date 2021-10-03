@@ -48,11 +48,6 @@ function renderBlockProperty(parent, propertyState) {
     let propertyView= $('<div />');
     propertyView.addClass('property');
 
-    let type = $('<div />');
-    type.addClass('type');
-    type.text(propertyState.Id + ' | ' + propertyState.TypeName);
-    propertyView.append(type);
-
     let value = $('<div />');
     value.addClass('value');
     switch(propertyState.TypeName) {
@@ -70,13 +65,13 @@ function renderBlockProperty(parent, propertyState) {
             value.append(label);
             break;
         case "Int64":
-            value.text(propertyState.LongValue.toString());
+            value.text(propertyState.Id + ': ' + propertyState.LongValue.toString());
             break;
         case "Single":
-            value.text(propertyState.FloatValue.toString());
+            value.text(propertyState.Id + ': ' + propertyState.FloatValue.toString());
             break;
         default:
-            value.text(propertyState.BoolValue.toString() + " | " + propertyState.LongValue.toString() + " | " + propertyState.FloatValue.toString());
+            value.text(propertyState.Id + ' ' + propertyState.TypeName + ': ' + propertyState.BoolValue.toString() + " | " + propertyState.LongValue.toString() + " | " + propertyState.FloatValue.toString());
     }
 
     propertyView.append(value);
