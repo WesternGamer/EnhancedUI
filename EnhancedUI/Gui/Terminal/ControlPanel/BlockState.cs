@@ -3,7 +3,7 @@ using Sandbox.Game.Entities.Cube;
 
 namespace EnhancedUI.Gui.Terminal.ControlPanel
 {
-    public class BlockInfo
+    public class BlockState
     {
         public readonly string Name;
 
@@ -12,7 +12,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
             return Name.GetHashCode();
         }
 
-        public BlockInfo(MyFunctionalBlock block)
+        public BlockState(MyTerminalBlock block)
         {
             Name = block.CustomName.ToString();
             if (Name == "")

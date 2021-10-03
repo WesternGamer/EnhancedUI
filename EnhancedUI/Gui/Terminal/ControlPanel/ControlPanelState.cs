@@ -12,10 +12,11 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
         private MyTerminalBlock? interactedBlock;
 
         // State variables filled from SE's data
-        private readonly List<BlockInfo> blocks = new();
+        private readonly List<BlockState> blocks = new();
 
         // Getters, because CefSharp relays only method calls
-        public List<BlockInfo> GetBlocks() => blocks;
+        // ReSharper disable once UnusedMember.Global
+        public List<BlockState> GetBlocks() => blocks;
 
         public ControlPanelState()
         {
@@ -68,9 +69,9 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
                 return;
             }
 
-            foreach (var functionalBlock in interactedBlock.CubeGrid.GetFatBlocks<MyFunctionalBlock>())
+            foreach (var terminalBlock in interactedBlock.CubeGrid.GridSystems.TerminalSystem.Blocks)
             {
-                blocks.Add(new BlockInfo(functionalBlock));
+                blocks.Add(new BlockState(terminalBlock));
             }
         }
     }
