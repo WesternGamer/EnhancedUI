@@ -55,7 +55,7 @@ function renderBlockProperty(parent, propertyState) {
             cb = $('<input />')
             cb.attr('type', 'checkbox');
             cb.attr('id', propertyState.Id);
-            if (propertyState.BoolValue) {
+            if (propertyState.Value) {
                 cb.attr('checked', 'checked');
             }
             value.append(cb);
@@ -65,13 +65,16 @@ function renderBlockProperty(parent, propertyState) {
             value.append(label);
             break;
         case "Int64":
-            value.text(propertyState.Id + ': ' + propertyState.LongValue.toString());
+            value.text(propertyState.Id + ': ' + propertyState.Value.toString());
             break;
         case "Single":
-            value.text(propertyState.Id + ': ' + propertyState.FloatValue.toString());
+            value.text(propertyState.Id + ': ' + propertyState.Value.toString());
+            break;
+        case "Color":
+            value.text(propertyState.Id + ': ' + propertyState.Value.toString());
             break;
         default:
-            value.text(propertyState.Id + ' ' + propertyState.TypeName + ': ' + propertyState.BoolValue.toString() + " | " + propertyState.LongValue.toString() + " | " + propertyState.FloatValue.toString());
+            value.text(propertyState.Id + ' ' + propertyState.TypeName + ': ' + (propertyState.Value == null ? 'null' : propertyState.Value.toString()));
     }
 
     propertyView.append(value);
