@@ -1,11 +1,5 @@
-var state = '';
-
-async function clearContent() {
-    $('#blocks').empty();
-}
-
-async function updateContent() {
-    const blocks = await model.GetBlocks();
+async function stateUpdated() {
+    const blocks = await state.GetBlocks();
     const ul = $('#blocks');
     ul.empty();
     blocks.forEach(block => {

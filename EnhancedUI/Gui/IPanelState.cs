@@ -2,16 +2,16 @@ using CefSharp.OffScreen;
 
 namespace EnhancedUI.Gui
 {
-    public interface IBrowserViewModel
+    public interface IPanelState
     {
-        // Assigns the current Chromium browser to the view model, required to invoke JavaScript
+        // Access to the browser instance is required to invoke JavaScript
         void SetBrowser(ChromiumWebBrowser? browser);
 
         // Return True if the page has been loaded
-        bool HasLoaded();
+        bool HasBound();
 
         // Marks the page as loaded
-        void MarkLoaded();
+        void NotifyBound();
 
         // Reloads the page
         void Reload();
