@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI.Interfaces;
+using SharpDX;
+using VRageMath;
 
 namespace EnhancedUI.Gui.Terminal.ControlPanel
 {
@@ -53,40 +55,31 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
     {
         public readonly string Id;
         public readonly string TypeName;
-
-        public readonly bool BoolValue;
-        public readonly long LongValue;
-        public readonly float FloatValue;
-        // public readonly Color ColorValue;
+        public object? Value;
 
         public BlockPropertyState(MyTerminalBlock block, ITerminalProperty property)
         {
             Id = property.Id;
             TypeName = property.TypeName;
 
-            var asBool = property.AsBool();
-            if (asBool != null)
+            switch (property.TypeName)
             {
-                BoolValue = asBool.GetValue(block);
-            }
+                case "Boolean":
+                    Value = property.AsBool().GetValue(block);
+                    break;
 
-            var asLong = property.As<Int64>();
-            if (asLong != null)
-            {
-                LongValue = asLong.GetValue(block);
-            }
+                case "Single":
+                    Value = property.AsFloat().GetValue(block);
+                    break;
 
-            var asFloat = property.AsFloat();
-            if (asFloat != null)
-            {
-                FloatValue = asFloat.GetValue(block);
-            }
+                case "Int64":
+                    Value = property.As<Int64>().GetValue(block);
+                    break;
 
-        //     var asColor = property.AsColor();
-        //     if (asColor != null)
-        //     {
-        //         ColorValue = asColor.GetValue(block);
-        //     }
+                case "Color":
+                    Value = property.As<Color>().GetValue(block).ToString();
+                    break;
+            }
         }
     }
 }
