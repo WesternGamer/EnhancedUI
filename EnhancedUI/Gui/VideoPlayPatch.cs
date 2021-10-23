@@ -23,7 +23,7 @@ namespace EnhancedUI.Gui
 
         public const string VideoNamePrefix = "EnhancedUI_";
 
-        public static void RegisterVideoPlayer(string name, BatchDataPlayer player)
+        public static void RegisterPlayer(string name, BatchDataPlayer player)
         {
             name = VideoNamePrefix + name;
 
@@ -35,7 +35,12 @@ namespace EnhancedUI.Gui
             Players[name] = player;
         }
 
-        public static void UnregisterVideoPlayer(string name)
+        public static bool TryGetPlayer(string name, out BatchDataPlayer player)
+        {
+            return Players.TryGetValue(name, out player);
+        }
+
+        public static void UnregisterPlayer(string name)
         {
             name = VideoNamePrefix + name;
 
