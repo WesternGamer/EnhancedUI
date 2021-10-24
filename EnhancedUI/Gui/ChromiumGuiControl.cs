@@ -178,9 +178,10 @@ namespace EnhancedUI.Gui
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
         }
 
+        // FIXME: This event is not reliable. Why?
         public override void OnFocusChanged(bool focus)
         {
-            BrowserHost?.SetFocus(focus);
+            // BrowserHost?.SetFocus(focus);
 
             MyLog.Default.Info($"{name} browser focus {focus}");
 
