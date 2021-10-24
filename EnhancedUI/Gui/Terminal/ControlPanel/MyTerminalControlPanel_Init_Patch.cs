@@ -23,7 +23,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
         {
             if (MyGuiScreenTerminal.InteractedEntity is MyTerminalBlock block)
             {
-                ControlPanelState.Instance?.Update(block);
+                ControlPanelState.Instance?.Init(block);
             }
             return false;
         }

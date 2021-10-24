@@ -1,0 +1,1 @@
+Disabled the compilation of files under Inventory until we can solve the focus issue.

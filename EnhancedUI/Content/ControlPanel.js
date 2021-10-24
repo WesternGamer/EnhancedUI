@@ -1,5 +1,7 @@
 var blockStates = null;
 
+// Invoked from C#
+// noinspection JSUnusedGlobalSymbols
 async function stateUpdated() {
     const blockViews = $('#blocks');
     blockViews.empty();
@@ -82,6 +84,8 @@ function renderBlockProperty(parent, propertyState) {
     parent.append(propertyView);
 }
 
+// Invoked from C#
+// noinspection JSUnusedGlobalSymbols
 async function blockStateUpdated(entityId) {
     // let blockState = await state.GetBlockState(entityId);
     // let blockView = $('#block-' + entityId);

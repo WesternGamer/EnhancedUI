@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using CefSharp;
 using CefSharp.OffScreen;
+using VRage.Utils;
 using VRageMath;
 
 namespace EnhancedUI.Gui

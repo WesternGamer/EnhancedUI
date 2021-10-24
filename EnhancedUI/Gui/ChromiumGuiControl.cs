@@ -2,6 +2,7 @@ using System;
 using CefSharp;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
+using VRage.Utils;
 using VRageMath;
 using VRageRender;
 using VRageRender.Messages;
@@ -36,7 +37,10 @@ namespace EnhancedUI.Gui
             this.name = name;
             this.state = state;
 
+            // FIXME: Do we need this?
             CanHaveFocus = true;
+
+            MyLog.Default.Info($"{name} browser created");
         }
 
         protected override void OnSizeChanged()
@@ -58,15 +62,17 @@ namespace EnhancedUI.Gui
             var rect = GetVideoScreenRectangle();
                 chromium = new Chromium(new Vector2I(rect.Width, rect.Height), state);
 
+            MyLog.Default.Info($"{name} browser size: {rect.Width} * {rect.Height} px");
+
             chromium.Ready += OnChromiumReady;
             chromium.Browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
 
             RegisterInputEvents();
 
-            state.SetBrowser(chromium.Browser);
-
             player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
             VideoPlayPatch.RegisterVideoPlayer(name, player);
+
+            MyLog.Default.Info($"{name} browser video player created");
         }
 
         public override void OnRemoving()
@@ -92,6 +98,8 @@ namespace EnhancedUI.Gui
 
             player = null;
             chromium = null;
+
+            MyLog.Default.Info($"{name} browser removed");
         }
 
         private void OnBrowserLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
@@ -106,10 +114,17 @@ namespace EnhancedUI.Gui
                 throw new Exception("This should not happen");
             }
 
-            var url = content.FormatIndexUrl(name);
-            chromium.Navigate(url);
+            Navigate();
 
             videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoNamePrefix + name, 0);
+        }
+
+        private void Navigate()
+        {
+            var url = content.FormatIndexUrl(name);
+            MyLog.Default.Info($"{name} browser navigation: {url}");
+            state.SetBrowser(chromium?.Browser);
+            chromium?.Navigate(url);
         }
 
         // Removes the browser instance when ChromiumGuiControl is no longer needed.
@@ -147,12 +162,14 @@ namespace EnhancedUI.Gui
         // Reloads the HTML document
         private void ReloadPage()
         {
-            state.Reload();
+            Navigate();
+            MyLog.Default.Info($"{name} browser is reloading");
         }
 
         private void OpenWebDeveloperTools()
         {
             chromium?.Browser.ShowDevTools();
+            MyLog.Default.Info($"{name} browser Developer Tools opened");
         }
 
         // Clears the cookies from the CEF browser
@@ -164,6 +181,8 @@ namespace EnhancedUI.Gui
         public override void OnFocusChanged(bool focus)
         {
             BrowserHost?.SetFocus(focus);
+
+            MyLog.Default.Info($"{name} browser focus {focus}");
 
             base.OnFocusChanged(focus);
         }

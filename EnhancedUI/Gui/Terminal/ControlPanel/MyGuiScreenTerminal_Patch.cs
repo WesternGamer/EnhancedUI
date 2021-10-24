@@ -44,6 +44,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
             page.Controls.Add(control);
             page.Controls.Add(control.Wheel);
 
+            // Focus the browser "control" by default when the tab is selected (see the original function)
             ___m_defaultFocusedControlKeyboard[MyTerminalPageEnum.ControlPanel] = control;
             ___m_defaultFocusedControlGamepad[MyTerminalPageEnum.ControlPanel] = control;
 

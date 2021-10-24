@@ -16,7 +16,8 @@ namespace EnhancedUI.Gui
 
         public override MyGuiControlBase HandleInput()
         {
-            if (!IsBrowserInitialized || CheckMouseOver() || MyInput.Static.IsNewKeyPressed(MyKeys.Escape))  // || !HasFocus
+            // FIXME: Should use HasFocus instead of mouse over
+            if (!IsBrowserInitialized || !CheckMouseOver())
                 return base.HandleInput();
 
             // F12 opens Chromium's Developer Tools in a new window
@@ -72,6 +73,7 @@ namespace EnhancedUI.Gui
 
         private void MouseHookOnMessageReceived(object sender, MouseMessageEventArgs e)
         {
+            // FIXME: Should use HasFocus
             // if (!HasFocus)
             //     return;
 
@@ -121,6 +123,7 @@ namespace EnhancedUI.Gui
 
         private void KeyboardHookOnMessageReceived(object sender, KeyboardMessageEventArgs e)
         {
+            // FIXME: Should use HasFocus
             // if (!HasFocus)
             //     return;
 
