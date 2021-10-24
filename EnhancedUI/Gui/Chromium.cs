@@ -25,6 +25,8 @@ namespace EnhancedUI.Gui
                 LifeSpanHandler = new LifespanHandler()
             };
 
+            Browser.MenuHandler = new CustomMenuHandler();
+
             Browser.Paint += BrowserOnPaint;
             Browser.BrowserInitialized += BrowserOnBrowserInitialized;
 

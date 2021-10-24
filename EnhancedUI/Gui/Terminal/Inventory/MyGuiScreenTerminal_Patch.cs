@@ -8,19 +8,23 @@ using VRageMath;
 
 namespace EnhancedUI.Gui.Terminal.Inventory
 {
-    [HarmonyPatch(typeof(MyGuiScreenTerminal), "CreateInventoryPageControls")]
+    [HarmonyPatch(typeof(MyGuiScreenTerminal))]
     // ReSharper disable once UnusedType.Global
     // ReSharper disable once InconsistentNaming
-    internal static class MyGuiScreenTerminal_CreateInventoryPageControls_Patch
+    internal static class MyGuiScreenTerminal_Patch
     {
         private const string Name = "Inventory";
         private static readonly WebContent Content = new();
 
+        [HarmonyPatch("CreateInventoryPageControls")]
+        [HarmonyPrefix]
         // ReSharper disable once UnusedMember.Local
-        private static bool Prefix(
+        private static bool CreateInventoryPageControlsPrefix(
             MyGuiControlTabPage page,
             // ReSharper disable once InconsistentNaming
-            Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlKeyboard)
+            Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlKeyboard,
+            // ReSharper disable once InconsistentNaming
+            Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlGamepad)
         {
             page.Name = "PageInventory";
             page.TextEnum = MySpaceTexts.Inventory;
@@ -38,6 +42,8 @@ namespace EnhancedUI.Gui.Terminal.Inventory
             page.Controls.Add(control.Wheel);
 
             ___m_defaultFocusedControlKeyboard[MyTerminalPageEnum.Inventory] = control;
+            ___m_defaultFocusedControlGamepad[MyTerminalPageEnum.Inventory] = control;
+
             return false;
         }
     }

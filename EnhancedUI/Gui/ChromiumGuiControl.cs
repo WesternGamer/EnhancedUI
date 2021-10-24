@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using CefSharp;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
@@ -13,8 +11,6 @@ namespace EnhancedUI.Gui
 {
     public partial class ChromiumGuiControl : MyGuiControlBase
     {
-        private static readonly Dictionary<string, Chromium> Browsers = new();
-
         private Chromium? chromium;
         private BatchDataPlayer? player;
         private uint videoId;
@@ -39,6 +35,8 @@ namespace EnhancedUI.Gui
             this.content = content;
             this.name = name;
             this.state = state;
+
+            CanHaveFocus = true;
         }
 
         protected override void OnSizeChanged()
@@ -58,18 +56,7 @@ namespace EnhancedUI.Gui
             }
 
             var rect = GetVideoScreenRectangle();
-            if (Browsers.TryGetValue(name, out chromium))
-            {
-                VideoPlayPatch.TryGetPlayer(name, out player);
-                OnChromiumReady();
-            }
-            else
-            {
                 chromium = new Chromium(new Vector2I(rect.Width, rect.Height), state);
-                Browsers[name] = chromium;
-                player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
-                VideoPlayPatch.RegisterPlayer(name, player);
-            }
 
             chromium.Ready += OnChromiumReady;
             chromium.Browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
@@ -77,17 +64,9 @@ namespace EnhancedUI.Gui
             RegisterInputEvents();
 
             state.SetBrowser(chromium.Browser);
-        }
 
-        public static void DisposeBrowsers()
-        {
-            foreach (var (name, browser) in Browsers)
-            {
-                VideoPlayPatch.UnregisterPlayer(name);
-                browser?.Dispose();
-            }
-
-            Browsers.Clear();
+            player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
+            VideoPlayPatch.RegisterVideoPlayer(name, player);
         }
 
         public override void OnRemoving()
@@ -106,7 +85,10 @@ namespace EnhancedUI.Gui
             chromium.Ready -= OnChromiumReady;
             chromium.Browser.LoadingStateChanged -= OnBrowserLoadingStateChanged;
 
+            chromium.Dispose();
             MyRenderProxy.CloseVideo(videoId);
+
+            VideoPlayPatch.UnregisterVideoPlayer(name);
 
             player = null;
             chromium = null;
@@ -168,6 +150,12 @@ namespace EnhancedUI.Gui
             state.Reload();
         }
 
+        private void OpenWebDeveloperTools()
+        {
+            chromium?.Browser.ShowDevTools();
+        }
+
+        // Clears the cookies from the CEF browser
         private void ClearCookies()
         {
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
@@ -178,11 +166,6 @@ namespace EnhancedUI.Gui
             BrowserHost?.SetFocus(focus);
 
             base.OnFocusChanged(focus);
-        }
-
-        private void OpenWebDeveloperTools()
-        {
-            chromium?.Browser.ShowDevTools();
         }
 
         private void DebugDraw()

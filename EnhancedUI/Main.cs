@@ -2,7 +2,6 @@
 using System.Reflection;
 using CefSharp;
 using CefSharp.OffScreen;
-using EnhancedUI.Gui;
 using HarmonyLib;
 using VRage.FileSystem;
 using VRage.Plugins;
@@ -14,7 +13,6 @@ namespace EnhancedUI
     {
         public void Dispose()
         {
-            ChromiumGuiControl.DisposeBrowsers();
             Cef.Shutdown();
         }
 

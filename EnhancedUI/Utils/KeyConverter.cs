@@ -6,7 +6,7 @@ namespace EnhancedUI.Utils
 {
     public static class KeyConverter
     {
-        private static readonly StringBuilder _result = new ();
+        private static readonly StringBuilder Result = new ();
 
         public static unsafe string KeyCodeToUnicode(uint virtualKeyCode)
         {
@@ -23,15 +23,15 @@ namespace EnhancedUI.Utils
             var windowThreadProcessId = GetWindowThreadProcessId(ProcessInfo.MainWindowHandle, IntPtr.Zero);
             var inputLocaleIdentifier = GetKeyboardLayout(windowThreadProcessId);
 
-            ToUnicodeEx(virtualKeyCode, scanCode, keyboardState, _result, 5, 0, inputLocaleIdentifier);
+            ToUnicodeEx(virtualKeyCode, scanCode, keyboardState, Result, 5, 0, inputLocaleIdentifier);
 
             try
             {
-                return _result.ToString();
+                return Result.ToString();
             }
             finally
             {
-                _result.Clear();
+                Result.Clear();
             }
         }
 

@@ -7,7 +7,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
     [HarmonyPatch]
     // ReSharper disable once UnusedType.Global
     // ReSharper disable once InconsistentNaming
-    internal static class MyTerminalControlPanel_Close_Patch
+    internal static class MyTerminalControlPanel_Patch
     {
         // ReSharper disable once UnusedMember.Local
         private static MethodBase TargetMethod()

@@ -11,14 +11,12 @@ namespace EnhancedUI.Gui
 {
     public partial class ChromiumGuiControl
     {
-        private const bool HasFocus2 = true;
-
         private readonly MouseHook mouseHook = new(ProcessInfo.Id);
         private readonly KeyboardHook keyboardHook = new(ProcessInfo.Id);
 
         public override MyGuiControlBase HandleInput()
         {
-            if (!IsBrowserInitialized || !HasFocus2 || MyInput.Static.IsNewKeyPressed(MyKeys.Escape))
+            if (!IsBrowserInitialized || CheckMouseOver() || MyInput.Static.IsNewKeyPressed(MyKeys.Escape))  // || !HasFocus
                 return base.HandleInput();
 
             // F12 opens Chromium's Developer Tools in a new window
@@ -27,19 +25,17 @@ namespace EnhancedUI.Gui
                 OpenWebDeveloperTools();
             }
 
-            // Ctrl-R reloads the page (handled here to be independent of browser state and input focus)
             if (MyInput.Static.IsAnyCtrlKeyPressed() && MyInput.Static.IsNewKeyPressed(MyKeys.R))
             {
                 ReloadPage();
 
-                // Ctrl-Shift-R reloads the page and clears all cookies
                 // FIXME: Do we need this?
+                // Ctrl-Shift-R reloads the page and clears all cookies
                 if (MyInput.Static.IsAnyShiftKeyPressed())
                     ClearCookies();
             }
 
-            // Tell the caller that we handled the input
-            return this;
+            return base.HandleInput();
         }
 
         private static CefEventFlags GetModifiers()
@@ -76,8 +72,8 @@ namespace EnhancedUI.Gui
 
         private void MouseHookOnMessageReceived(object sender, MouseMessageEventArgs e)
         {
-            if (!IsMouseOver)
-                return;
+            // if (!HasFocus)
+            //     return;
 
             switch ((MouseMessageCode)e.MessageCode)
             {
@@ -125,8 +121,8 @@ namespace EnhancedUI.Gui
 
         private void KeyboardHookOnMessageReceived(object sender, KeyboardMessageEventArgs e)
         {
-            if (!HasFocus2)
-                return;
+            // if (!HasFocus)
+            //     return;
 
             switch (e.Direction)
             {
