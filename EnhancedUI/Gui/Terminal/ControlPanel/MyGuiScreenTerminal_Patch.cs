@@ -21,8 +21,6 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
         [HarmonyPrefix]
         // ReSharper disable once UnusedMember.Local
         private static bool CreateControlPanelPageControlsPrefix(
-            // ReSharper disable once InconsistentNaming
-            // MyGuiScreenTerminal __instance,
             MyGuiControlTabPage page,
             // ReSharper disable once InconsistentNaming
             Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlKeyboard,
@@ -48,21 +46,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
             ___m_defaultFocusedControlKeyboard[MyTerminalPageEnum.ControlPanel] = control;
             ___m_defaultFocusedControlGamepad[MyTerminalPageEnum.ControlPanel] = control;
 
-            // __instance.Closed += InstanceOnClosed;
-
             return false;
         }
-
-        // private static void InstanceOnClosed(MyGuiScreenBase source, bool isunloading)
-        // {
-        //     currentControl = null;
-        //     source.Closed -= InstanceOnClosed;
-        // }
-
-        // [HarmonyPatch("HandleUnhandledInput")]
-        // [HarmonyPrefix]
-        // // ReSharper disable once UnusedMember.Local
-        // private static bool HandleUnhandledInputPrefix() => !(currentControl?.CheckMouseOver() ?? false);
-
     }
 }

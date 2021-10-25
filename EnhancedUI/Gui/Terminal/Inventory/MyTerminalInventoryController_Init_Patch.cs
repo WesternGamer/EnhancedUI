@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using HarmonyLib;
+using Sandbox.Game.Entities.Cube;
+using Sandbox.Game.Gui;
 
 namespace EnhancedUI.Gui.Terminal.Inventory
 {
@@ -16,6 +18,14 @@ namespace EnhancedUI.Gui.Terminal.Inventory
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static bool Prefix() => false;
+        // ReSharper disable once InconsistentNaming
+        private static bool Prefix()
+        {
+            if (MyGuiScreenTerminal.InteractedEntity is MyTerminalBlock block)
+            {
+                InventoryState.Instance?.Init(block);
+            }
+            return false;
+        }
     }
 }

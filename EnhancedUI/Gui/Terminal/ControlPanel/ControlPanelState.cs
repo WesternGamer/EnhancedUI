@@ -85,6 +85,9 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
         private void OnPropertyChanged(MyTerminalBlock terminalBlock)
         {
+            // FIXME: Disabled due to bad performance. Collect changes and deliver periodically.
+            return;
+
             if (terminalBlock.Closed)
                 return;
 

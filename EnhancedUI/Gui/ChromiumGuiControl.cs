@@ -31,6 +31,8 @@ namespace EnhancedUI.Gui
 
         private readonly IPanelState state;
 
+        private static bool hooksInstalled;
+
         public ChromiumGuiControl(WebContent content, string name, IPanelState state)
         {
             this.content = content;
@@ -41,6 +43,21 @@ namespace EnhancedUI.Gui
             CanHaveFocus = true;
 
             MyLog.Default.Info($"{name} browser created");
+
+            if (!hooksInstalled)
+            {
+                InstallHooks();
+                hooksInstalled = true;
+            }
+        }
+
+        ~ChromiumGuiControl()
+        {
+            if (hooksInstalled)
+            {
+                UninstallHooks();
+                hooksInstalled = false;
+            }
         }
 
         protected override void OnSizeChanged()
@@ -60,7 +77,9 @@ namespace EnhancedUI.Gui
             }
 
             var rect = GetVideoScreenRectangle();
-                chromium = new Chromium(new Vector2I(rect.Width, rect.Height), state);
+            chromium = new Chromium(new Vector2I(rect.Width, rect.Height), state);
+
+            BrowserControls[name] = this;
 
             MyLog.Default.Info($"{name} browser size: {rect.Width} * {rect.Height} px");
 
@@ -85,6 +104,8 @@ namespace EnhancedUI.Gui
             }
 
             UnregisterInputEvents();
+
+            BrowserControls.Remove(name);
 
             state.SetBrowser(null);
 
@@ -178,14 +199,39 @@ namespace EnhancedUI.Gui
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
         }
 
-        // FIXME: This event is not reliable. Why?
-        public override void OnFocusChanged(bool focus)
+        public override void Update()
         {
-            // BrowserHost?.SetFocus(focus);
+            base.Update();
 
-            MyLog.Default.Info($"{name} browser focus {focus}");
+            var tabPage = (MyGuiControlTabPage)Owner;
+            var tabPageVisible = tabPage.Visible;
 
-            base.OnFocusChanged(focus);
+            if (tabPageVisible != IsActive())
+            {
+                MyLog.Default.Info($"{name} browser: active {IsActive()}, tab visible {tabPage.Visible}");
+            }
+
+            // if (isActive != page.IsActiveControl)
+            // {
+            //     isActive = page.IsActiveControl;
+            //     MyLog.Default.Info(isActive ? $"{name} browser is active" : $"{name} browser is inactive");
+            // }
+        }
+
+        // NOTE: OnFocusChanged and HasFocus are not reliable, use OnVisibleChanged and Visible instead
+        // protected override void OnVisibleChanged()
+        // {
+        //     base.OnVisibleChanged();
+        //     BrowserHost?.SetFocus(Visible);
+        //     MyLog.Default.Info(Visible ? $"{name} browser is visible" : $"{name} browser is hidden");
+        //     isActive = Visible;
+        // }
+
+        private bool IsActive()
+        {
+            var tabPage = (MyGuiControlTabPage)Owner;
+            var tabs = (MyGuiControlTabControl)(tabPage.Owner);
+            return tabs.Pages.TryGetValue(tabs.SelectedPage, out var selectedTab) && selectedTab == tabPage;
         }
 
         private void DebugDraw()

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI.Interfaces;
 using SharpDX;
 using VRageMath;
+using VRageRender.Messages;
 
 namespace EnhancedUI.Gui.Terminal.ControlPanel
 {
@@ -76,10 +78,19 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
                     Value = property.As<Int64>().GetValue(block);
                     break;
 
+                case "StringBuilder":
+                    Value = property.As<StringBuilder>().GetValue(block).ToString();
+                    break;
+
                 case "Color":
-                    Value = property.As<Color>().GetValue(block).ToString();
+                    Value = FormatColor(property.As<Color>().GetValue(block));
                     break;
             }
+        }
+
+        private static string FormatColor(Color c)
+        {
+            return $"#{c.R:X02}{c.G:X02}{c.B:X02}";
         }
     }
 }

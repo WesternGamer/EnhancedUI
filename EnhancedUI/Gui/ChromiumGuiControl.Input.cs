@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 using CefSharp;
 using EnhancedUI.Utils;
@@ -11,13 +12,13 @@ namespace EnhancedUI.Gui
 {
     public partial class ChromiumGuiControl
     {
-        private readonly MouseHook mouseHook = new(ProcessInfo.Id);
-        private readonly KeyboardHook keyboardHook = new(ProcessInfo.Id);
+        private static readonly MouseHook MouseHook = new(ProcessInfo.Id);
+        private static readonly KeyboardHook KeyboardHook = new(ProcessInfo.Id);
+        private static readonly Dictionary<string, ChromiumGuiControl> BrowserControls = new();
 
         public override MyGuiControlBase HandleInput()
         {
-            // FIXME: Should use HasFocus instead of mouse over
-            if (!IsBrowserInitialized || !CheckMouseOver())
+            if (!IsActive() || !IsBrowserInitialized || !CheckMouseOver())
                 return base.HandleInput();
 
             // F12 opens Chromium's Developer Tools in a new window
@@ -53,29 +54,34 @@ namespace EnhancedUI.Gui
                 (input.IsRightMousePressed() ? CefEventFlags.RightMouseButton : 0);
         }
 
+        private void InstallHooks()
+        {
+            MouseHook.InstallAsync();
+            KeyboardHook.InstallAsync();
+        }
+
+        private void UninstallHooks()
+        {
+            MouseHook.Uninstall();
+            KeyboardHook.Uninstall();
+        }
+
         private void RegisterInputEvents()
         {
-            mouseHook.MessageReceived += MouseHookOnMessageReceived;
-            keyboardHook.MessageReceived += KeyboardHookOnMessageReceived;
-
-            mouseHook.InstallAsync();
-            keyboardHook.InstallAsync();
+            MouseHook.MessageReceived += MouseHookOnMessageReceived;
+            KeyboardHook.MessageReceived += KeyboardHookOnMessageReceived;
         }
 
         private void UnregisterInputEvents()
         {
-            mouseHook.MessageReceived -= MouseHookOnMessageReceived;
-            keyboardHook.MessageReceived -= KeyboardHookOnMessageReceived;
-
-            mouseHook.Uninstall();
-            keyboardHook.Uninstall();
+            MouseHook.MessageReceived -= MouseHookOnMessageReceived;
+            KeyboardHook.MessageReceived -= KeyboardHookOnMessageReceived;
         }
 
         private void MouseHookOnMessageReceived(object sender, MouseMessageEventArgs e)
         {
-            // FIXME: Should use HasFocus
-            // if (!HasFocus)
-            //     return;
+            if (!IsActive())
+                return;
 
             switch ((MouseMessageCode)e.MessageCode)
             {
@@ -123,9 +129,8 @@ namespace EnhancedUI.Gui
 
         private void KeyboardHookOnMessageReceived(object sender, KeyboardMessageEventArgs e)
         {
-            // FIXME: Should use HasFocus
-            // if (!HasFocus)
-            //     return;
+            if (!IsActive())
+                return;
 
             switch (e.Direction)
             {

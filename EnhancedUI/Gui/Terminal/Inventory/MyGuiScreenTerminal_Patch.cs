@@ -30,8 +30,8 @@ namespace EnhancedUI.Gui.Terminal.Inventory
             page.TextEnum = MySpaceTexts.Inventory;
             page.TextScale = 0.7005405f;
 
-            var proxy = new InventoryState();
-            var control = new ChromiumGuiControl(Content, Name, proxy)
+            var state = new InventoryState();
+            var control = new ChromiumGuiControl(Content, Name, state)
             {
                 Position = new Vector2(0f, 0.005f),
                 Size = new Vector2(0.9f, 0.7f)
@@ -41,6 +41,7 @@ namespace EnhancedUI.Gui.Terminal.Inventory
             page.Controls.Add(control);
             page.Controls.Add(control.Wheel);
 
+            // Focus the browser "control" by default when the tab is selected (see the original function)
             ___m_defaultFocusedControlKeyboard[MyTerminalPageEnum.Inventory] = control;
             ___m_defaultFocusedControlGamepad[MyTerminalPageEnum.Inventory] = control;
 

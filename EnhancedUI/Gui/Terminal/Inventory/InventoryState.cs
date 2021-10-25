@@ -1,3 +1,5 @@
+using Sandbox.Game.Entities.Cube;
+
 namespace EnhancedUI.Gui.Terminal.Inventory
 {
     public class InventoryState: PanelState
@@ -7,6 +9,11 @@ namespace EnhancedUI.Gui.Terminal.Inventory
         public InventoryState()
         {
             Instance = this;
+        }
+
+        public void Init(MyTerminalBlock block)
+        {
+            // TODO
         }
     }
 }
