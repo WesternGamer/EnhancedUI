@@ -14,11 +14,13 @@ namespace EnhancedUI.Gui
     {
         private static readonly MouseHook MouseHook = new(ProcessInfo.Id);
         private static readonly KeyboardHook KeyboardHook = new(ProcessInfo.Id);
+
+        // FIXME: For debugging only
         private static readonly Dictionary<string, ChromiumGuiControl> BrowserControls = new();
 
         public override MyGuiControlBase HandleInput()
         {
-            if (!IsActive() || !IsBrowserInitialized || !CheckMouseOver())
+            if (!IsActive || !IsBrowserInitialized || !CheckMouseOver() || MyInput.Static.IsNewKeyPressed(MyKeys.Escape))
                 return base.HandleInput();
 
             // F12 opens Chromium's Developer Tools in a new window
@@ -37,7 +39,7 @@ namespace EnhancedUI.Gui
                     ClearCookies();
             }
 
-            return base.HandleInput();
+            return this;
         }
 
         private static CefEventFlags GetModifiers()
@@ -80,7 +82,7 @@ namespace EnhancedUI.Gui
 
         private void MouseHookOnMessageReceived(object sender, MouseMessageEventArgs e)
         {
-            if (!IsActive())
+            if (!IsActive)
                 return;
 
             switch ((MouseMessageCode)e.MessageCode)
@@ -129,7 +131,7 @@ namespace EnhancedUI.Gui
 
         private void KeyboardHookOnMessageReceived(object sender, KeyboardMessageEventArgs e)
         {
-            if (!IsActive())
+            if (!IsActive)
                 return;
 
             switch (e.Direction)

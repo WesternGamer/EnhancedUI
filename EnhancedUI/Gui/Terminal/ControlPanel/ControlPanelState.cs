@@ -50,7 +50,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
                 terminalBlock.PropertiesChanged += OnPropertyChanged;
             }
 
-            Browser.ExecuteScriptAsync("stateUpdated();");
+            Browser?.ExecuteScriptAsync("stateUpdated();");
         }
 
         public void Clear()
@@ -97,7 +97,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
             if (HasBound())
             {
-                Browser.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
+                Browser?.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
             }
         }
 
@@ -115,7 +115,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
             if (HasBound())
             {
-                Browser.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
+                Browser?.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
             }
         }
 
@@ -146,7 +146,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
             if (HasBound())
             {
-                Browser.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
+                Browser?.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
             }
         }
     }

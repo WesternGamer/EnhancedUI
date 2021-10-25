@@ -73,7 +73,7 @@ function renderBlockProperty(parent, propertyState) {
         case "Int64":
             label = $('<label />');
             label.attr('for', propertyState.Id);
-            label.text(propertyState.Id + ' ');
+            label.text(propertyState.Id);
             value.append(label);
 
             cb = $('<input />')
@@ -89,7 +89,7 @@ function renderBlockProperty(parent, propertyState) {
         case "Single":
             label = $('<label />');
             label.attr('for', propertyState.Id);
-            label.text(propertyState.Id + ' ');
+            label.text(propertyState.Id);
             value.append(label);
 
             cb = $('<input />')
@@ -105,7 +105,7 @@ function renderBlockProperty(parent, propertyState) {
         case "StringBuilder":
             label = $('<label />');
             label.attr('for', propertyState.Id);
-            label.text(propertyState.Id + ' ');
+            label.text(propertyState.Id);
             value.append(label);
 
             cb = $('<input />')
@@ -118,9 +118,11 @@ function renderBlockProperty(parent, propertyState) {
             break;
 
         case "Color":
+            // See https://bitbucket.org/chromiumembedded/cef/issues/899
+
             label = $('<label />');
             label.attr('for', propertyState.Id);
-            label.text(propertyState.Id + ' ');
+            label.text(propertyState.Id);
             value.append(label);
 
             cb = $('<input />')

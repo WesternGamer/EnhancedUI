@@ -16,10 +16,14 @@ namespace EnhancedUI.Gui
         private BatchDataPlayer? player;
         private uint videoId;
 
-        //Returns false if the browser is not initialized else it returns true.
+        private IBrowserHost? BrowserHost => chromium?.Browser.GetBrowser().GetHost();
+
+        // Returns true if the browser has been initialized already
         private bool IsBrowserInitialized => chromium?.Browser.IsBrowserInitialized ?? false;
 
-        private IBrowserHost? BrowserHost => chromium?.Browser.GetBrowser().GetHost();
+        // True if this browser is visible and should get the input focus
+        // OnFocusChanged and HasFocus are not reliable, use OnVisibleChanged and Visible of the tab page instead
+        private bool IsActive => Visible && (Owner as MyGuiControlTabPage)?.Visible == true;
 
         public readonly MyGuiControlRotatingWheel Wheel = new(Vector2.Zero)
         {
@@ -197,41 +201,6 @@ namespace EnhancedUI.Gui
         private void ClearCookies()
         {
             Cef.GetGlobalCookieManager().DeleteCookies("", "");
-        }
-
-        public override void Update()
-        {
-            base.Update();
-
-            var tabPage = (MyGuiControlTabPage)Owner;
-            var tabPageVisible = tabPage.Visible;
-
-            if (tabPageVisible != IsActive())
-            {
-                MyLog.Default.Info($"{name} browser: active {IsActive()}, tab visible {tabPage.Visible}");
-            }
-
-            // if (isActive != page.IsActiveControl)
-            // {
-            //     isActive = page.IsActiveControl;
-            //     MyLog.Default.Info(isActive ? $"{name} browser is active" : $"{name} browser is inactive");
-            // }
-        }
-
-        // NOTE: OnFocusChanged and HasFocus are not reliable, use OnVisibleChanged and Visible instead
-        // protected override void OnVisibleChanged()
-        // {
-        //     base.OnVisibleChanged();
-        //     BrowserHost?.SetFocus(Visible);
-        //     MyLog.Default.Info(Visible ? $"{name} browser is visible" : $"{name} browser is hidden");
-        //     isActive = Visible;
-        // }
-
-        private bool IsActive()
-        {
-            var tabPage = (MyGuiControlTabPage)Owner;
-            var tabs = (MyGuiControlTabControl)(tabPage.Owner);
-            return tabs.Pages.TryGetValue(tabs.SelectedPage, out var selectedTab) && selectedTab == tabPage;
         }
 
         private void DebugDraw()

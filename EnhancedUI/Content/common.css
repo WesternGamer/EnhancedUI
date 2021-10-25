@@ -30,8 +30,13 @@ body {
     display: none;
 }
 
-label {
-    padding-left: 0.5ch;
+label,
+input[type="checkbox"] {
+    margin-right: 0.5ch;
+}
+
+label:hover {
+    text-decoration: underline;
 }
 
 .block {
