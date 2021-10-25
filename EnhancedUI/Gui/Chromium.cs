@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using CefSharp;
 using CefSharp.OffScreen;
+using VRage.Utils;
 using VRageMath;
 
 namespace EnhancedUI.Gui
@@ -24,6 +25,8 @@ namespace EnhancedUI.Gui
                 Size = new Size(size.X, size.Y),
                 LifeSpanHandler = new LifespanHandler()
             };
+
+            Browser.MenuHandler = new CustomMenuHandler();
 
             Browser.Paint += BrowserOnPaint;
             Browser.BrowserInitialized += BrowserOnBrowserInitialized;

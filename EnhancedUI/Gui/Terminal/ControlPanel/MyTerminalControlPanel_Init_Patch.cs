@@ -21,12 +21,10 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
         // ReSharper disable once InconsistentNaming
         private static bool Prefix()
         {
-            var block = MyGuiScreenTerminal.InteractedEntity as MyTerminalBlock;
-            if (block != null)
+            if (MyGuiScreenTerminal.InteractedEntity is MyTerminalBlock block)
             {
-                ControlPanelState.Instance?.Update(block);
+                ControlPanelState.Instance?.Init(block);
             }
-
             return false;
         }
     }

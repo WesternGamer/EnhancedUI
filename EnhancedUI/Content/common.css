@@ -9,10 +9,12 @@ html {
     background: transparent url("checkerboard.png");
     font-family: SpaceEngineers, serif;
     color: lightcyan;
+    font-size: 1.5vw;
+    line-height: 1.6vw;
 }
 
 body {
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .fullscreen {
@@ -28,8 +30,13 @@ body {
     display: none;
 }
 
-label {
-    padding-left: 0.5ch;
+label,
+input[type="checkbox"] {
+    margin-right: 0.5ch;
+}
+
+label:hover {
+    text-decoration: underline;
 }
 
 .block {

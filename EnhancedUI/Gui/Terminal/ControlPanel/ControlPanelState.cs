@@ -19,9 +19,12 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
         // Blocks states by EntityId
         private readonly Dictionary<long, BlockState> blockStates = new();
 
-        // Getters, because CefSharp relays only method calls
+        // Invoked from JavaScript
         // ReSharper disable once UnusedMember.Global
         public Dictionary<long, BlockState> GetBlockStates() => blockStates;
+
+        // Invoked from JavaScript
+        // ReSharper disable once UnusedMember.Global
         public BlockState GetBlockState(long entityId) => blockStates[entityId];
 
         public ControlPanelState()
@@ -29,10 +32,25 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
             Instance = this;
         }
 
-        public override void Reload()
+        public void Init(MyTerminalBlock block)
         {
-            base.Reload();
+            if (interactedBlock?.EntityId == block.EntityId)
+            {
+                return;
+            }
+
             Clear();
+
+            interactedBlock = block;
+
+            LoadBlockStates();
+
+            foreach (var terminalBlock in terminalBlocks.Values)
+            {
+                terminalBlock.PropertiesChanged += OnPropertyChanged;
+            }
+
+            Browser?.ExecuteScriptAsync("stateUpdated();");
         }
 
         public void Clear()
@@ -46,38 +64,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
             terminalBlocks.Clear();
             blockStates.Clear();
-
-            if (HasBound())
-            {
-                Browser.ExecuteScriptAsync("stateUpdated();");
-            }
         }
-
-        public void Update(MyTerminalBlock block)
-        {
-            if (!HasBound())
-            {
-                return;
-            }
-
-            if (interactedBlock?.EntityId == block.EntityId)
-            {
-                return;
-            }
-
-            interactedBlock = block;
-
-            LoadBlockStates();
-
-            foreach (var terminalBlock in terminalBlocks.Values)
-            {
-                terminalBlock.PropertiesChanged += OnPropertyChanged;
-            }
-
-            Browser.ExecuteScriptAsync("stateUpdated();");
-        }
-
-        // ReSharper disable once UnusedMember.Global
 
         private void LoadBlockStates()
         {
@@ -98,6 +85,9 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
         private void OnPropertyChanged(MyTerminalBlock terminalBlock)
         {
+            // FIXME: Disabled due to bad performance. Collect changes and deliver periodically.
+            return;
+
             if (terminalBlock.Closed)
                 return;
 
@@ -107,7 +97,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
             if (HasBound())
             {
-                Browser.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
+                Browser?.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
             }
         }
 
@@ -125,7 +115,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
             if (HasBound())
             {
-                Browser.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
+                Browser?.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
             }
         }
 
@@ -156,7 +146,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
             if (HasBound())
             {
-                Browser.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
+                Browser?.ExecuteScriptAsync("blockStateUpdated('" + entityId + "');");
             }
         }
     }

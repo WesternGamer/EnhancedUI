@@ -5,7 +5,6 @@ using System.Runtime.ExceptionServices;
 using System.Security;
 using HarmonyLib;
 using VRage.Utils;
-using VRageRender;
 
 namespace EnhancedUI.Gui
 {

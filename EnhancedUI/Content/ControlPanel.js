@@ -1,5 +1,7 @@
 var blockStates = null;
 
+// Invoked from C#
+// noinspection JSUnusedGlobalSymbols
 async function stateUpdated() {
     const blockViews = $('#blocks');
     blockViews.empty();
@@ -48,33 +50,102 @@ function renderBlockProperty(parent, propertyState) {
     let propertyView= $('<div />');
     propertyView.addClass('property');
 
+    let cb, label;
     let value = $('<div />');
     value.addClass('value');
     switch(propertyState.TypeName) {
         case "Boolean":
             cb = $('<input />')
-            cb.attr('type', 'checkbox');
             cb.attr('id', propertyState.Id);
+            cb.attr('type', 'checkbox');
             if (propertyState.Value) {
                 cb.attr('checked', 'checked');
             }
             value.append(cb);
+
             label = $('<label />');
             label.attr('for', propertyState.Id);
             label.text(propertyState.Id);
             value.append(label);
+
             break;
+
         case "Int64":
-            value.text(propertyState.Id + ': ' + propertyState.Value.toString());
+            label = $('<label />');
+            label.attr('for', propertyState.Id);
+            label.text(propertyState.Id);
+            value.append(label);
+
+            cb = $('<input />')
+            cb.attr('id', propertyState.Id);
+            cb.attr('type', 'number');
+            cb.attr('value', propertyState.Value == null ? '0' : propertyState.Value.toString());
+            cb.attr('maxlength', '20');
+            cb.attr('size', '20');
+            value.append(cb);
+
             break;
+
         case "Single":
-            value.text(propertyState.Id + ': ' + propertyState.Value.toString());
+            label = $('<label />');
+            label.attr('for', propertyState.Id);
+            label.text(propertyState.Id);
+            value.append(label);
+
+            cb = $('<input />')
+            cb.attr('id', propertyState.Id);
+            cb.attr('type', 'number');
+            cb.attr('value', propertyState.Value == null ? '0.0' : propertyState.Value.toString());
+            cb.attr('maxlength', '20');
+            cb.attr('size', '20');
+            value.append(cb);
+
             break;
+
+        case "StringBuilder":
+            label = $('<label />');
+            label.attr('for', propertyState.Id);
+            label.text(propertyState.Id);
+            value.append(label);
+
+            cb = $('<input />')
+            cb.attr('id', propertyState.Id);
+            cb.attr('value', propertyState.Value == null ? '' : propertyState.Value.toString());
+            cb.attr('maxlength', '65535');
+            cb.attr('size', '100');
+            value.append(cb);
+
+            break;
+
         case "Color":
-            value.text(propertyState.Id + ': ' + propertyState.Value.toString());
+            // See https://bitbucket.org/chromiumembedded/cef/issues/899
+
+            label = $('<label />');
+            label.attr('for', propertyState.Id);
+            label.text(propertyState.Id);
+            value.append(label);
+
+            cb = $('<input />')
+            cb.attr('id', propertyState.Id);
+            cb.attr('type', 'color');
+            cb.attr('value', propertyState.Value == null ? '#ffffff' : propertyState.Value.toString());
+            value.append(cb);
+
             break;
+
         default:
-            value.text(propertyState.Id + ' ' + propertyState.TypeName + ': ' + (propertyState.Value == null ? 'null' : propertyState.Value.toString()));
+            label = $('<label />');
+            label.attr('for', propertyState.Id);
+            label.text(propertyState.Id + '[' + propertyState.TypeName + '] ');
+            value.append(label);
+
+            cb = $('<input />')
+            cb.attr('readonly', 'readonly');
+            cb.attr('id', propertyState.Id);
+            cb.attr('value', propertyState.Value == null ? '' : propertyState.Value.toString());
+            value.append(cb);
+
+            break;
     }
 
     propertyView.append(value);
@@ -82,6 +153,8 @@ function renderBlockProperty(parent, propertyState) {
     parent.append(propertyView);
 }
 
+// Invoked from C#
+// noinspection JSUnusedGlobalSymbols
 async function blockStateUpdated(entityId) {
     // let blockState = await state.GetBlockState(entityId);
     // let blockView = $('#block-' + entityId);

@@ -14,6 +14,7 @@ namespace EnhancedUI.Gui
         public void SetBrowser(ChromiumWebBrowser? browser)
         {
             Browser = browser;
+            bound = false;
         }
 
         // Checks whether the state has been bound to a JS accessible global variable already
@@ -26,13 +27,7 @@ namespace EnhancedUI.Gui
         public virtual void NotifyBound()
         {
             bound = true;
-        }
-
-        // Reloads the page, which requires re-binding the state to a JS global variable
-        public virtual void Reload()
-        {
-            bound = false;
-            Browser?.Reload();
+            Browser.ExecuteScriptAsync("stateUpdated();");
         }
     }
 }

@@ -8,12 +8,12 @@ namespace EnhancedUI.Gui
         void SetBrowser(ChromiumWebBrowser? browser);
 
         // Return True if the page has been loaded
+        // ReSharper disable once UnusedMemberInSuper.Global
         bool HasBound();
 
         // Marks the page as loaded
+        // Invoked from JavaScript
+        // ReSharper disable once UnusedMember.Global
         void NotifyBound();
-
-        // Reloads the page
-        void Reload();
     }
 }
