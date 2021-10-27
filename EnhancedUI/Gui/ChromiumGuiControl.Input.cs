@@ -24,7 +24,7 @@ namespace EnhancedUI.Gui
                 return base.HandleInput();
 
             // F12 opens Chromium's Developer Tools in a new window
-            if (MyInput.Static.IsNewKeyPressed(MyKeys.F12))
+            if (MyInput.Static.IsNewKeyPressed(MyKeys.F12) && MyInput.Static.IsAnyCtrlKeyPressed())
             {
                 OpenWebDeveloperTools();
             }
