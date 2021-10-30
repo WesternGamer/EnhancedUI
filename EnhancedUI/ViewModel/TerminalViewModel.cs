@@ -6,7 +6,7 @@ using Sandbox.Game.Entities.Cube;
 
 namespace EnhancedUI.ViewModel
 {
-    public class TerminalViewModel : IViewModelApi, IDisposable
+    public class TerminalViewModel : ITerminalViewModel, IDisposable
     {
         // Model is a singleton
         public static TerminalViewModel? Instance;

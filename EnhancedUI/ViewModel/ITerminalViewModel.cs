@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace EnhancedUI.ViewModel
 {
     /* JavaScript API of the ViewModel */
-    public interface IViewModelApi
+    public interface ITerminalViewModel
     {
         // Returns the EntityId of the block the player is interacting with (terminal port opened on).
         // Returns null if the player is not connected to a terminal port.
