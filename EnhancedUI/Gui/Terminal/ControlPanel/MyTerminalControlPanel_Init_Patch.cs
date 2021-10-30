@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using EnhancedUI.ViewModel;
 using HarmonyLib;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.Game.Gui;
@@ -23,7 +24,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
         {
             if (MyGuiScreenTerminal.InteractedEntity is MyTerminalBlock block)
             {
-                ControlPanelState.Instance?.Init(block);
+                TerminalViewModel.Instance?.Connect(block);
             }
             return false;
         }

@@ -33,17 +33,13 @@ namespace EnhancedUI.Gui
         private readonly WebContent content;
         private readonly string name;
 
-        private readonly IPanelState state;
-
         private static bool hooksInstalled;
 
-        public ChromiumGuiControl(WebContent content, string name, IPanelState state)
+        public ChromiumGuiControl(WebContent content, string name)
         {
             this.content = content;
             this.name = name;
-            this.state = state;
 
-            // FIXME: Do we need this?
             CanHaveFocus = true;
 
             MyLog.Default.Info($"{name} browser created");
@@ -81,7 +77,7 @@ namespace EnhancedUI.Gui
             }
 
             var rect = GetVideoScreenRectangle();
-            chromium = new Chromium(new Vector2I(rect.Width, rect.Height), state);
+            chromium = new Chromium(new Vector2I(rect.Width, rect.Height));
 
             BrowserControls[name] = this;
 
@@ -110,8 +106,6 @@ namespace EnhancedUI.Gui
             UnregisterInputEvents();
 
             BrowserControls.Remove(name);
-
-            state.SetBrowser(null);
 
             chromium.Ready -= OnChromiumReady;
             chromium.Browser.LoadingStateChanged -= OnBrowserLoadingStateChanged;
@@ -148,7 +142,6 @@ namespace EnhancedUI.Gui
         {
             var url = content.FormatIndexUrl(name);
             MyLog.Default.Info($"{name} browser navigation: {url}");
-            state.SetBrowser(chromium?.Browser);
             chromium?.Navigate(url);
         }
 

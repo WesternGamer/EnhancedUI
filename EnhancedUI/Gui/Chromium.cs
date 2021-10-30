@@ -16,7 +16,7 @@ namespace EnhancedUI.Gui
 
         public readonly ChromiumWebBrowser Browser;
 
-        public Chromium(Vector2I size, object state)
+        public Chromium(Vector2I size)
         {
             videoData = new byte[size.X * size.Y * 4];
 
@@ -31,16 +31,17 @@ namespace EnhancedUI.Gui
             Browser.Paint += BrowserOnPaint;
             Browser.BrowserInitialized += BrowserOnBrowserInitialized;
 
-            Browser.JavascriptObjectRepository.ResolveObject += (sender, e) =>
-            {
-                var repo = e.ObjectRepository;
-                if (e.ObjectName == "state")
-                {
-                    // No CamelCase of Javascript Names
-                    repo.NameConverter = null;
-                    repo.Register("state", state, isAsync: true, options: BindingOptions.DefaultBinder);
-                }
-            };
+            // !!!
+            // Browser.JavascriptObjectRepository.ResolveObject += (sender, e) =>
+            // {
+            //     var repo = e.ObjectRepository;
+            //     if (e.ObjectName == "state")
+            //     {
+            //         // No CamelCase of Javascript Names
+            //         repo.NameConverter = null;
+            //         repo.Register("state", state, isAsync: true, options: BindingOptions.DefaultBinder);
+            //     }
+            // };
         }
 
         public byte[] GetVideoData()
