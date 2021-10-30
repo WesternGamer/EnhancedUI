@@ -1,5 +1,6 @@
 using System;
 using CefSharp;
+using EnhancedUI.ViewModel;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
 using VRage.Utils;
@@ -199,6 +200,16 @@ namespace EnhancedUI.Gui
         private void DebugDraw()
         {
             MyGuiManager.DrawBorders(GetPositionAbsoluteTopLeft(), Size, Color.White, 1);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            if (chromium == null || !IsBrowserInitialized)
+                return;
+
+            TerminalViewModel.Instance?.NotifyBrowser(chromium.Browser);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace EnhancedUI
     // ReSharper disable once UnusedType.Global
     public class Main : IPlugin
     {
+        // Single instance of the view model, reused for all browser instances
         private readonly TerminalViewModel model = new();
 
         public void Dispose()

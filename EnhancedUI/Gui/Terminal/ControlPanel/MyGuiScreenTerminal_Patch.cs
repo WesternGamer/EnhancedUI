@@ -15,7 +15,6 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
     {
         private const string Name = "ControlPanel";
         private static readonly WebContent Content = new();
-        // private static ChromiumGuiControl? currentControl;
 
         [HarmonyPatch("CreateControlPanelPageControls")]
         [HarmonyPrefix]

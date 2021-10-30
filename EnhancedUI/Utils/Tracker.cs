@@ -29,6 +29,22 @@ namespace EnhancedUI.Utils
             }
         }
 
+        public int Count
+        {
+            get
+            {
+                mutex.WaitOne();
+                try
+                {
+                    return items.Count;
+                }
+                finally
+                {
+                    mutex.ReleaseMutex();
+                }
+            }
+        }
+
         public class Context: IDisposable
         {
             private readonly Tracker<T> tracker;

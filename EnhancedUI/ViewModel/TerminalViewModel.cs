@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CefSharp;
+using CefSharp.OffScreen;
 using EnhancedUI.Utils;
 using Sandbox.Game.Entities.Cube;
 
@@ -27,8 +29,8 @@ namespace EnhancedUI.ViewModel
         // Set to null if the player is not connected to any grids
         private MyTerminalBlock? interactedBlock;
 
-        // True if the interacted block is valid
-        private bool IsValid => interactedBlock?.IsFunctional == true;
+        // True if the player is connected to a terminal system
+        private bool IsConnected => interactedBlock?.IsFunctional == true;
 
         public TerminalViewModel()
         {
@@ -87,7 +89,7 @@ namespace EnhancedUI.ViewModel
             {
                 blocks.Clear();
 
-                if (interactedBlock == null || !IsValid)
+                if (interactedBlock == null || !IsConnected)
                     return;
 
                 foreach (var block in interactedBlock.CubeGrid.GridSystems.TerminalSystem.Blocks)
@@ -110,13 +112,24 @@ namespace EnhancedUI.ViewModel
         // Called on game updates
         internal void Update()
         {
-            if (!IsValid)
+            if (!IsConnected)
+            {
+                Clear();
                 return;
+            }
 
             lock (blocks)
             {
                 UpdateGameModifiedBlocks();
                 ApplyUserModifications();
+            }
+        }
+
+        internal void NotifyBrowser(ChromiumWebBrowser browser)
+        {
+            if (blocksToRefresh.Count > 0)
+            {
+                browser.ExecuteScriptAsync("NotifyBrowserBlocksToRefresh()");
             }
         }
 
