@@ -29,6 +29,7 @@ namespace EnhancedUI.ViewModel
         public bool IsFunctional { get; private set; }
 
         // Name of the block (used editable)
+        // ReSharper disable once MemberCanBePrivate.Global
         public string Name { get; set; }
 
         // Custom data (user editable)
