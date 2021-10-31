@@ -33,6 +33,7 @@ namespace EnhancedUI.ViewModel
         // Terminal block the player interacts with
         // Set to null if the player is not connected to any grids
         private MyTerminalBlock? interactedBlock;
+        private long? interactedBlockId;
 
         // True if the player is connected to a terminal system
         private bool IsConnected => interactedBlock?.IsFunctional == true;
@@ -83,6 +84,7 @@ namespace EnhancedUI.ViewModel
                 blocks.Clear();
 
                 interactedBlock = null;
+                interactedBlockId = null;
             }
         }
 
@@ -100,6 +102,9 @@ namespace EnhancedUI.ViewModel
                 {
                     var blockViewModel = new BlockViewModel(this, block, version);
                     blocks[blockViewModel.Id] = blockViewModel;
+
+                    if (block == interactedBlock)
+                        interactedBlockId = blockViewModel.Id;
                 }
             }
         }
@@ -180,6 +185,11 @@ namespace EnhancedUI.ViewModel
         }
 
         #region JavaScript API
+
+        public long? GetInteractedBlockId()
+        {
+            return interactedBlockId;
+        }
 
         public List<long> GetBlockIds()
         {
