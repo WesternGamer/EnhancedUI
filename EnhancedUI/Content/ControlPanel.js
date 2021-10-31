@@ -3,14 +3,19 @@ let latestVersion = -1;
 // Invoked from C# whenever a new game state version is available
 // noinspection JSUnusedGlobalSymbols
 async function GameStateUpdated(version) {
+    if (TerminalViewModel === undefined)
+        return;
+
     let blockIds = await TerminalViewModel.GetModifiedBlockIds(latestVersion + 1);
 
-    const $blocks = $('#blocks');
+    let blocks = $('#blocks');
     for (const i in blockIds) {
         let blockId = blockIds[i];
         let blockState = await TerminalViewModel.GetBlockState(blockId);
-        renderBlock($blocks, blockState);
+        renderBlock(blocks, blockState);
     }
+
+    latestVersion = version;
 }
 
 function renderBlock(parent, blockState) {
@@ -29,9 +34,6 @@ function renderBlock(parent, blockState) {
         parent.append(blockView);
     else
         oldBlockView.replaceWith(blockView);
-
-    if (blockState.Version > latestVersion)
-        latestVersion = blockState.Version;
 }
 
 function renderBlockInner(blockView, blockState) {
