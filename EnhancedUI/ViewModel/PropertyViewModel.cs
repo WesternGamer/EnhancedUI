@@ -5,7 +5,7 @@ using VRageMath;
 
 namespace EnhancedUI.ViewModel
 {
-    /* Property view model passed to JavaScript */
+    // Property view model passed to JavaScript
     public class PropertyViewModel
     {
         private readonly ITerminalProperty property;
@@ -28,7 +28,7 @@ namespace EnhancedUI.ViewModel
             Update(block);
         }
 
-        /* Updates value from in-game property */
+        // Updates value from in-game property
         public bool Update(MyTerminalBlock block)
         {
             var value = Read(block, property);
@@ -39,7 +39,7 @@ namespace EnhancedUI.ViewModel
             return true;
         }
 
-        /* Applies the value to the in-game property */
+        // Applies the value to the in-game property
         public bool Apply(MyTerminalBlock block)
         {
             return Write(block, property, Value);

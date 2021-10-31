@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EnhancedUI.ViewModel
 {
-    /* JavaScript API of the ViewModel */
+    // JavaScript API of the ViewModel
     public interface ITerminalViewModel
     {
         // Returns the EntityId of the block the player is interacting with (terminal port opened on).
@@ -17,7 +17,7 @@ namespace EnhancedUI.ViewModel
         // Returns null if the player is not connected to a terminal port.
         BlockViewModel? GetBlock(long blockId);
 
-        // Returns list of EntityIds of blocks which have modifications and should be refreshed */
+        // Returns list of EntityIds of blocks which have modifications and should be refreshed
         List<long> GetDirtyBlockIds();
 
         // Modifies a block's Name, actual modification will happen on the next game update

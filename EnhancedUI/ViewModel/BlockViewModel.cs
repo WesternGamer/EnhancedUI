@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Interfaces;
 
 namespace EnhancedUI.ViewModel
 {
-    /* Block view model passed to JavaScript */
+    // Block view model passed to JavaScript
     public class BlockViewModel : IDisposable
     {
         // Owning block view model
