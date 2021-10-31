@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using EnhancedUI.Utils;
 using Sandbox.Game.Entities.Cube;
 using VRage.Utils;
@@ -12,8 +13,7 @@ namespace EnhancedUI.ViewModel
         // Model is a singleton
         public static TerminalViewModel? Instance;
 
-        // Logical clock, model state versions for browser synchronization
-        private readonly object latestVersionLock = new();
+        // Logical clock, model state version number for browser synchronization
         private long latestVersion;
 
         // Event triggered on new game state versions
@@ -111,10 +111,7 @@ namespace EnhancedUI.ViewModel
 
         private long GetNextVersion()
         {
-            lock (latestVersionLock)
-            {
-                return ++latestVersion;
-            }
+            return Interlocked.Increment(ref latestVersion);
         }
 
         internal void NotifyGameModifiedBlock(long blockId)
