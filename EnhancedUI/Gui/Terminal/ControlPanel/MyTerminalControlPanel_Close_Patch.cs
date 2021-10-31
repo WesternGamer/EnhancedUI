@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using EnhancedUI.ViewModel;
 using HarmonyLib;
 
 namespace EnhancedUI.Gui.Terminal.ControlPanel

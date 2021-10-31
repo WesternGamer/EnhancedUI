@@ -15,7 +15,6 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
     {
         private const string Name = "ControlPanel";
         private static readonly WebContent Content = new();
-        // private static ChromiumGuiControl? currentControl;
 
         [HarmonyPatch("CreateControlPanelPageControls")]
         [HarmonyPrefix]
@@ -31,8 +30,7 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
             page.TextEnum = MySpaceTexts.ControlPanel;
             page.TextScale = 0.7005405f;
 
-            var state = new ControlPanelState();
-            var control = new ChromiumGuiControl(Content, Name, state)
+            var control = new ChromiumGuiControl(Content, Name)
             {
                 Position = new Vector2(0f, 0.005f),
                 Size = new Vector2(0.9f, 0.7f)

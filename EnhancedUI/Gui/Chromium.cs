@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using CefSharp;
 using CefSharp.OffScreen;
+using EnhancedUI.ViewModel;
 using VRage.Utils;
 using VRageMath;
 
@@ -16,7 +17,7 @@ namespace EnhancedUI.Gui
 
         public readonly ChromiumWebBrowser Browser;
 
-        public Chromium(Vector2I size, object state)
+        public Chromium(Vector2I size)
         {
             videoData = new byte[size.X * size.Y * 4];
 
@@ -34,11 +35,11 @@ namespace EnhancedUI.Gui
             Browser.JavascriptObjectRepository.ResolveObject += (sender, e) =>
             {
                 var repo = e.ObjectRepository;
-                if (e.ObjectName == "state")
+                if (e.ObjectName == "TerminalViewModel")
                 {
                     // No CamelCase of Javascript Names
                     repo.NameConverter = null;
-                    repo.Register("state", state, isAsync: true, options: BindingOptions.DefaultBinder);
+                    repo.Register("TerminalViewModel", TerminalViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
                 }
             };
         }

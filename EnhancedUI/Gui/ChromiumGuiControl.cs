@@ -1,5 +1,6 @@
 using System;
 using CefSharp;
+using EnhancedUI.ViewModel;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
 using VRage.Utils;
@@ -33,17 +34,13 @@ namespace EnhancedUI.Gui
         private readonly WebContent content;
         private readonly string name;
 
-        private readonly IPanelState state;
-
         private static bool hooksInstalled;
 
-        public ChromiumGuiControl(WebContent content, string name, IPanelState state)
+        public ChromiumGuiControl(WebContent content, string name)
         {
             this.content = content;
             this.name = name;
-            this.state = state;
 
-            // FIXME: Do we need this?
             CanHaveFocus = true;
 
             MyLog.Default.Info($"{name} browser created");
@@ -53,10 +50,20 @@ namespace EnhancedUI.Gui
                 InstallHooks();
                 hooksInstalled = true;
             }
+
+            if (TerminalViewModel.Instance != null)
+            {
+                TerminalViewModel.Instance.OnGameStateChanged += OnGameStateChanged;
+            }
         }
 
         ~ChromiumGuiControl()
         {
+            if (TerminalViewModel.Instance != null)
+            {
+                TerminalViewModel.Instance.OnGameStateChanged -= OnGameStateChanged;
+            }
+
             if (hooksInstalled)
             {
                 UninstallHooks();
@@ -81,7 +88,7 @@ namespace EnhancedUI.Gui
             }
 
             var rect = GetVideoScreenRectangle();
-            chromium = new Chromium(new Vector2I(rect.Width, rect.Height), state);
+            chromium = new Chromium(new Vector2I(rect.Width, rect.Height));
 
             BrowserControls[name] = this;
 
@@ -110,8 +117,6 @@ namespace EnhancedUI.Gui
             UnregisterInputEvents();
 
             BrowserControls.Remove(name);
-
-            state.SetBrowser(null);
 
             chromium.Ready -= OnChromiumReady;
             chromium.Browser.LoadingStateChanged -= OnBrowserLoadingStateChanged;
@@ -144,11 +149,18 @@ namespace EnhancedUI.Gui
             videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoNamePrefix + name, 0);
         }
 
+        private void OnGameStateChanged(long version)
+        {
+            if (!IsBrowserInitialized)
+                return;
+
+            chromium?.Browser.ExecuteScriptAsync($"OnGameStateChange({version})");
+        }
+
         private void Navigate()
         {
             var url = content.FormatIndexUrl(name);
             MyLog.Default.Info($"{name} browser navigation: {url}");
-            state.SetBrowser(chromium?.Browser);
             chromium?.Navigate(url);
         }
 
@@ -207,5 +219,5 @@ namespace EnhancedUI.Gui
         {
             MyGuiManager.DrawBorders(GetPositionAbsoluteTopLeft(), Size, Color.White, 1);
         }
-    }
+   }
 }
