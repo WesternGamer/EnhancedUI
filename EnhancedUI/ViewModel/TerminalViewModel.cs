@@ -13,9 +13,6 @@ namespace EnhancedUI.ViewModel
         // Model is a singleton
         public static TerminalViewModel? Instance;
 
-        // Logical clock, model state version number for browser synchronization
-        private long latestVersion;
-
         // Event triggered on new game state versions
         public delegate void OnGameStateChangedHandler(long version);
 
@@ -37,6 +34,10 @@ namespace EnhancedUI.ViewModel
 
         // True if the player is connected to a terminal system
         private bool IsConnected => interactedBlock?.IsFunctional == true;
+
+        // Logical clock, model state version number for browser synchronization
+        private long latestVersion;
+        private long GetNextVersion() => Interlocked.Increment(ref latestVersion);
 
         public TerminalViewModel()
         {
@@ -107,11 +108,6 @@ namespace EnhancedUI.ViewModel
                         interactedBlockId = blockViewModel.Id;
                 }
             }
-        }
-
-        private long GetNextVersion()
-        {
-            return Interlocked.Increment(ref latestVersion);
         }
 
         internal void NotifyGameModifiedBlock(long blockId)
