@@ -40,9 +40,9 @@ namespace EnhancedUI.ViewModel
         }
 
         // Applies the value to the in-game property
-        public bool Apply(MyTerminalBlock block)
+        public void Apply(MyTerminalBlock block)
         {
-            return Write(block, property, Value);
+            Write(block, property, Value);
         }
 
         private static object? Read(MyTerminalBlock block, ITerminalProperty property)
@@ -68,41 +68,40 @@ namespace EnhancedUI.ViewModel
             return null;
         }
 
-        private static bool Write(MyTerminalBlock block, ITerminalProperty property, object? value)
+        private static void Write(MyTerminalBlock block, ITerminalProperty property, object? value)
         {
-            if (value == Read(block, property))
-                return false;
+            var currentValue = Read(block, property);
+            if (value == currentValue)
+                return;
 
             switch (property.TypeName)
             {
                 case "Boolean":
                     property.AsBool().SetValue(block, value as bool? ?? property.AsBool().GetDefaultValue(block));
-                    return true;
+                    break;
 
                 case "Single":
                     property.AsFloat().SetValue(block, value as float? ?? property.AsFloat().GetDefaultValue(block));
-                    return true;
+                    break;
 
                 case "Int64":
                     property.As<long>().SetValue(block, value as long? ?? property.As<long>().GetDefaultValue(block));
-                    return true;
+                    break;
 
                 case "StringBuilder":
                     property.As<StringBuilder>().SetValue(block,
                         value == null
                             ? property.As<StringBuilder>().GetDefaultValue(block)
                             : new StringBuilder(value as string ?? ""));
-                    return true;
+                    break;
 
                 case "Color":
                     property.As<Color>().SetValue(block,
                         value == null
                             ? property.As<Color>().GetDefaultValue(block)
                             : ParseColor(value as string ?? ""));
-                    return true;
+                    break;
             }
-
-            return false;
         }
 
         private static string FormatColor(Color c)

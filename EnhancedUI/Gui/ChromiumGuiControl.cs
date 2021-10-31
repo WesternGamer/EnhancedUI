@@ -154,7 +154,7 @@ namespace EnhancedUI.Gui
             if (!IsBrowserInitialized)
                 return;
 
-            chromium?.Browser.ExecuteScriptAsync($"OnGameStateChange({version})");
+            chromium?.Browser.ExecuteScriptAsync($"if (typeof OnGameStateChange != typeof undefined) OnGameStateChange({version})");
         }
 
         private void Navigate()

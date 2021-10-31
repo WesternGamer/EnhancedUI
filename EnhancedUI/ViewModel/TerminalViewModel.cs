@@ -37,7 +37,7 @@ namespace EnhancedUI.ViewModel
 
         // Logical clock, model state version number for browser synchronization
         private long latestVersion;
-        private long GetNextVersion() => Interlocked.Increment(ref latestVersion);
+        public long GetNextVersion() => Interlocked.Increment(ref latestVersion);
 
         public TerminalViewModel()
         {
@@ -131,50 +131,44 @@ namespace EnhancedUI.ViewModel
                 return;
             }
 
-            bool changed;
+            ApplyUserModifications();
+
+            long versionBefore = latestVersion;
+
             lock (blocks)
             {
-                var version = GetNextVersion();
-                changed = UpdateGameModifiedBlocks(version);
-                changed = ApplyUserModifications(version) || changed;
+                UpdateGameModifiedBlocks();
             }
 
-            if (changed)
+            if (latestVersion != versionBefore)
             {
                 MyLog.Default.Debug($"EnhancedUI: OnGameStateChanged({latestVersion})");
                 OnGameStateChanged?.Invoke(latestVersion);
             }
         }
 
-        private bool ApplyUserModifications(long version)
+        private void ApplyUserModifications()
         {
-            var changed = false;
-
             using var context = blocksModifiedByUser.Process();
             foreach (var blockId in context.Items)
             {
                 if (!blocks.TryGetValue(blockId, out var block))
                     continue;
 
-                changed = block.Apply(version) || changed;
+                block.Apply();
             }
-
-            return changed;
         }
 
-        private bool UpdateGameModifiedBlocks(long version)
+        private void UpdateGameModifiedBlocks()
         {
             using var context = blocksModifiedByGame.Process();
-            var changed = false;
             foreach (var blockId in context.Items)
             {
                 if (!blocks.TryGetValue(blockId, out var block))
                     continue;
 
-                changed = block.Update(version) || changed;
+                block.Update();
             }
-
-            return changed;
         }
 
         #region JavaScript API
