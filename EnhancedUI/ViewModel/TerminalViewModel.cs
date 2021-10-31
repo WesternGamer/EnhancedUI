@@ -113,12 +113,14 @@ namespace EnhancedUI.ViewModel
 
         internal void NotifyGameModifiedBlock(long blockId)
         {
-            blocksModifiedByGame.Add(blockId);
+            if (blocks.ContainsKey(blockId))
+                blocksModifiedByGame.Add(blockId);
         }
 
         internal void NotifyUserModifiedBlock(long blockId)
         {
-            blocksModifiedByUser.Add(blockId);
+            if (blocks.ContainsKey(blockId))
+                blocksModifiedByUser.Add(blockId);
         }
 
         // Called on game updates
