@@ -12,7 +12,7 @@ namespace EnhancedUI.ViewModel
         private readonly TerminalViewModel terminalModel;
 
         // Terminal block
-        public readonly MyTerminalBlock Block;
+        private readonly MyTerminalBlock block;
 
         // Terminal property view models for the block
         private readonly Dictionary<string, PropertyViewModel> properties = new();
@@ -42,64 +42,61 @@ namespace EnhancedUI.ViewModel
         public string DetailedInfo { get; private set; }
 
         // Block identification
-        public long EntityId => Block.EntityId;
+        public long EntityId => block.EntityId;
         public override int GetHashCode() => EntityId.GetHashCode();
 
         // Block type
-        public string ClassName => Block.GetType().Name;
-        public string TypeId => Block.BlockDefinition.Id.TypeId.ToString();
-        public string SubtypeName => Block.BlockDefinition.Id.SubtypeName;
+        public string ClassName => block.GetType().Name;
+        public string TypeId => block.BlockDefinition.Id.TypeId.ToString();
+        public string SubtypeName => block.BlockDefinition.Id.SubtypeName;
 
+#pragma warning disable 8618
         public BlockViewModel(TerminalViewModel terminalViewModel, MyTerminalBlock terminalBlock)
         {
-            // Make the static code analysis happy
-            Name = "";
-            CustomData = "";
-            DetailedInfo = "";
-
-            Block = terminalBlock;
+            block = terminalBlock;
             terminalModel = terminalViewModel;
 
             UpdateFields();
             CreatePropertyModels();
 
-            Block.PropertiesChanged += OnPropertyChanged;
+            block.PropertiesChanged += OnPropertyChanged;
         }
+#pragma warning restore 8618
 
         private bool UpdateFields()
         {
             var changed = false;
 
-            var isValid = !Block.Closed && Block.InScene && !Block.IsPreview;
+            var isValid = !block.Closed && block.InScene && !block.IsPreview;
             if (isValid != IsValid)
             {
                 IsValid = isValid;
                 changed = true;
             }
 
-            var isFunctional = Block.IsFunctional;
+            var isFunctional = block.IsFunctional;
             if (isFunctional != IsFunctional)
             {
                 IsFunctional = isFunctional;
                 changed = true;
             }
 
-            var name = Block.CustomName.ToString();
+            var name = block.CustomName.ToString();
             if (name == "")
-                name = Block.DisplayNameText ?? Block.DisplayName;
+                name = block.DisplayNameText ?? block.DisplayName;
             if (name != Name)
             {
                 Name = name;
                 changed = true;
             }
 
-            if (CustomData != Block.CustomData)
+            if (CustomData != block.CustomData)
             {
-                CustomData = Block.CustomData;
+                CustomData = block.CustomData;
                 changed = true;
             }
 
-            var detailedInfo = Block.DetailedInfo.ToString();
+            var detailedInfo = block.DetailedInfo.ToString();
             if (detailedInfo != DetailedInfo)
             {
                 DetailedInfo = detailedInfo;
@@ -112,16 +109,16 @@ namespace EnhancedUI.ViewModel
         private void CreatePropertyModels()
         {
             var terminalProperties = new List<ITerminalProperty>();
-            Block.GetProperties(terminalProperties);
+            block.GetProperties(terminalProperties);
             foreach (var terminalProperty in terminalProperties)
             {
-                properties[terminalProperty.Id] = new PropertyViewModel(this, terminalProperty);
+                properties[terminalProperty.Id] = new PropertyViewModel(block, terminalProperty);
             }
         }
 
         public void Dispose()
         {
-            Block.PropertiesChanged -= OnPropertyChanged;
+            block.PropertiesChanged -= OnPropertyChanged;
 
             properties.Clear();
         }
@@ -142,7 +139,7 @@ namespace EnhancedUI.ViewModel
         {
             var changed = false;
             foreach (var property in properties.Values)
-                changed = property.Update() || changed;
+                changed = property.Update(block) || changed;
 
             return changed;
         }
@@ -152,22 +149,22 @@ namespace EnhancedUI.ViewModel
         {
             var changed = false;
 
-            var defaultName = Block.DisplayNameText ?? Block.DisplayName;
-            if (Name != defaultName && Name != Block.CustomName.ToString())
+            var defaultName = block.DisplayNameText ?? block.DisplayName;
+            if (Name != defaultName && Name != block.CustomName.ToString())
             {
-                Block.CustomName.Clear();
-                Block.CustomName.Append(Name);
+                block.CustomName.Clear();
+                block.CustomName.Append(Name);
                 changed = true;
             }
 
-            if (CustomData != Block.CustomName.ToString())
+            if (CustomData != block.CustomName.ToString())
             {
-                Block.CustomData = CustomData;
+                block.CustomData = CustomData;
                 changed = true;
             }
 
             foreach (var property in properties.Values)
-                changed = property.Apply() || changed;
+                changed = property.Apply(block) || changed;
 
             return changed;
         }

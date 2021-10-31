@@ -8,36 +8,30 @@ namespace EnhancedUI.ViewModel
     /* Property view model passed to JavaScript */
     public class PropertyViewModel
     {
-        private readonly BlockViewModel blockModel;
         private readonly ITerminalProperty property;
-
-        // ReSharper disable once MemberCanBePrivate.Global
-        public string Id { get; }
-
-        // ReSharper disable once MemberCanBePrivate.Global
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public string TypeName { get; }
 
         // ReSharper disable once MemberCanBePrivate.Global
         public object? Value { get; set; }
 
+        // ReSharper disable once MemberCanBePrivate.Global
+        public string Id => property.Id;
+
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public string TypeName => property.TypeName;
+
         public override int GetHashCode() => Id.GetHashCode();
 
-        public PropertyViewModel(BlockViewModel blockViewModel, ITerminalProperty terminalProperty)
+        public PropertyViewModel(MyTerminalBlock block, ITerminalProperty terminalProperty)
         {
-            blockModel = blockViewModel;
             property = terminalProperty;
-
-            Id = terminalProperty.Id;
-            TypeName = terminalProperty.TypeName;
-
-            Update();
+            Update(block);
         }
 
         /* Updates value from in-game property */
-        public bool Update()
+        public bool Update(MyTerminalBlock block)
         {
-            var value = Read(blockModel.Block, property);
+            var value = Read(block, property);
             if (value == Value)
                 return false;
 
@@ -46,9 +40,9 @@ namespace EnhancedUI.ViewModel
         }
 
         /* Applies the value to the in-game property */
-        public bool Apply()
+        public bool Apply(MyTerminalBlock block)
         {
-            return Write(blockModel.Block, property, Value);
+            return Write(block, property, Value);
         }
 
         private static object? Read(MyTerminalBlock block, ITerminalProperty property)
