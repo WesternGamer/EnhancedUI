@@ -1,28 +1,37 @@
-let latestVersion = -1;
+let displayedVersion = 0;
+let rendering = false;
 
 // Invoked from C# whenever a new game state version is available
 // noinspection JSUnusedGlobalSymbols
-async function GameStateUpdated(version) {
+async function OnGameStateChange(version) {
+    // Is the model accessible?
     if (TerminalViewModel === undefined)
         return;
 
-    let blockIds = await TerminalViewModel.GetModifiedBlockIds(latestVersion + 1);
+    // Eliminate any any duplicate or redundant calls
+    if (rendering || version <= displayedVersion)
+        return;
 
-    let blocks = $('#blocks');
-    for (const i in blockIds) {
-        let blockId = blockIds[i];
-        let blockState = await TerminalViewModel.GetBlockState(blockId);
-        renderBlock(blocks, blockState);
+    rendering = true;
+    try {
+        let blockIds = await TerminalViewModel.GetModifiedBlockIds(displayedVersion);
+        let blocks = $('#blocks');
+        for (const i in blockIds) {
+            let blockId = blockIds[i];
+            let blockState = await TerminalViewModel.GetBlockState(blockId);
+            renderBlock(blocks, blockState);
+        }
+    } finally {
+        displayedVersion = version;
+        rendering = false;
     }
-
-    latestVersion = version;
 }
 
 function renderBlock(parent, blockState) {
     if (blockState == null)
         return;
 
-    let blockViewId = 'block-' + blockState.EntityId;
+    let blockViewId = 'block-' + blockState.Id;
     let oldBlockView = $('#' + blockViewId);
 
     let blockView = $('<div />');
@@ -38,8 +47,8 @@ function renderBlock(parent, blockState) {
 
 function renderBlockInner(blockView, blockState) {
     let id = $('<div />');
-    id.addClass('entityId');
-    id.text(blockState.EntityId);
+    id.addClass('id');
+    id.text('Block #' + blockState.Id);
     blockView.append(id);
 
     let type = $('<div />');

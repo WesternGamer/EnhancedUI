@@ -5,15 +5,13 @@ namespace EnhancedUI.ViewModel
     // JavaScript API of the ViewModel
     public interface ITerminalViewModel
     {
-        // Returns the EntityId of the block the player is interacting with (terminal port opened on).
-        // Returns null if the player is not connected to a terminal port.
-        long? GetInteractedBlockId();
+        // TODO: Grids
 
-        // Returns list of EntityIds of blocks the player have access to via the interacted block.
+        // Returns list of IDs of blocks the player have access to via the interacted block.
         // Returns empty list if the player is not connected to a terminal port.
         List<long> GetBlockIds();
 
-        // Returns list of EntityIds of blocks which have had any modifications since the given version
+        // Returns list of IDs of blocks have got any modifications since the given version
         List<long> GetModifiedBlockIds(long sinceVersion);
 
         // Retrieves the view model of the specific block.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EnhancedUI.Utils;
 using Sandbox.Game.Entities.Cube;
+using VRage.Utils;
 
 namespace EnhancedUI.ViewModel
 {
@@ -16,17 +17,17 @@ namespace EnhancedUI.ViewModel
         private long latestVersion;
 
         // Event triggered on new game state versions
-        public delegate void OnNewGameStateVersionHandler(long version);
+        public delegate void OnGameStateChangedHandler(long version);
 
-        public event OnNewGameStateVersionHandler? OnNewGameStateVersion;
+        public event OnGameStateChangedHandler? OnGameStateChanged;
 
-        // View model of reachable blocks by EntityId
+        // View model of reachable blocks by ID
         private readonly Dictionary<long, BlockViewModel> blocks = new();
 
-        // Set of EntityIds of blocks modified by the game
+        // Set of IDs of blocks modified by the game
         private readonly Tracker<long> blocksModifiedByGame = new();
 
-        // Set of EntityIds of blocks modified by the user
+        // Set of IDs of blocks modified by the user
         private readonly Tracker<long> blocksModifiedByUser = new();
 
         // Terminal block the player interacts with
@@ -53,10 +54,8 @@ namespace EnhancedUI.ViewModel
         // Called when the user connects to a terminal block
         public void Connect(MyTerminalBlock block)
         {
-            if (interactedBlock?.EntityId == block.EntityId)
-            {
+            if (interactedBlock == block)
                 return;
-            }
 
             Clear();
 
@@ -99,7 +98,8 @@ namespace EnhancedUI.ViewModel
                 var version = GetNextVersion();
                 foreach (var block in interactedBlock.CubeGrid.GridSystems.TerminalSystem.Blocks)
                 {
-                    blocks[block.EntityId] = new BlockViewModel(this, block, version);
+                    var blockViewModel = new BlockViewModel(this, block, version);
+                    blocks[blockViewModel.Id] = blockViewModel;
                 }
             }
         }
@@ -133,17 +133,18 @@ namespace EnhancedUI.ViewModel
                 return;
             }
 
-            var version = GetNextVersion();
-
             bool changed;
             lock (blocks)
             {
                 changed = ApplyUserModifications();
-                changed = UpdateGameModifiedBlocks(version) || changed;
+                changed = UpdateGameModifiedBlocks() || changed;
             }
 
             if (changed)
-                OnNewGameStateVersion?.Invoke(version);
+            {
+                MyLog.Default.Info($"EnhancedUI: OnGameStateChanged({latestVersion})");
+                OnGameStateChanged?.Invoke(latestVersion);
+            }
         }
 
         private bool ApplyUserModifications()
@@ -162,11 +163,11 @@ namespace EnhancedUI.ViewModel
             return changed;
         }
 
-        private bool UpdateGameModifiedBlocks(long version)
+        private bool UpdateGameModifiedBlocks()
         {
-            var changed = false;
-
             using var context = blocksModifiedByGame.Process();
+            var version = GetNextVersion();
+            var changed = false;
             foreach (var blockId in context.Items)
             {
                 if (!blocks.TryGetValue(blockId, out var block))
@@ -180,19 +181,11 @@ namespace EnhancedUI.ViewModel
 
         #region JavaScript API
 
-        public long? GetInteractedBlockId()
-        {
-            lock (blocks)
-            {
-                return interactedBlock?.EntityId;
-            }
-        }
-
         public List<long> GetBlockIds()
         {
             lock (blocks)
             {
-                return blocks.Values.Select(b => b.EntityId).ToList();
+                return blocks.Values.Select(b => b.Id).ToList();
             }
         }
 
@@ -200,7 +193,9 @@ namespace EnhancedUI.ViewModel
         {
             lock (blocks)
             {
-                return blocks.Values.Where(b => b.Version >= sinceVersion).Select(b => b.EntityId).ToList();
+                var blockIds =blocks.Values.Where(b => b.Version > sinceVersion).Select(b => b.Id).ToList();
+                MyLog.Default.Info($"EnhancedUI: GetModifiedBlockIds({sinceVersion}) => {blockIds.Count} blocks");
+                return blockIds;
             }
         }
 
@@ -208,7 +203,12 @@ namespace EnhancedUI.ViewModel
         {
             lock (blocks)
             {
-                return blocks.GetValueOrDefault(blockId);
+                var blockViewModel = blocks.GetValueOrDefault(blockId);
+                MyLog.Default.Info(
+                    blockViewModel == null
+                        ? $"EnhancedUI: GetBlockState({blockId}) => NOT FOUND"
+                        : $"EnhancedUI: GetBlockState({blockId}) => {blockViewModel}");
+                return blockViewModel;
             }
         }
 

@@ -1,20 +1,30 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using EnhancedUI.Utils;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI.Interfaces;
+using VRage.Utils;
 
 namespace EnhancedUI.ViewModel
 {
     // Block view model passed to JavaScript
     public class BlockViewModel : IDisposable
     {
+        private static long nextId;
+
         // Owning block view model
         private readonly TerminalViewModel terminalModel;
 
         // Terminal block
         private readonly MyTerminalBlock block;
 
+        // Identification
+        public long Id { get; }
+        public override int GetHashCode() => Id.GetHashCode();
+
         // State version
+        // ReSharper disable once MemberCanBePrivate.Global
         public long Version { get; private set; }
 
         // Terminal property view models for the block
@@ -45,21 +55,35 @@ namespace EnhancedUI.ViewModel
         // ReSharper disable once MemberCanBePrivate.Global
         public string DetailedInfo { get; private set; }
 
-        // Block identification
-        public long EntityId => block.EntityId;
-        public override int GetHashCode() => EntityId.GetHashCode();
-
         // Block type
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once MemberCanBePrivate.Global
         public string ClassName => block.GetType().Name;
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once MemberCanBePrivate.Global
         public string TypeId => block.BlockDefinition.Id.TypeId.ToString();
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once MemberCanBePrivate.Global
         public string SubtypeName => block.BlockDefinition.Id.SubtypeName;
+
+        // Geometry
+        // ReSharper disable once UnusedMember.Global
+        public int[] Position => block.Position.ToArray();
+        // ReSharper disable once UnusedMember.Global
+        public int[] Size => block.BlockDefinition.Size.ToArray();
+
+        public override string ToString() => $"BlockViewModel #{Id} at {block.Position} is {SubtypeName} \"{Name}\"";
 
 #pragma warning disable 8618
         public BlockViewModel(TerminalViewModel terminalViewModel, MyTerminalBlock terminalBlock, long version)
         {
+            Id = Interlocked.Increment(ref nextId);
+
             terminalModel = terminalViewModel;
             block = terminalBlock;
             Version = version;
+
+            MyLog.Default.Info($"EnhancedUI: {this}");
 
             UpdateFields(version);
             CreatePropertyModels();
@@ -133,7 +157,7 @@ namespace EnhancedUI.ViewModel
 
         private void OnPropertyChanged(MyTerminalBlock obj)
         {
-            terminalModel.NotifyGameModifiedBlock(EntityId);
+            terminalModel.NotifyGameModifiedBlock(Id);
         }
 
         // Updates model from game state, returns true if anything has changed
@@ -203,7 +227,7 @@ namespace EnhancedUI.ViewModel
 
         private void NotifyChange()
         {
-            terminalModel.NotifyUserModifiedBlock(EntityId);
+            terminalModel.NotifyUserModifiedBlock(Id);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace EnhancedUI.Gui
 
             if (TerminalViewModel.Instance != null)
             {
-                TerminalViewModel.Instance.OnNewGameStateVersion += OnNewGameStateVersion;
+                TerminalViewModel.Instance.OnGameStateChanged += OnGameStateChanged;
             }
         }
 
@@ -61,7 +61,7 @@ namespace EnhancedUI.Gui
         {
             if (TerminalViewModel.Instance != null)
             {
-                TerminalViewModel.Instance.OnNewGameStateVersion -= OnNewGameStateVersion;
+                TerminalViewModel.Instance.OnGameStateChanged -= OnGameStateChanged;
             }
 
             if (hooksInstalled)
@@ -149,12 +149,12 @@ namespace EnhancedUI.Gui
             videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoNamePrefix + name, 0);
         }
 
-        private void OnNewGameStateVersion(long version)
+        private void OnGameStateChanged(long version)
         {
             if (!IsBrowserInitialized)
                 return;
 
-            chromium?.Browser.ExecuteScriptAsync($"GameStateUpdated({version})");
+            chromium?.Browser.ExecuteScriptAsync($"OnGameStateChange({version})");
         }
 
         private void Navigate()
