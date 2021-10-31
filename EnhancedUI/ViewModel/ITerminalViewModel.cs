@@ -6,7 +6,10 @@ namespace EnhancedUI.ViewModel
     public interface ITerminalViewModel
     {
         // TODO: Grid API
-        // TODO: Provide a way to query the ID of the interacted block.
+
+        // Returns the ID of the interacted block the player is directly connected to.
+        // Returns null if the player is not connected to a terminal port.
+        long? GetInteractedBlockId();
 
         // Returns list of IDs of blocks the player have access to via the interacted block.
         // Returns empty list if the player is not connected to a terminal port.
@@ -25,7 +28,7 @@ namespace EnhancedUI.ViewModel
         // Modifies a block's CustomData, actual modification will happen on the next game update
         void SetBlockCustomData(long blockId, string customData);
 
-        // Modified a property value, actual modification will happen on the next game update
+        // Modifies a block property's value, actual modification will happen on the next game update
         void SetBlockProperty(long blockId, string propertyId, object? value);
 
         // Returns the named groups of blocks the player have access to via the interacted block.

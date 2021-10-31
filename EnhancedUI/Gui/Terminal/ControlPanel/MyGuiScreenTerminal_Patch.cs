@@ -42,9 +42,19 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
 
             // Focus the browser "control" by default when the tab is selected (see the original function)
             ___m_defaultFocusedControlKeyboard[MyTerminalPageEnum.ControlPanel] = control;
-            ___m_defaultFocusedControlGamepad[MyTerminalPageEnum.ControlPanel] = control;
+
+            // FIXME: Looks like this is not needed, since it does not present in the original code either.
+            //___m_defaultFocusedControlGamepad[MyTerminalPageEnum.ControlPanel] = control;
 
             return false;
         }
+
+        [HarmonyPatch("AttachGroups")]
+        [HarmonyPrefix]
+        private static bool AttachGroupsPatch() => false;
+
+        [HarmonyPatch("DetachGroups")]
+        [HarmonyPrefix]
+        private static bool DetachGroupsPatch() => false;
     }
 }

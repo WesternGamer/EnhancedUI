@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using EnhancedUI.Utils;
 using Sandbox.Game.Entities.Cube;
 using VRage.Utils;
@@ -11,10 +12,6 @@ namespace EnhancedUI.ViewModel
     {
         // Model is a singleton
         public static TerminalViewModel? Instance;
-
-        // Logical clock, model state versions for browser synchronization
-        private readonly object latestVersionLock = new();
-        private long latestVersion;
 
         // Event triggered on new game state versions
         public delegate void OnGameStateChangedHandler(long version);
@@ -33,9 +30,14 @@ namespace EnhancedUI.ViewModel
         // Terminal block the player interacts with
         // Set to null if the player is not connected to any grids
         private MyTerminalBlock? interactedBlock;
+        private long? interactedBlockId;
 
         // True if the player is connected to a terminal system
         private bool IsConnected => interactedBlock?.IsFunctional == true;
+
+        // Logical clock, model state version number for browser synchronization
+        private long latestVersion;
+        public long GetNextVersion() => Interlocked.Increment(ref latestVersion);
 
         public TerminalViewModel()
         {
@@ -83,6 +85,7 @@ namespace EnhancedUI.ViewModel
                 blocks.Clear();
 
                 interactedBlock = null;
+                interactedBlockId = null;
             }
         }
 
@@ -100,15 +103,10 @@ namespace EnhancedUI.ViewModel
                 {
                     var blockViewModel = new BlockViewModel(this, block, version);
                     blocks[blockViewModel.Id] = blockViewModel;
-                }
-            }
-        }
 
-        private long GetNextVersion()
-        {
-            lock (latestVersionLock)
-            {
-                return ++latestVersion;
+                    if (block == interactedBlock)
+                        interactedBlockId = blockViewModel.Id;
+                }
             }
         }
 
@@ -133,53 +131,52 @@ namespace EnhancedUI.ViewModel
                 return;
             }
 
-            bool changed;
+            ApplyUserModifications();
+
+            long versionBefore = latestVersion;
+
             lock (blocks)
             {
-                var version = GetNextVersion();
-                changed = UpdateGameModifiedBlocks(version);
-                changed = ApplyUserModifications(version) || changed;
+                UpdateGameModifiedBlocks();
             }
 
-            if (changed)
+            if (latestVersion != versionBefore)
             {
                 MyLog.Default.Debug($"EnhancedUI: OnGameStateChanged({latestVersion})");
                 OnGameStateChanged?.Invoke(latestVersion);
             }
         }
 
-        private bool ApplyUserModifications(long version)
+        private void ApplyUserModifications()
         {
-            var changed = false;
-
             using var context = blocksModifiedByUser.Process();
             foreach (var blockId in context.Items)
             {
                 if (!blocks.TryGetValue(blockId, out var block))
                     continue;
 
-                changed = block.Apply(version) || changed;
+                block.Apply();
             }
-
-            return changed;
         }
 
-        private bool UpdateGameModifiedBlocks(long version)
+        private void UpdateGameModifiedBlocks()
         {
             using var context = blocksModifiedByGame.Process();
-            var changed = false;
             foreach (var blockId in context.Items)
             {
                 if (!blocks.TryGetValue(blockId, out var block))
                     continue;
 
-                changed = block.Update(version) || changed;
+                block.Update();
             }
-
-            return changed;
         }
 
         #region JavaScript API
+
+        public long? GetInteractedBlockId()
+        {
+            return interactedBlockId;
+        }
 
         public List<long> GetBlockIds()
         {

@@ -59,9 +59,11 @@ namespace EnhancedUI.ViewModel
         // ReSharper disable once UnusedMember.Global
         // ReSharper disable once MemberCanBePrivate.Global
         public string ClassName => block.GetType().Name;
+
         // ReSharper disable once UnusedMember.Global
         // ReSharper disable once MemberCanBePrivate.Global
         public string TypeId => block.BlockDefinition.Id.TypeId.ToString();
+
         // ReSharper disable once UnusedMember.Global
         // ReSharper disable once MemberCanBePrivate.Global
         public string SubtypeName => block.BlockDefinition.Id.SubtypeName;
@@ -69,6 +71,7 @@ namespace EnhancedUI.ViewModel
         // Geometry
         // ReSharper disable once UnusedMember.Global
         public int[] Position => block.Position.ToArray();
+
         // ReSharper disable once UnusedMember.Global
         public int[] Size => block.BlockDefinition.Size.ToArray();
 
@@ -85,17 +88,15 @@ namespace EnhancedUI.ViewModel
 
             MyLog.Default.Info($"EnhancedUI: {this}");
 
-            UpdateFields(version);
+            UpdateFields(true);
             CreatePropertyModels();
 
             block.PropertiesChanged += OnPropertyChanged;
         }
 #pragma warning restore 8618
 
-        private bool UpdateFields(long version)
+        private void UpdateFields(bool changed = false)
         {
-            var changed = false;
-
             var isValid = !block.Closed && block.InScene && !block.IsPreview;
             if (isValid != IsValid)
             {
@@ -133,9 +134,7 @@ namespace EnhancedUI.ViewModel
             }
 
             if (changed)
-                Version = version;
-
-            return changed;
+                Version = terminalModel.GetNextVersion();
         }
 
         private void CreatePropertyModels()
@@ -161,50 +160,39 @@ namespace EnhancedUI.ViewModel
         }
 
         // Updates model from game state, returns true if anything has changed
-        public bool Update(long version)
+        public void Update()
         {
-            var changed = UpdateFields(version);
-            return UpdateProperties(version) || changed;
+            UpdateFields();
+            UpdateProperties();
         }
 
-        private bool UpdateProperties(long version)
+        private void UpdateProperties()
         {
             var changed = false;
             foreach (var property in Properties.Values)
                 changed = property.Update(block) || changed;
 
             if (changed)
-                Version = version;
-
-            return changed;
+                Version = terminalModel.GetNextVersion();
         }
 
         // Applies model changes to game state, returns true if anything has changed
-        public bool Apply(long version)
+        public void Apply()
         {
-            var changed = false;
-
             var defaultName = block.DisplayNameText ?? block.DisplayName;
             if (Name != defaultName && Name != block.CustomName.ToString())
             {
                 block.CustomName.Clear();
                 block.CustomName.Append(Name);
-                changed = true;
             }
 
             if (CustomData != block.CustomData.ToString())
             {
                 block.CustomData = CustomData;
-                changed = true;
             }
 
             foreach (var property in Properties.Values)
-                changed = property.Apply(block) || changed;
-
-            if (changed)
-                Version = version;
-
-            return changed;
+                property.Apply(block);
         }
 
         public void SetName(string name)
@@ -230,6 +218,7 @@ namespace EnhancedUI.ViewModel
 
         private void NotifyChange()
         {
+            Version = terminalModel.GetNextVersion();
             terminalModel.NotifyUserModifiedBlock(Id);
         }
     }

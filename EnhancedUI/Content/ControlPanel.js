@@ -5,7 +5,7 @@ let rendering = false;
 // noinspection JSUnusedGlobalSymbols
 async function OnGameStateChange(version) {
     // Is the model accessible?
-    if (TerminalViewModel === undefined)
+    if (typeof TerminalViewModel === typeof undefined)
         return;
 
     // Eliminate any any duplicate or redundant calls
@@ -123,7 +123,7 @@ function renderBlockProperty(parent, blockId, propertyState) {
             value.append(input);
 
             value.bind('change', async function (e) {
-                await TerminalViewModel.SetBlockProperty(blockId, propertyId, parseInt(input.value()));
+                await TerminalViewModel.SetBlockProperty(blockId, propertyId, parseInt(input.val()));
             });
 
             break;
@@ -143,7 +143,7 @@ function renderBlockProperty(parent, blockId, propertyState) {
             value.append(input);
 
             value.bind('change', async function (e) {
-                await TerminalViewModel.SetBlockProperty(blockId, propertyId, parseFloat(input.value()));
+                await TerminalViewModel.SetBlockProperty(blockId, propertyId, parseFloat(input.val()));
             });
 
             break;
@@ -162,7 +162,7 @@ function renderBlockProperty(parent, blockId, propertyState) {
             value.append(input);
 
             value.bind('change', async function (e) {
-                await TerminalViewModel.SetBlockProperty(blockId, propertyId, input.value());
+                await TerminalViewModel.SetBlockProperty(blockId, propertyId, input.val());
             });
 
             break;
@@ -183,7 +183,7 @@ function renderBlockProperty(parent, blockId, propertyState) {
             value.append(input);
 
             value.bind('change', async function (e) {
-                await TerminalViewModel.SetBlockProperty(blockId, propertyId, input.value());
+                await TerminalViewModel.SetBlockProperty(blockId, propertyId, input.val());
             });
 
             break;
