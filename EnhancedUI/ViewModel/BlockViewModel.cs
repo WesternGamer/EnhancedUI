@@ -18,7 +18,8 @@ namespace EnhancedUI.ViewModel
         public long Version { get; private set; }
 
         // Terminal property view models for the block
-        private readonly Dictionary<string, PropertyViewModel> properties = new();
+        // ReSharper disable once MemberCanBePrivate.Global
+        public readonly Dictionary<string, PropertyViewModel> Properties = new();
 
         // True as long as the block is valid (not closed),
         // set to false if a block is destroyed
@@ -119,7 +120,7 @@ namespace EnhancedUI.ViewModel
             block.GetProperties(terminalProperties);
             foreach (var terminalProperty in terminalProperties)
             {
-                properties[terminalProperty.Id] = new PropertyViewModel(block, terminalProperty);
+                Properties[terminalProperty.Id] = new PropertyViewModel(block, terminalProperty);
             }
         }
 
@@ -127,7 +128,7 @@ namespace EnhancedUI.ViewModel
         {
             block.PropertiesChanged -= OnPropertyChanged;
 
-            properties.Clear();
+            Properties.Clear();
         }
 
         private void OnPropertyChanged(MyTerminalBlock obj)
@@ -145,7 +146,7 @@ namespace EnhancedUI.ViewModel
         private bool UpdateProperties(long version)
         {
             var changed = false;
-            foreach (var property in properties.Values)
+            foreach (var property in Properties.Values)
                 changed = property.Update(block) || changed;
 
             if (changed)
@@ -173,7 +174,7 @@ namespace EnhancedUI.ViewModel
                 changed = true;
             }
 
-            foreach (var property in properties.Values)
+            foreach (var property in Properties.Values)
                 changed = property.Apply(block) || changed;
 
             return changed;
@@ -193,7 +194,7 @@ namespace EnhancedUI.ViewModel
 
         public void SetProperty(string propertyId, object? value)
         {
-            if (!properties.TryGetValue(propertyId, out var property))
+            if (!Properties.TryGetValue(propertyId, out var property))
                 return;
 
             property.Value = value;

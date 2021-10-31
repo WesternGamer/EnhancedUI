@@ -1,23 +1,37 @@
-var blockStates = null;
+let latestVersion = -1;
 
-// Invoked from C#
+// Invoked from C# whenever a new game state version is available
 // noinspection JSUnusedGlobalSymbols
-async function stateUpdated() {
-    const blockViews = $('#blocks');
-    blockViews.empty();
+async function GameStateUpdated(version) {
+    let blockIds = await TerminalViewModel.GetModifiedBlockIds(latestVersion + 1);
 
-    blockStates = await state.GetBlockStates();
-    for (const entityId in blockStates) {
-        renderBlock(blockViews, blockStates[entityId]);
+    const $blocks = $('#blocks');
+    for (const i in blockIds) {
+        let blockId = blockIds[i];
+        let blockState = await TerminalViewModel.GetBlockState(blockId);
+        renderBlock($blocks, blockState);
     }
 }
 
 function renderBlock(parent, blockState) {
+    if (blockState == null)
+        return;
+
+    let blockViewId = 'block-' + blockState.EntityId;
+    let oldBlockView = $('#' + blockViewId);
+
     let blockView = $('<div />');
     blockView.addClass('block');
-    blockView.attr('id', 'block-' + blockState.EntityId);
+    blockView.attr('id', blockViewId);
     renderBlockInner(blockView, blockState);
-    parent.append(blockView);
+
+    if (oldBlockView.length === 0)
+        parent.append(blockView);
+    else
+        oldBlockView.replaceWith(blockView);
+
+    if (blockState.Version > latestVersion)
+        latestVersion = blockState.Version;
 }
 
 function renderBlockInner(blockView, blockState) {
@@ -38,8 +52,8 @@ function renderBlockInner(blockView, blockState) {
 
     let properties = $('<div />')
     properties.addClass('properties');
-    for (const propertyId in blockState.PropertyStates) {
-        renderBlockProperty(properties, blockState.PropertyStates[propertyId])
+    for (const propertyId in blockState.Properties) {
+        renderBlockProperty(properties, blockState.Properties[propertyId])
     }
     blockView.append(properties)
 

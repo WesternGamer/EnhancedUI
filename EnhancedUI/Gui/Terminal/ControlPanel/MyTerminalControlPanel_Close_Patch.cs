@@ -17,10 +17,6 @@ namespace EnhancedUI.Gui.Terminal.ControlPanel
         }
 
         // ReSharper disable once UnusedMember.Local
-        private static bool Prefix()
-        {
-            TerminalViewModel.Instance?.Clear();
-            return false;
-        }
+        private static bool Prefix() => false;
     }
 }

@@ -50,10 +50,20 @@ namespace EnhancedUI.Gui
                 InstallHooks();
                 hooksInstalled = true;
             }
+
+            if (TerminalViewModel.Instance != null)
+            {
+                TerminalViewModel.Instance.OnNewGameStateVersion += OnNewGameStateVersion;
+            }
         }
 
         ~ChromiumGuiControl()
         {
+            if (TerminalViewModel.Instance != null)
+            {
+                TerminalViewModel.Instance.OnNewGameStateVersion -= OnNewGameStateVersion;
+            }
+
             if (hooksInstalled)
             {
                 UninstallHooks();
@@ -137,11 +147,6 @@ namespace EnhancedUI.Gui
             Navigate();
 
             videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoNamePrefix + name, 0);
-
-            if (TerminalViewModel.Instance != null)
-            {
-                TerminalViewModel.Instance.OnNewGameStateVersion += OnNewGameStateVersion;
-            }
         }
 
         private void OnNewGameStateVersion(long version)

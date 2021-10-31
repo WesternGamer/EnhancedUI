@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CefSharp;
-using CefSharp.OffScreen;
 using EnhancedUI.Utils;
 using Sandbox.Game.Entities.Cube;
 
@@ -14,12 +12,12 @@ namespace EnhancedUI.ViewModel
         public static TerminalViewModel? Instance;
 
         // Logical clock, model state versions for browser synchronization
-        private long latestVersion = 0;
-        private object latestVersionLock = new();
+        private readonly object latestVersionLock = new();
+        private long latestVersion;
 
         // Event triggered on new game state versions
         public delegate void OnNewGameStateVersionHandler(long version);
-        public event OnNewGameStateVersionHandler OnNewGameStateVersion;
+        public event OnNewGameStateVersionHandler? OnNewGameStateVersion;
 
         // View model of reachable blocks by EntityId
         private readonly Dictionary<long, BlockViewModel> blocks = new();
@@ -65,12 +63,12 @@ namespace EnhancedUI.ViewModel
 
             CreateBlockViewModels();
 
-            // TODO: Listen on grid modification (add/remove blocks) and split events!
+            // TODO: Listen on grid modifications (add/remove blocks) and splits!
             // TODO: Collect named groups!
         }
 
         // Called to clear the current view model on closing the terminal
-        public void Clear()
+        private void Clear()
         {
             if (interactedBlock == null)
                 return;
@@ -105,7 +103,7 @@ namespace EnhancedUI.ViewModel
             }
         }
 
-        public long GetNextVersion()
+        private long GetNextVersion()
         {
             lock (latestVersionLock)
             {
@@ -142,7 +140,7 @@ namespace EnhancedUI.ViewModel
             }
 
             if (changed)
-                OnNewGameStateVersion.Invoke(version);
+                OnNewGameStateVersion?.Invoke(version);
         }
 
         private bool ApplyUserModifications()
@@ -195,19 +193,19 @@ namespace EnhancedUI.ViewModel
             }
         }
 
-        public BlockViewModel? GetBlock(long blockId)
-        {
-            lock (blocks)
-            {
-                return blocks.GetValueOrDefault(blockId);
-            }
-        }
-
         public List<long> GetModifiedBlockIds(long sinceVersion)
         {
             lock (blocks)
             {
                 return blocks.Values.Where(b => b.Version >= sinceVersion).Select(b => b.EntityId).ToList();
+            }
+        }
+
+        public BlockViewModel? GetBlockState(long blockId)
+        {
+            lock (blocks)
+            {
+                return blocks.GetValueOrDefault(blockId);
             }
         }
 
