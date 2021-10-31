@@ -47,8 +47,8 @@ namespace EnhancedUI.Gui
 
             if (!hooksInstalled)
             {
-                InstallHooks();
-                hooksInstalled = true;
+                // InstallHooks();
+                // hooksInstalled = true;
             }
 
             if (TerminalViewModel.Instance != null)
@@ -77,7 +77,7 @@ namespace EnhancedUI.Gui
 
             // Create the player only when the exact size of the control is already known
             // FIXME: Verify whether we need to support control re-sizing
-            CreatePlayerIfNeeded();
+            // CreatePlayerIfNeeded();
         }
 
         private void CreatePlayerIfNeeded()
