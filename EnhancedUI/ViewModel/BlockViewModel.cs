@@ -180,7 +180,7 @@ namespace EnhancedUI.ViewModel
         }
 
         // Applies model changes to game state, returns true if anything has changed
-        public bool Apply()
+        public bool Apply(long version)
         {
             var changed = false;
 
@@ -192,7 +192,7 @@ namespace EnhancedUI.ViewModel
                 changed = true;
             }
 
-            if (CustomData != block.CustomName.ToString())
+            if (CustomData != block.CustomData.ToString())
             {
                 block.CustomData = CustomData;
                 changed = true;
@@ -200,6 +200,9 @@ namespace EnhancedUI.ViewModel
 
             foreach (var property in Properties.Values)
                 changed = property.Apply(block) || changed;
+
+            if (changed)
+                Version = version;
 
             return changed;
         }

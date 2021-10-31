@@ -136,8 +136,9 @@ namespace EnhancedUI.ViewModel
             bool changed;
             lock (blocks)
             {
-                changed = ApplyUserModifications();
-                changed = UpdateGameModifiedBlocks() || changed;
+                var version = GetNextVersion();
+                changed = UpdateGameModifiedBlocks(version);
+                changed = ApplyUserModifications(version) || changed;
             }
 
             if (changed)
@@ -147,7 +148,7 @@ namespace EnhancedUI.ViewModel
             }
         }
 
-        private bool ApplyUserModifications()
+        private bool ApplyUserModifications(long version)
         {
             var changed = false;
 
@@ -157,16 +158,15 @@ namespace EnhancedUI.ViewModel
                 if (!blocks.TryGetValue(blockId, out var block))
                     continue;
 
-                changed = block.Apply() || changed;
+                changed = block.Apply(version) || changed;
             }
 
             return changed;
         }
 
-        private bool UpdateGameModifiedBlocks()
+        private bool UpdateGameModifiedBlocks(long version)
         {
             using var context = blocksModifiedByGame.Process();
-            var version = GetNextVersion();
             var changed = false;
             foreach (var blockId in context.Items)
             {
@@ -234,7 +234,7 @@ namespace EnhancedUI.ViewModel
             }
         }
 
-        public void SetProperty(long blockId, string propertyId, object? value)
+        public void SetBlockProperty(long blockId, string propertyId, object? value)
         {
             lock (blocks)
             {

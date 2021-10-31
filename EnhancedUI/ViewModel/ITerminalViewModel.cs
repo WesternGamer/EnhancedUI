@@ -25,7 +25,7 @@ namespace EnhancedUI.ViewModel
         void SetBlockCustomData(long blockId, string customData);
 
         // Modified a property value, actual modification will happen on the next game update
-        void SetProperty(long blockId, string propertyId, object? value);
+        void SetBlockProperty(long blockId, string propertyId, object? value);
 
         // Returns the named groups of blocks the player have access to via the interacted block.
         // Returns an empty dictionary if the player is not connected to a terminal port.
