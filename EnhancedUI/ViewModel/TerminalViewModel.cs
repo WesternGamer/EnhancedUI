@@ -17,6 +17,7 @@ namespace EnhancedUI.ViewModel
 
         // Event triggered on new game state versions
         public delegate void OnNewGameStateVersionHandler(long version);
+
         public event OnNewGameStateVersionHandler? OnNewGameStateVersion;
 
         // View model of reachable blocks by EntityId
