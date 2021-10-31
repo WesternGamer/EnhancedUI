@@ -14,6 +14,9 @@ namespace EnhancedUI.ViewModel
         // Terminal block
         private readonly MyTerminalBlock block;
 
+        // State version
+        public long Version { get; private set; }
+
         // Terminal property view models for the block
         private readonly Dictionary<string, PropertyViewModel> properties = new();
 
@@ -51,19 +54,20 @@ namespace EnhancedUI.ViewModel
         public string SubtypeName => block.BlockDefinition.Id.SubtypeName;
 
 #pragma warning disable 8618
-        public BlockViewModel(TerminalViewModel terminalViewModel, MyTerminalBlock terminalBlock)
+        public BlockViewModel(TerminalViewModel terminalViewModel, MyTerminalBlock terminalBlock, long version)
         {
-            block = terminalBlock;
             terminalModel = terminalViewModel;
+            block = terminalBlock;
+            Version = version;
 
-            UpdateFields();
+            UpdateFields(version);
             CreatePropertyModels();
 
             block.PropertiesChanged += OnPropertyChanged;
         }
 #pragma warning restore 8618
 
-        private bool UpdateFields()
+        private bool UpdateFields(long version)
         {
             var changed = false;
 
@@ -103,6 +107,9 @@ namespace EnhancedUI.ViewModel
                 changed = true;
             }
 
+            if (changed)
+                Version = version;
+
             return changed;
         }
 
@@ -129,17 +136,20 @@ namespace EnhancedUI.ViewModel
         }
 
         // Updates model from game state, returns true if anything has changed
-        public bool Update()
+        public bool Update(long version)
         {
-            var changed = UpdateFields();
-            return UpdateProperties() || changed;
+            var changed = UpdateFields(version);
+            return UpdateProperties(version) || changed;
         }
 
-        private bool UpdateProperties()
+        private bool UpdateProperties(long version)
         {
             var changed = false;
             foreach (var property in properties.Values)
                 changed = property.Update(block) || changed;
+
+            if (changed)
+                Version = version;
 
             return changed;
         }

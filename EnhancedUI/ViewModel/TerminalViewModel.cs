@@ -13,6 +13,14 @@ namespace EnhancedUI.ViewModel
         // Model is a singleton
         public static TerminalViewModel? Instance;
 
+        // Logical clock, model state versions for browser synchronization
+        private long latestVersion = 0;
+        private object latestVersionLock = new();
+
+        // Event triggered on new game state versions
+        public delegate void OnNewGameStateVersionHandler(long version);
+        public event OnNewGameStateVersionHandler OnNewGameStateVersion;
+
         // View model of reachable blocks by EntityId
         private readonly Dictionary<long, BlockViewModel> blocks = new();
 
@@ -21,9 +29,6 @@ namespace EnhancedUI.ViewModel
 
         // Set of EntityIds of blocks modified by the user
         private readonly Tracker<long> blocksModifiedByUser = new();
-
-        // Set of EntityIds of blocks need to be refreshed in the browser
-        private readonly Tracker<long> blocksToRefresh = new();
 
         // Terminal block the player interacts with
         // Set to null if the player is not connected to any grids
@@ -92,10 +97,19 @@ namespace EnhancedUI.ViewModel
                 if (interactedBlock == null || !IsConnected)
                     return;
 
+                var version = GetNextVersion();
                 foreach (var block in interactedBlock.CubeGrid.GridSystems.TerminalSystem.Blocks)
                 {
-                    blocks[block.EntityId] = new BlockViewModel(this, block);
+                    blocks[block.EntityId] = new BlockViewModel(this, block, version);
                 }
+            }
+        }
+
+        public long GetNextVersion()
+        {
+            lock (latestVersionLock)
+            {
+                return ++latestVersion;
             }
         }
 
@@ -118,45 +132,49 @@ namespace EnhancedUI.ViewModel
                 return;
             }
 
+            var version = GetNextVersion();
+
+            bool changed;
             lock (blocks)
             {
-                UpdateGameModifiedBlocks();
-                ApplyUserModifications();
+                changed = ApplyUserModifications();
+                changed = UpdateGameModifiedBlocks(version) || changed;
             }
+
+            if (changed)
+                OnNewGameStateVersion.Invoke(version);
         }
 
-        internal void NotifyBrowser(ChromiumWebBrowser browser)
+        private bool ApplyUserModifications()
         {
-            if (blocksToRefresh.Count > 0)
-            {
-                browser.ExecuteScriptAsync("NotifyBrowserBlocksToRefresh()");
-            }
-        }
+            var changed = false;
 
-        private void UpdateGameModifiedBlocks()
-        {
-            using var context = blocksModifiedByGame.Process();
-            foreach (var blockId in context.Items)
-            {
-                if (!blocks.TryGetValue(blockId, out var block))
-                    continue;
-
-                if (block.Update())
-                    blocksToRefresh.Add(blockId);
-            }
-        }
-
-        private void ApplyUserModifications()
-        {
             using var context = blocksModifiedByUser.Process();
             foreach (var blockId in context.Items)
             {
                 if (!blocks.TryGetValue(blockId, out var block))
                     continue;
 
-                if (block.Apply())
-                    blocksToRefresh.Add(blockId);
+                changed = block.Apply() || changed;
             }
+
+            return changed;
+        }
+
+        private bool UpdateGameModifiedBlocks(long version)
+        {
+            var changed = false;
+
+            using var context = blocksModifiedByGame.Process();
+            foreach (var blockId in context.Items)
+            {
+                if (!blocks.TryGetValue(blockId, out var block))
+                    continue;
+
+                changed = block.Update(version) || changed;
+            }
+
+            return changed;
         }
 
         #region JavaScript API
@@ -185,12 +203,11 @@ namespace EnhancedUI.ViewModel
             }
         }
 
-        public List<long> GetDirtyBlockIds()
+        public List<long> GetModifiedBlockIds(long sinceVersion)
         {
             lock (blocks)
             {
-                using var context = blocksToRefresh.Process();
-                return context.Items.ToList();
+                return blocks.Values.Where(b => b.Version >= sinceVersion).Select(b => b.EntityId).ToList();
             }
         }
 

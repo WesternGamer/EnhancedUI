@@ -8,7 +8,7 @@ namespace EnhancedUI.Utils
     // then atomically processing the collected ones
     public class Tracker<T>
     {
-        private readonly Mutex mutex = new ();
+        private readonly Mutex mutex = new();
         private readonly HashSet<T> items = new();
 
         public Context Process()
@@ -45,7 +45,7 @@ namespace EnhancedUI.Utils
             }
         }
 
-        public class Context: IDisposable
+        public class Context : IDisposable
         {
             private readonly Tracker<T> tracker;
 

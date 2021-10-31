@@ -17,8 +17,8 @@ namespace EnhancedUI.ViewModel
         // Returns null if the player is not connected to a terminal port.
         BlockViewModel? GetBlock(long blockId);
 
-        // Returns list of EntityIds of blocks which have modifications and should be refreshed
-        List<long> GetDirtyBlockIds();
+        // Returns list of EntityIds of blocks which have had any modifications since the given version
+        List<long> GetModifiedBlockIds(long sinceVersion);
 
         // Modifies a block's Name, actual modification will happen on the next game update
         void SetBlockName(long blockId, string name);

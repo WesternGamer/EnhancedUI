@@ -137,6 +137,19 @@ namespace EnhancedUI.Gui
             Navigate();
 
             videoId = MyRenderProxy.PlayVideo(VideoPlayPatch.VideoNamePrefix + name, 0);
+
+            if (TerminalViewModel.Instance != null)
+            {
+                TerminalViewModel.Instance.OnNewGameStateVersion += OnNewGameStateVersion;
+            }
+        }
+
+        private void OnNewGameStateVersion(long version)
+        {
+            if (!IsBrowserInitialized)
+                return;
+
+            chromium?.Browser.ExecuteScriptAsync($"GameStateUpdated({version})");
         }
 
         private void Navigate()
@@ -201,15 +214,5 @@ namespace EnhancedUI.Gui
         {
             MyGuiManager.DrawBorders(GetPositionAbsoluteTopLeft(), Size, Color.White, 1);
         }
-
-        public override void Update()
-        {
-            base.Update();
-
-            if (chromium == null || !IsBrowserInitialized)
-                return;
-
-            TerminalViewModel.Instance?.NotifyBrowser(chromium.Browser);
-        }
-    }
+   }
 }
