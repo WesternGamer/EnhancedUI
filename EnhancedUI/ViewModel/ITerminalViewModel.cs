@@ -5,7 +5,8 @@ namespace EnhancedUI.ViewModel
     // JavaScript API of the ViewModel
     public interface ITerminalViewModel
     {
-        // TODO: Grids
+        // TODO: Grid API
+        // TODO: Provide a way to query the ID of the interacted block.
 
         // Returns list of IDs of blocks the player have access to via the interacted block.
         // Returns empty list if the player is not connected to a terminal port.

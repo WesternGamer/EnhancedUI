@@ -143,7 +143,7 @@ namespace EnhancedUI.ViewModel
 
             if (changed)
             {
-                MyLog.Default.Info($"EnhancedUI: OnGameStateChanged({latestVersion})");
+                MyLog.Default.Debug($"EnhancedUI: OnGameStateChanged({latestVersion})");
                 OnGameStateChanged?.Invoke(latestVersion);
             }
         }
@@ -194,7 +194,7 @@ namespace EnhancedUI.ViewModel
             lock (blocks)
             {
                 var blockIds =blocks.Values.Where(b => b.Version > sinceVersion).Select(b => b.Id).ToList();
-                MyLog.Default.Info($"EnhancedUI: GetModifiedBlockIds({sinceVersion}) => {blockIds.Count} blocks");
+                MyLog.Default.Debug($"EnhancedUI: GetModifiedBlockIds({sinceVersion}) => {blockIds.Count} blocks");
                 return blockIds;
             }
         }
@@ -204,7 +204,7 @@ namespace EnhancedUI.ViewModel
             lock (blocks)
             {
                 var blockViewModel = blocks.GetValueOrDefault(blockId);
-                MyLog.Default.Info(
+                MyLog.Default.Debug(
                     blockViewModel == null
                         ? $"EnhancedUI: GetBlockState({blockId}) => NOT FOUND"
                         : $"EnhancedUI: GetBlockState({blockId}) => {blockViewModel}");
