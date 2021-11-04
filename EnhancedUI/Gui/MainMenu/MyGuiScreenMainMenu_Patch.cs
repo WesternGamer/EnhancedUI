@@ -31,7 +31,7 @@ namespace EnhancedUI.Gui.MainMenu
             var control = new ChromiumGuiControl(Content, Name)
             {
                 Position = new Vector2(0.50f, 0.50f),
-                Size = new Vector2(1.33f, 1.0f)
+                Size = new Vector2(1.331f, 1.0f)
             };
 
             // Adds the GUI elements to the screen
