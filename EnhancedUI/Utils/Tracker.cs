@@ -4,8 +4,10 @@ using System.Threading;
 
 namespace EnhancedUI.Utils
 {
-    // Tracker to allow concurrently collect items,
-    // then atomically processing the collected ones
+    /// <summary>
+    /// Tracker to allow concurrently collect items, then automatically processing the collected ones.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class Tracker<T>
     {
         private readonly Mutex mutex = new();

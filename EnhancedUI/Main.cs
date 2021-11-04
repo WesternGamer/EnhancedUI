@@ -10,9 +10,14 @@ using VRage.Plugins;
 namespace EnhancedUI
 {
     // ReSharper disable once UnusedType.Global
+    /// <summary>
+    /// Main entry point of the plugin.
+    /// </summary>
     public class Main : IPlugin
     {
-        // Single instance of the view model, reused for all browser instances
+        /// <summary>
+        /// Single instance of the view model, reused for all browser instances
+        /// </summary>
         private readonly TerminalViewModel model = new();
 
         public void Dispose()
@@ -24,6 +29,7 @@ namespace EnhancedUI
         {
             new Harmony("EnhancedUI").PatchAll(Assembly.GetExecutingAssembly());
 
+            //Sets settings for Cef.
             var settings = new CefSettings
             {
                 CachePath = Path.Combine(MyFileSystem.CachePath, "CefCache"),
@@ -38,6 +44,7 @@ namespace EnhancedUI
 
         public void Update()
         {
+            //TerminalViewModel.Update
             model.Update();
         }
     }

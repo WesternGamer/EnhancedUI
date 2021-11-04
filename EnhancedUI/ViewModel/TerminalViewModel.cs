@@ -10,33 +10,54 @@ namespace EnhancedUI.ViewModel
 {
     public class TerminalViewModel : ITerminalViewModel, IDisposable
     {
-        // Model is a singleton
+        /// <summary>
+        /// Model is a singleton.
+        /// </summary>
         public static TerminalViewModel? Instance;
 
-        // Event triggered on new game state versions
+        /// <summary>
+        /// Event triggered on new game state versions.
+        /// </summary>
+        /// <param name="version"></param>
         public delegate void OnGameStateChangedHandler(long version);
 
         public event OnGameStateChangedHandler? OnGameStateChanged;
 
-        // View model of reachable blocks by ID
+        /// <summary>
+        /// View model of reachable blocks by ID.
+        /// </summary>
         private readonly Dictionary<long, BlockViewModel> blocks = new();
 
-        // Set of IDs of blocks modified by the game
+        /// <summary>
+        /// Set of IDs of blocks modified by the game.
+        /// </summary>
         private readonly Tracker<long> blocksModifiedByGame = new();
 
-        // Set of IDs of blocks modified by the user
+        /// <summary>
+        /// Set of IDs of blocks modified by the user.
+        /// </summary>
         private readonly Tracker<long> blocksModifiedByUser = new();
 
-        // Terminal block the player interacts with
-        // Set to null if the player is not connected to any grids
+        /// <summary>
+        /// Terminal block the player interacts with. Set to null if the player is not connected to any grids.
+        /// </summary>
         private MyTerminalBlock? interactedBlock;
+
+        /// <summary>
+        /// The ID of the block that the player interacts with.
+        /// </summary>
         private long? interactedBlockId;
 
-        // True if the player is connected to a terminal system
+        /// <summary>
+        /// Returns true if the player is connected to a terminal system.
+        /// </summary>
         private bool IsConnected => interactedBlock?.IsFunctional == true;
 
-        // Logical clock, model state version number for browser synchronization
+        /// <summary>
+        /// Logical clock, model state version number for browser synchronization.
+        /// </summary>
         private long latestVersion;
+
         public long GetNextVersion() => Interlocked.Increment(ref latestVersion);
 
         public TerminalViewModel()
@@ -53,7 +74,10 @@ namespace EnhancedUI.ViewModel
             Instance = null;
         }
 
-        // Called when the user connects to a terminal block
+        /// <summary>
+        /// Called when the user connects to a terminal block
+        /// </summary>
+        /// <param name="block">The block that the player interacts with.</param>
         public void Connect(MyTerminalBlock block)
         {
             if (interactedBlock == block)
@@ -69,7 +93,9 @@ namespace EnhancedUI.ViewModel
             // TODO: Collect named groups!
         }
 
-        // Called to clear the current view model on closing the terminal
+        /// <summary>
+        /// Called to clear the current view model on closing the terminal.
+        /// </summary>
         private void Clear()
         {
             if (interactedBlock == null)
@@ -110,19 +136,29 @@ namespace EnhancedUI.ViewModel
             }
         }
 
+        /// <summary>
+        /// Adds to the list of blocks modified by the game.
+        /// </summary>
+        /// <param name="blockId">The blockID of the block that is modified by the game.</param>
         internal void NotifyGameModifiedBlock(long blockId)
         {
             if (blocks.ContainsKey(blockId))
                 blocksModifiedByGame.Add(blockId);
         }
 
+        /// <summary>
+        /// Adds to the list of blocks modified by the player.
+        /// </summary>
+        /// <param name="blockId">The blockID of the block that is modified by the player.</param>
         internal void NotifyUserModifiedBlock(long blockId)
         {
             if (blocks.ContainsKey(blockId))
                 blocksModifiedByUser.Add(blockId);
         }
 
-        // Called on game updates
+        /// <summary>
+        /// Called on game updates.
+        /// </summary>
         internal void Update()
         {
             if (!IsConnected)
@@ -147,6 +183,9 @@ namespace EnhancedUI.ViewModel
             }
         }
 
+        /// <summary>
+        /// Applies the properties that the player modified.
+        /// </summary>
         private void ApplyUserModifications()
         {
             using var context = blocksModifiedByUser.Process();

@@ -5,7 +5,9 @@ using VRageMath;
 
 namespace EnhancedUI.ViewModel
 {
-    // Property view model passed to JavaScript
+    /// <summary>
+    /// Property view model passed to JavaScript
+    /// </summary>
     public class PropertyViewModel
     {
         private readonly ITerminalProperty property;
@@ -28,7 +30,11 @@ namespace EnhancedUI.ViewModel
             Update(block);
         }
 
-        // Updates value from in-game property
+        /// <summary>
+        /// Updates value from in-game property.
+        /// </summary>
+        /// <param name="block">Block to update the value from in-game property.</param>
+        /// <returns></returns>
         public bool Update(MyTerminalBlock block)
         {
             var value = Read(block, property);
@@ -39,12 +45,21 @@ namespace EnhancedUI.ViewModel
             return true;
         }
 
-        // Applies the value to the in-game property
+        /// <summary>
+        /// Applies the value to the in-game property of a block.
+        /// </summary>
+        /// <param name="block">Block to apply the in-game property to.</param>
         public void Apply(MyTerminalBlock block)
         {
             Write(block, property, Value);
         }
 
+        /// <summary>
+        /// Reads the property of a block.
+        /// </summary>
+        /// <param name="block">The block to read the property from.</param>
+        /// <param name="property">The property to read the data from.</param>
+        /// <returns></returns>
         private static object? Read(MyTerminalBlock block, ITerminalProperty property)
         {
             switch (property.TypeName)
@@ -68,6 +83,12 @@ namespace EnhancedUI.ViewModel
             return null;
         }
 
+        /// <summary>
+        /// Writes the property of a block.
+        /// </summary>
+        /// <param name="block">Block to write the property to.</param>
+        /// <param name="property">Property to write the data to.</param>
+        /// <param name="value">Data to write to the property.</param>
         private static void Write(MyTerminalBlock block, ITerminalProperty property, object? value)
         {
             var currentValue = Read(block, property);
