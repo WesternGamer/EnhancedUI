@@ -8,56 +8,80 @@ using VRage.Utils;
 
 namespace EnhancedUI.ViewModel
 {
-    // Block view model passed to JavaScript
+    /// <summary>
+    /// Block view model passed to JavaScript
+    /// </summary>
     public class BlockViewModel : IDisposable
     {
         private static long nextId;
 
-        // Owning block view model
+        /// <summary>
+        /// Owning block view model.
+        /// </summary>
         private readonly TerminalViewModel terminalModel;
 
-        // Terminal block
+        /// <summary>
+        /// Terminal block.
+        /// </summary>
         private readonly MyTerminalBlock block;
 
-        // Identification
+        /// <summary>
+        /// Identification.
+        /// </summary>
         public long Id { get; }
+
         public override int GetHashCode() => Id.GetHashCode();
 
-        // State version
         // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// State version.
+        /// </summary>
         public long Version { get; private set; }
 
-        // Terminal property view models for the block
         // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// Terminal property view models for the block.
+        /// </summary>
         public readonly Dictionary<string, PropertyViewModel> Properties = new();
 
-        // True as long as the block is valid (not closed),
-        // set to false if a block is destroyed
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// True as long as the block is valid (not closed); set to false if a block is destroyed
+        /// </summary>
         public bool IsValid { get; private set; }
 
-        // True if the block is functional
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// True if the block is functional.
+        /// </summary>
         public bool IsFunctional { get; private set; }
 
-        // Name of the block (used editable)
         // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// Name of the block (user editable).
+        /// </summary>
         public string Name { get; set; }
 
-        // Custom data (user editable)
         // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// Custom data (user editable).
+        /// </summary>
         public string CustomData { get; set; }
 
-        // Detailed information may be provided by some of the blocks (read-only)
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// Detailed information may be provided by some of the blocks (read-only).
+        /// </summary>
         public string DetailedInfo { get; private set; }
 
-        // Block type
         // ReSharper disable once UnusedMember.Global
         // ReSharper disable once MemberCanBePrivate.Global
+        /// <summary>
+        /// Block type.
+        /// </summary>
         public string ClassName => block.GetType().Name;
 
         // ReSharper disable once UnusedMember.Global
@@ -68,8 +92,10 @@ namespace EnhancedUI.ViewModel
         // ReSharper disable once MemberCanBePrivate.Global
         public string SubtypeName => block.BlockDefinition.Id.SubtypeName;
 
-        // Geometry
         // ReSharper disable once UnusedMember.Global
+        /// <summary>
+        /// Geometry.
+        /// </summary>
         public int[] Position => block.Position.ToArray();
 
         // ReSharper disable once UnusedMember.Global
@@ -95,6 +121,10 @@ namespace EnhancedUI.ViewModel
         }
 #pragma warning restore 8618
 
+        /// <summary>
+        /// Updates the valid state, functional state, name, custom data, and detailed info.
+        /// </summary>
+        /// <param name="changed">Is block fields changed already?</param>
         private void UpdateFields(bool changed = false)
         {
             var isValid = !block.Closed && block.InScene && !block.IsPreview;
@@ -159,13 +189,18 @@ namespace EnhancedUI.ViewModel
             terminalModel.NotifyGameModifiedBlock(Id);
         }
 
-        // Updates model from game state, returns true if anything has changed
+        /// <summary>
+        /// Updates model from game state.
+        /// </summary>
         public void Update()
         {
             UpdateFields();
             UpdateProperties();
         }
 
+        /// <summary>
+        /// Updates the properties of a block.
+        /// </summary>
         private void UpdateProperties()
         {
             var changed = false;
@@ -176,7 +211,10 @@ namespace EnhancedUI.ViewModel
                 Version = terminalModel.GetNextVersion();
         }
 
-        // Applies model changes to game state, returns true if anything has changed
+        // 
+        /// <summary>
+        /// Applies model changes to game state.
+        /// </summary>
         public void Apply()
         {
             var defaultName = block.DisplayNameText ?? block.DisplayName;
@@ -195,18 +233,31 @@ namespace EnhancedUI.ViewModel
                 property.Apply(block);
         }
 
+        /// <summary>
+        /// Sets the name of a block.
+        /// </summary>
+        /// <param name="name">The name of the block.</param>
         public void SetName(string name)
         {
             Name = name;
             NotifyChange();
         }
 
+        /// <summary>
+        /// Sets custom data of a block.
+        /// </summary>
+        /// <param name="customData">The custom data.</param>
         public void SetCustomData(string customData)
         {
             CustomData = customData;
             NotifyChange();
         }
 
+        /// <summary>
+        /// Set a property of a block.
+        /// </summary>
+        /// <param name="propertyId">ID of property.</param>
+        /// <param name="value">Data the set the property to.</param>
         public void SetProperty(string propertyId, object? value)
         {
             if (!Properties.TryGetValue(propertyId, out var property))
@@ -216,6 +267,9 @@ namespace EnhancedUI.ViewModel
             NotifyChange();
         }
 
+        /// <summary>
+        /// Notifies that a property was changed.
+        /// </summary>
         private void NotifyChange()
         {
             Version = terminalModel.GetNextVersion();

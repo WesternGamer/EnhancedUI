@@ -8,7 +8,9 @@ using VRage.Utils;
 
 namespace EnhancedUI.Gui
 {
-    // Patch to allow loading HTML files using the video player
+    /// <summary>
+    /// Patch to allow loading HTML files using the video player
+    /// </summary>
     [HarmonyPatch]
     internal static class VideoPlayPatch
     {
@@ -52,6 +54,11 @@ namespace EnhancedUI.Gui
             return AccessTools.Method(FactoryType, "Play");
         }
 
+        /// <summary>
+        /// Patched version of MyVideoFactory.Play
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="videoFile"></param>
         [HandleProcessCorruptedStateExceptions]
         [SecurityCritical]
         // ReSharper disable once UnusedMember.Local
