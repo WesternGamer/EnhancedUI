@@ -39,7 +39,7 @@ namespace EnhancedUI.Gui
                     ClearCookies();
             }
 
-            return this;
+            return base.HandleInputElements();
         }
 
         private static CefEventFlags GetModifiers()

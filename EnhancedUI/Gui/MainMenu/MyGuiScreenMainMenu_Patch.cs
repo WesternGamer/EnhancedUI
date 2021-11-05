@@ -18,16 +18,8 @@ namespace EnhancedUI.Gui.MainMenu
         [HarmonyPatch("RecreateControls")]
         [HarmonyPrefix]
         // ReSharper disable once UnusedMember.Local
-        private static bool RecreateControlsPrefix(MyGuiScreenMainMenu __instance
-            //MyGuiControlTabPage page,
-            // ReSharper disable once InconsistentNaming
-            //Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlKeyboard,
-            // ReSharper disable once InconsistentNaming
-            //Dictionary<MyTerminalPageEnum, MyGuiControlBase> ___m_defaultFocusedControlGamepad
-            )
+        private static bool RecreateControlsPrefix(MyGuiScreenMainMenu __instance)
         {
-            
-
             var control = new ChromiumGuiControl(Content, Name)
             {
                 Position = new Vector2(0.50f, 0.50f),
@@ -37,12 +29,6 @@ namespace EnhancedUI.Gui.MainMenu
             // Adds the GUI elements to the screen
             __instance.Controls.Add(control);
             __instance.Controls.Add(control.Wheel);
-
-            // Focus the browser "control" by default when the tab is selected (see the original function)
-            //___m_defaultFocusedControlKeyboard[MyTerminalPageEnum.ControlPanel] = control;
-
-            // FIXME: Looks like this is not needed, since it does not present in the original code either.
-            //___m_defaultFocusedControlGamepad[MyTerminalPageEnum.ControlPanel] = control;
 
             return false;
         }
