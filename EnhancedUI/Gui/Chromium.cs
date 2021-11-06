@@ -3,8 +3,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using CefSharp;
 using CefSharp.OffScreen;
-using EnhancedUI.ViewModel;
-using VRage.Utils;
 using VRageMath;
 
 namespace EnhancedUI.Gui
@@ -27,21 +25,9 @@ namespace EnhancedUI.Gui
                 LifeSpanHandler = new LifespanHandler()
             };
 
-            Browser.MenuHandler = new CustomMenuHandler();
 
             Browser.Paint += BrowserOnPaint;
             Browser.BrowserInitialized += BrowserOnBrowserInitialized;
-
-            Browser.JavascriptObjectRepository.ResolveObject += (sender, e) =>
-            {
-                var repo = e.ObjectRepository;
-                if (e.ObjectName == "TerminalViewModel")
-                {
-                    // No CamelCase of Javascript Names
-                    repo.NameConverter = null;
-                    repo.Register("TerminalViewModel", TerminalViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
-                }
-            };
         }
 
         public byte[] GetVideoData()

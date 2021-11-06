@@ -1,6 +1,5 @@
 using System;
 using CefSharp;
-using EnhancedUI.ViewModel;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
 using VRage.Utils;
@@ -17,8 +16,6 @@ namespace EnhancedUI.Gui
         private BatchDataPlayer? player;
         private uint videoId;
 
-        private IBrowserHost? BrowserHost => chromium?.Browser.GetBrowser().GetHost();
-
         // Returns true if the browser has been initialized already
         private bool IsBrowserInitialized => chromium?.Browser.IsBrowserInitialized ?? false;
 
@@ -26,15 +23,8 @@ namespace EnhancedUI.Gui
         // OnFocusChanged and HasFocus are not reliable, use OnVisibleChanged and Visible of the tab page instead
         private bool IsActive => Visible && (Owner as MyGuiControlTabPage)?.Visible == true;
 
-        public readonly MyGuiControlRotatingWheel Wheel = new(Vector2.Zero)
-        {
-            Visible = false
-        };
-
         private readonly WebContent content;
         private readonly string name;
-
-        private static bool hooksInstalled;
 
         public ChromiumGuiControl(WebContent content, string name)
         {
@@ -44,31 +34,6 @@ namespace EnhancedUI.Gui
             CanHaveFocus = true;
 
             MyLog.Default.Info($"{name} browser created");
-
-            if (!hooksInstalled)
-            {
-                InstallHooks();
-                hooksInstalled = true;
-            }
-
-            if (TerminalViewModel.Instance != null)
-            {
-                TerminalViewModel.Instance.OnGameStateChanged += OnGameStateChanged;
-            }
-        }
-
-        ~ChromiumGuiControl()
-        {
-            if (TerminalViewModel.Instance != null)
-            {
-                TerminalViewModel.Instance.OnGameStateChanged -= OnGameStateChanged;
-            }
-
-            if (hooksInstalled)
-            {
-                UninstallHooks();
-                hooksInstalled = false;
-            }
         }
 
         protected override void OnSizeChanged()
@@ -95,9 +60,6 @@ namespace EnhancedUI.Gui
             MyLog.Default.Info($"{name} browser size: {rect.Width} * {rect.Height} px");
 
             chromium.Ready += OnChromiumReady;
-            chromium.Browser.LoadingStateChanged += OnBrowserLoadingStateChanged;
-
-            RegisterInputEvents();
 
             player = new BatchDataPlayer(new Vector2I(rect.Width, rect.Height), chromium.GetVideoData);
             VideoPlayPatch.RegisterVideoPlayer(name, player);
@@ -114,12 +76,10 @@ namespace EnhancedUI.Gui
                 return;
             }
 
-            UnregisterInputEvents();
-
             BrowserControls.Remove(name);
 
             chromium.Ready -= OnChromiumReady;
-            chromium.Browser.LoadingStateChanged -= OnBrowserLoadingStateChanged;
+            
 
             chromium.Dispose();
             MyRenderProxy.CloseVideo(videoId);
@@ -130,11 +90,6 @@ namespace EnhancedUI.Gui
             chromium = null;
 
             MyLog.Default.Info($"{name} browser removed");
-        }
-
-        private void OnBrowserLoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
-        {
-            Wheel.Visible = e.IsLoading;
         }
 
         private void OnChromiumReady()

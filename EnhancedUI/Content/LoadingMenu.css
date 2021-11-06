@@ -1,0 +1,35 @@
+#stage {
+    width: 1920px;
+    height: 1080px;
+  }
+
+  #stage a {
+    position: absolute;
+  }
+  #stage a img {
+    padding: 0px;
+    background: #fff;
+  }
+
+  #stage a:nth-of-type(1) {
+    animation-name: fader;
+    animation-delay: 10s;
+    animation-duration: 1s;
+    z-index: 20;
+  }
+  #stage a:nth-of-type(2) {
+    z-index: 10;
+  }
+  #stage a:nth-of-type(n+3) {
+    display: none;
+  }
+
+  @keyframes fader {
+    from { opacity: 1.0; }
+    to   { opacity: 0.0; }
+  }
+
+  body {
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+  }

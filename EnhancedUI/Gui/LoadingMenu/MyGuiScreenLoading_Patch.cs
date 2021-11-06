@@ -1,25 +1,23 @@
 ﻿using HarmonyLib;
-using SpaceEngineers.Game.GUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Sandbox.Game.Gui;
+using Sandbox.Graphics.GUI;
 using VRageMath;
 
-namespace EnhancedUI.Gui.MainMenu
+namespace EnhancedUI.Gui.LoadingMenu
 {
-    [HarmonyPatch(typeof(MyGuiScreenMainMenu))]
-    internal class MyGuiScreenMainMenu_Patch
+    [HarmonyPatch(typeof(MyGuiScreenLoading), "RecreateControls")]
+    internal class MyGuiScreenLoading_Patch
     {
-        private const string Name = "MainMenu";
+        private const string Name = "LoadingMenu";
         private static readonly WebContent Content = new();
 
         [HarmonyPatch("RecreateControls")]
         [HarmonyPrefix]
         // ReSharper disable once UnusedMember.Local
-        private static bool RecreateControlsPrefix(MyGuiScreenMainMenu __instance)
+        private static bool RecreateControlsPrefix(MyGuiScreenLoading __instance, ref MyGuiControlRotatingWheel ___m_wheel)
         {
+            ___m_wheel = new MyGuiControlRotatingWheel(new Vector2(-0.1f, -0.1f));
+            
             var control = new ChromiumGuiControl(Content, Name)
             {
                 Position = new Vector2(0.50f, 0.50f),
@@ -27,9 +25,8 @@ namespace EnhancedUI.Gui.MainMenu
             };
 
             // Adds the GUI elements to the screen
+            __instance.Controls.Add(___m_wheel);
             __instance.Controls.Add(control);
-            __instance.Controls.Add(control.Wheel);
-
             return false;
         }
     }

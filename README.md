@@ -1,5 +1,7 @@
 # Enhanced UI
 
+!!DO NOT MERGE!!
+
 Highly functional Terminal UI based on Web technology.
 
 ## Install the client plugin (Coming Soon)

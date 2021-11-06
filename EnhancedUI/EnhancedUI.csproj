@@ -13,6 +13,22 @@
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <DebugType>pdbonly</DebugType>
     </PropertyGroup>
+    <ItemGroup>
+      <Content Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\build\net45\winook.support\Winook.Lib.Host.x64.exe" />
+      <Content Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\build\net45\winook.support\Winook.Lib.Host.x86.exe" />
+      <Content Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\build\net45\winook.support\Winook.Lib.Keyboard.x64.dll" />
+      <Content Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\build\net45\winook.support\Winook.Lib.Keyboard.x86.dll" />
+      <Content Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\build\net45\winook.support\Winook.Lib.Mouse.x64.dll" />
+      <Content Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\build\net45\winook.support\Winook.Lib.Mouse.x86.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\contentFiles\any\netstandard2.0\winook.support\Winook.Lib.Host.x64.exe" />
+      <None Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\contentFiles\any\netstandard2.0\winook.support\Winook.Lib.Host.x86.exe" />
+      <None Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\contentFiles\any\netstandard2.0\winook.support\Winook.Lib.Keyboard.x64.dll" />
+      <None Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\contentFiles\any\netstandard2.0\winook.support\Winook.Lib.Keyboard.x86.dll" />
+      <None Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\contentFiles\any\netstandard2.0\winook.support\Winook.Lib.Mouse.x64.dll" />
+      <None Remove="C:\Users\Kevng\.nuget\packages\winook\1.3.2\contentFiles\any\netstandard2.0\winook.support\Winook.Lib.Mouse.x86.dll" />
+    </ItemGroup>
 
     <ItemGroup>
         <Reference Include="Sandbox.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -122,20 +138,6 @@
         <PackageReference Include="Lib.Harmony" Version="2.1.1" />
         <PackageReference Include="WinHook" Version="0.1.1" />
         <PackageReference Include="Winook" Version="1.3.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Gui\Terminal\Inventory\InventoryState.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyGuiScreenTerminal_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyGuiScreenTerminal_Patch.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyTerminalInventoryController_Close_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyTerminalInventoryController_Close_Patch.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyTerminalInventoryController_HandleInput_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyTerminalInventoryController_HandleInput_Patch.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyTerminalInventoryController_Init_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyTerminalInventoryController_Init_Patch.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyTerminalInventoryController_Refresh_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyTerminalInventoryController_Refresh_Patch.cs" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
