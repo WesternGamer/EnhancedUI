@@ -20,7 +20,13 @@
         <a href="7.jpg"><img src="7.jpg" width="1920" height="1080"></a>
         <a href="8.jpg"><img src="8.jpg" width="1920" height="1080"></a>
         </div>
+    <img id="LoadingWheel" src = "circle.gif" width="150" height="100" style="display:none">
 
+    <script type="text/javascript">
+        window.onload = function(){
+          window.setTimeout('document.getElementById("LoadingWheel").style.display = "inline";',50000);
+        }
+      </script>
 <script src="common.js"></script>
 <script src="LoadingMenu.js"></script>
 

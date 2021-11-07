@@ -33,3 +33,10 @@
     overflow-y: hidden; /* Hide vertical scrollbar */
     overflow-x: hidden; /* Hide horizontal scrollbar */
   }
+
+  #LoadingWheel{
+    z-index: 21;
+    position:absolute;
+      bottom: 25px;
+      right: 25px;
+  }
