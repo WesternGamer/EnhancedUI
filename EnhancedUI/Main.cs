@@ -1,11 +1,10 @@
-﻿using System.IO;
-using System.Reflection;
-using CefSharp;
+﻿using CefSharp;
 using CefSharp.OffScreen;
 using EnhancedUI.ViewModel;
 using HarmonyLib;
 using Sandbox;
-using Sandbox.Engine.Utils;
+using System.IO;
+using System.Reflection;
 using VRage;
 using VRage.FileSystem;
 using VRage.Plugins;
@@ -38,7 +37,7 @@ namespace EnhancedUI
                 CachePath = Path.Combine(MyFileSystem.CachePath, "CefCache"),
                 CommandLineArgsDisabled = true
             };
-            
+
             switch (MySandboxGame.Config.Language)
             {
                 case MyLanguagesEnum.English:
@@ -124,7 +123,7 @@ namespace EnhancedUI
                     break;
             }
 
-        settings.DisableGpuAcceleration();
+            settings.DisableGpuAcceleration();
 
             CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
 

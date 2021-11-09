@@ -9,7 +9,7 @@ namespace EnhancedUI.Utils
     /// </summary>
     public static class KeyConverter
     {
-        private static readonly StringBuilder Result = new ();
+        private static readonly StringBuilder Result = new();
 
         /// <summary>
         /// Converts the native Windows key codes to unicode.
@@ -18,18 +18,18 @@ namespace EnhancedUI.Utils
         /// <returns> Unicode of key.</returns>
         public static unsafe string KeyCodeToUnicode(uint virtualKeyCode)
         {
-            var keyboardState = stackalloc byte[255];
+            byte* keyboardState = stackalloc byte[255];
 
-            var keyboardStateStatus = GetKeyboardState(keyboardState);
+            bool keyboardStateStatus = GetKeyboardState(keyboardState);
 
             if (!keyboardStateStatus)
             {
                 return string.Empty;
             }
 
-            var scanCode = MapVirtualKey(virtualKeyCode, 0);
-            var windowThreadProcessId = GetWindowThreadProcessId(ProcessInfo.MainWindowHandle, IntPtr.Zero);
-            var inputLocaleIdentifier = GetKeyboardLayout(windowThreadProcessId);
+            uint scanCode = MapVirtualKey(virtualKeyCode, 0);
+            uint windowThreadProcessId = GetWindowThreadProcessId(ProcessInfo.MainWindowHandle, IntPtr.Zero);
+            IntPtr inputLocaleIdentifier = GetKeyboardLayout(windowThreadProcessId);
 
             ToUnicodeEx(virtualKeyCode, scanCode, keyboardState, Result, 5, 0, inputLocaleIdentifier);
 

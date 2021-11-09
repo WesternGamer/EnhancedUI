@@ -1,9 +1,9 @@
-﻿using System;
-using HarmonyLib;
+﻿using HarmonyLib;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
+using System;
 using VRage;
 using VRageMath;
 using Device = SharpDX.Direct3D11.Device;
@@ -31,7 +31,7 @@ namespace EnhancedUI.Gui
 
         public void Init(string filename)
         {
-            var texture2DDescription = new Texture2DDescription
+            Texture2DDescription texture2DDescription = new Texture2DDescription
             {
                 Width = VideoWidth,
                 Height = VideoHeight,
@@ -54,7 +54,7 @@ namespace EnhancedUI.Gui
                 DebugName = "BatchDataPlayer.Texture"
             };
 
-            var shaderResourceViewDescription = new ShaderResourceViewDescription
+            ShaderResourceViewDescription shaderResourceViewDescription = new ShaderResourceViewDescription
             {
                 Format = Format.B8G8R8A8_UNorm_SRgb,
                 Dimension = ShaderResourceViewDimension.Texture2D,
@@ -99,7 +99,7 @@ namespace EnhancedUI.Gui
 
         private void OnFrame(DeviceContext context, byte[] data)
         {
-            var dataBox = context.MapSubresource(texture, 0, MapMode.WriteDiscard, MapFlags.None);
+            DataBox dataBox = context.MapSubresource(texture, 0, MapMode.WriteDiscard, MapFlags.None);
 
             if (dataBox.IsEmpty)
             {
