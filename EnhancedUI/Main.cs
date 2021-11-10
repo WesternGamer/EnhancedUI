@@ -30,14 +30,26 @@ namespace EnhancedUI
         public void Init(object gameInstance)
         {
             new Harmony("EnhancedUI").PatchAll(Assembly.GetExecutingAssembly());
+            #region CEFSettings
+
+            //Deletes the CEF log file so it's size does not pile up overtime.
+            File.Delete(Path.Combine(MyFileSystem.UserDataPath, "Storage\\PluginData\\EnhancedUI\\EnhancedUI_CEF.log"));
 
             //Sets settings for Cef.
             CefSettings settings = new()
             {
-                CachePath = Path.Combine(MyFileSystem.CachePath, "CefCache"),
-                CommandLineArgsDisabled = true
+                CommandLineArgsDisabled = true,
+                CachePath = Path.Combine(MyFileSystem.CachePath, "PluginCache\\EnhancedUI"),
+                UserDataPath = Path.Combine(MyFileSystem.UserDataPath, "Storage\\PluginData\\EnhancedUI\\UserData"),
+                LogFile = Path.Combine(MyFileSystem.UserDataPath, "Storage\\PluginData\\EnhancedUI\\EnhancedUI_CEF.log"),
+#if DEBUG
+                LogSeverity = LogSeverity.Verbose,
+#else
+                LogSeverity = LogSeverity.Warning,
+#endif
             };
 
+            //Language selection.
             switch (MySandboxGame.Config.Language)
             {
                 case MyLanguagesEnum.English:
@@ -123,10 +135,11 @@ namespace EnhancedUI
                     break;
             }
 
+            //TODO: Should we have this? Keeping Gpu Acceleration enabled did not impact performance and loaded the webpages a litte but faster.
             settings.DisableGpuAcceleration();
 
             CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
-
+#endregion
             Cef.Initialize(settings, true, browserProcessHandler: null);
         }
 

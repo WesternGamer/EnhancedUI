@@ -6,6 +6,7 @@
         <OutputPath>bin\</OutputPath>
         <PlatformTarget>x64</PlatformTarget>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <DebugType>full</DebugType>
