@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using System.Windows.Forms;
 using CefSharp;
 using EnhancedUI.Utils;
 using Sandbox.Graphics.GUI;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using VRage.Input;
 using VRageMath;
 using Winook;
@@ -21,7 +21,9 @@ namespace EnhancedUI.Gui
         public override MyGuiControlBase HandleInput()
         {
             if (!IsActive || !IsBrowserInitialized || !CheckMouseOver() || MyInput.Static.IsNewKeyPressed(MyKeys.Escape))
+            {
                 return base.HandleInput();
+            }
 
             // F12 opens Chromium's Developer Tools in a new window
             if (MyInput.Static.IsNewKeyPressed(MyKeys.F12) && MyInput.Static.IsAnyCtrlKeyPressed())
@@ -36,7 +38,9 @@ namespace EnhancedUI.Gui
                 // FIXME: Do we need this?
                 // Ctrl-Shift-R reloads the page and clears all cookies
                 if (MyInput.Static.IsAnyShiftKeyPressed())
+                {
                     ClearCookies();
+                }
             }
 
             return this;
@@ -44,7 +48,7 @@ namespace EnhancedUI.Gui
 
         private static CefEventFlags GetModifiers()
         {
-            var input = MyInput.Static;
+            IMyInput? input = MyInput.Static;
             return
                 (Control.IsKeyLocked(Keys.CapsLock) ? CefEventFlags.CapsLockOn : 0) |
                 (Control.IsKeyLocked(Keys.NumLock) ? CefEventFlags.NumLockOn : 0) |
@@ -83,7 +87,9 @@ namespace EnhancedUI.Gui
         private void MouseHookOnMessageReceived(object sender, MouseMessageEventArgs e)
         {
             if (!IsActive)
+            {
                 return;
+            }
 
             switch ((MouseMessageCode)e.MessageCode)
             {
@@ -123,16 +129,18 @@ namespace EnhancedUI.Gui
                 case MouseMessageCode.MouseLeave:
                     BrowserHost?.SendMouseMoveEvent(GetMouseEvent(), true);
                     break;
-                // FIXME: MouseMessageCode.NCMouseMove can arrive!
-                // default:
-                //     throw new ArgumentOutOfRangeException();
+                    // FIXME: MouseMessageCode.NCMouseMove can arrive!
+                    // default:
+                    //     throw new ArgumentOutOfRangeException();
             }
         }
 
         private void KeyboardHookOnMessageReceived(object sender, KeyboardMessageEventArgs e)
         {
             if (!IsActive)
+            {
                 return;
+            }
 
             switch (e.Direction)
             {
@@ -143,7 +151,7 @@ namespace EnhancedUI.Gui
                     break;
                 case KeyDirection.Down:
                     BrowserHost?.SendKeyEvent((int)Wm.Keydown, e.KeyValue, 0);
-                    foreach (var c in KeyConverter.KeyCodeToUnicode(e.KeyValue))
+                    foreach (char c in KeyConverter.KeyCodeToUnicode(e.KeyValue))
                     {
                         // TODO IME text input
                         BrowserHost?.SendKeyEvent((int)Wm.Char, c, 0);
@@ -155,10 +163,10 @@ namespace EnhancedUI.Gui
 
         private Vector2I GetMousePos()
         {
-            var mousePosition = MyInput.Static.GetMousePosition();
+            Vector2 mousePosition = MyInput.Static.GetMousePosition();
 
             // Correct for left-top corner (position)
-            var vr = GetVideoScreenRectangle();
+            Rectangle vr = GetVideoScreenRectangle();
             mousePosition.X -= vr.Left;
             mousePosition.Y -= vr.Top;
 
@@ -168,7 +176,7 @@ namespace EnhancedUI.Gui
 
         private MouseEvent GetMouseEvent()
         {
-            var pos = GetMousePos();
+            Vector2I pos = GetMousePos();
             return new MouseEvent(pos.X, pos.Y, GetModifiers());
         }
     }

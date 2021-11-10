@@ -1,8 +1,8 @@
-using System;
 using CefSharp;
 using EnhancedUI.ViewModel;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
+using System;
 using VRage.Utils;
 using VRageMath;
 using VRageRender;
@@ -90,7 +90,7 @@ namespace EnhancedUI.Gui
                 return;
             }
 
-            var rect = GetVideoScreenRectangle();
+            Rectangle rect = GetVideoScreenRectangle();
             chromium = new Chromium(new Vector2I(rect.Width, rect.Height));
 
             BrowserControls[name] = this;
@@ -155,14 +155,16 @@ namespace EnhancedUI.Gui
         private void OnGameStateChanged(long version)
         {
             if (!IsBrowserInitialized)
+            {
                 return;
+            }
 
             chromium?.Browser.ExecuteScriptAsync($"if (typeof OnGameStateChange != typeof undefined) OnGameStateChange({version})");
         }
 
         private void Navigate()
         {
-            var url = content.FormatIndexUrl(name);
+            string? url = content.FormatIndexUrl(name);
             MyLog.Default.Info($"{name} browser navigation: {url}");
             chromium?.Navigate(url);
         }
@@ -172,9 +174,9 @@ namespace EnhancedUI.Gui
         /// </summary>
         private Rectangle GetVideoScreenRectangle()
         {
-            var pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(GetPositionAbsoluteTopLeft());
+            Vector2I pos = (Vector2I)MyGuiManager.GetScreenCoordinateFromNormalizedCoordinate(GetPositionAbsoluteTopLeft());
 
-            var size = (Vector2I)MyGuiManager.GetScreenSizeFromNormalizedSize(Size);
+            Vector2I size = (Vector2I)MyGuiManager.GetScreenSizeFromNormalizedSize(Size);
 
             return new Rectangle(pos.X, pos.Y, size.X, size.Y);
         }
@@ -235,5 +237,5 @@ namespace EnhancedUI.Gui
         {
             MyGuiManager.DrawBorders(GetPositionAbsoluteTopLeft(), Size, Color.White, 1);
         }
-   }
+    }
 }

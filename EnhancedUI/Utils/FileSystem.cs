@@ -10,8 +10,8 @@ namespace EnhancedUI.Utils
         /// <returns>Returns the directory of the folder where the plugin assembly file is located as a string.</returns>
         public static string GetPluginFolderDir()
         {
-            var executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var dllDirectory = Path.GetDirectoryName(executingAssembly.Location);
+            System.Reflection.Assembly? executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+            string? dllDirectory = Path.GetDirectoryName(executingAssembly.Location);
             return dllDirectory ?? ".";
         }
     }

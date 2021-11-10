@@ -1,9 +1,9 @@
-﻿using System;
-using System.Reflection;
-using EnhancedUI.ViewModel;
+﻿using EnhancedUI.ViewModel;
 using HarmonyLib;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.Game.Gui;
+using System;
+using System.Reflection;
 
 namespace EnhancedUI.Gui.Terminal.ControlPanel
 {
