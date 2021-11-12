@@ -117,25 +117,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CefSharp.Common" Version="93.1.140" />
-        <PackageReference Include="CefSharp.OffScreen" Version="93.1.140" />
+        <PackageReference Include="CefSharp.Common" Version="95.7.141" />
+        <PackageReference Include="CefSharp.OffScreen" Version="95.7.141" />
         <PackageReference Include="Lib.Harmony" Version="2.1.1" />
         <PackageReference Include="WinHook" Version="0.1.1" />
         <PackageReference Include="Winook" Version="1.3.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Gui\Terminal\Inventory\InventoryState.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyGuiScreenTerminal_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyGuiScreenTerminal_Patch.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyTerminalInventoryController_Close_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyTerminalInventoryController_Close_Patch.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyTerminalInventoryController_HandleInput_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyTerminalInventoryController_HandleInput_Patch.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyTerminalInventoryController_Init_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyTerminalInventoryController_Init_Patch.cs" />
-      <Compile Remove="Gui\Terminal\Inventory\MyTerminalInventoryController_Refresh_Patch.cs" />
-      <None Include="Gui\Terminal\Inventory\MyTerminalInventoryController_Refresh_Patch.cs" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

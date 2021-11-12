@@ -1,10 +1,9 @@
-﻿using System;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using CefSharp;
+﻿using CefSharp;
 using CefSharp.OffScreen;
 using EnhancedUI.ViewModel;
-using VRage.Utils;
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using VRageMath;
 
 namespace EnhancedUI.Gui
@@ -34,7 +33,7 @@ namespace EnhancedUI.Gui
 
             Browser.JavascriptObjectRepository.ResolveObject += (sender, e) =>
             {
-                var repo = e.ObjectRepository;
+                IJavascriptObjectRepository? repo = e.ObjectRepository;
                 if (e.ObjectName == "TerminalViewModel")
                 {
                     // No CamelCase of Javascript Names

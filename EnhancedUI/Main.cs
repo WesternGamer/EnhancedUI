@@ -1,9 +1,9 @@
-﻿using System.IO;
-using System.Reflection;
-using CefSharp;
+﻿using CefSharp;
 using CefSharp.OffScreen;
 using EnhancedUI.ViewModel;
 using HarmonyLib;
+using System.IO;
+using System.Reflection;
 using VRage.FileSystem;
 using VRage.Plugins;
 
@@ -15,16 +15,15 @@ namespace EnhancedUI
         // Single instance of the view model, reused for all browser instances
         private readonly TerminalViewModel model = new();
 
-        public void Dispose()
+        /// <summary>
+        /// Called earlier than Init.
+        /// </summary>
+        public Main()
         {
-            Cef.Shutdown();
-        }
-
-        public void Init(object gameInstance)
-        {
+            //This is the earliest point that Harmony can initialize.
             new Harmony("EnhancedUI").PatchAll(Assembly.GetExecutingAssembly());
 
-            var settings = new CefSettings
+            CefSettings? settings = new CefSettings
             {
                 CachePath = Path.Combine(MyFileSystem.CachePath, "CefCache"),
                 CommandLineArgsDisabled = true
@@ -34,6 +33,16 @@ namespace EnhancedUI
             CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
 
             Cef.Initialize(settings, true, browserProcessHandler: null);
+        }
+
+        public void Dispose()
+        {
+            Cef.Shutdown();
+        }
+
+        public void Init(object gameInstance)
+        {
+
         }
 
         public void Update()

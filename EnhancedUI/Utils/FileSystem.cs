@@ -6,8 +6,8 @@ namespace EnhancedUI.Utils
     {
         public static string GetPluginsDir()
         {
-            var executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var dllDirectory = Path.GetDirectoryName(executingAssembly.Location);
+            System.Reflection.Assembly? executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+            string? dllDirectory = Path.GetDirectoryName(executingAssembly.Location);
             return dllDirectory ?? ".";
         }
     }

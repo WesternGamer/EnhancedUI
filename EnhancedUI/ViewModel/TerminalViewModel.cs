@@ -1,9 +1,9 @@
+using EnhancedUI.Utils;
+using Sandbox.Game.Entities.Cube;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using EnhancedUI.Utils;
-using Sandbox.Game.Entities.Cube;
 using VRage.Utils;
 
 namespace EnhancedUI.ViewModel
@@ -37,12 +37,17 @@ namespace EnhancedUI.ViewModel
 
         // Logical clock, model state version number for browser synchronization
         private long latestVersion;
-        public long GetNextVersion() => Interlocked.Increment(ref latestVersion);
+        public long GetNextVersion()
+        {
+            return Interlocked.Increment(ref latestVersion);
+        }
 
         public TerminalViewModel()
         {
             if (Instance != null)
+            {
                 throw new Exception("This is a singleton");
+            }
 
             Instance = this;
         }
@@ -57,7 +62,9 @@ namespace EnhancedUI.ViewModel
         public void Connect(MyTerminalBlock block)
         {
             if (interactedBlock == block)
+            {
                 return;
+            }
 
             Clear();
 
@@ -73,11 +80,13 @@ namespace EnhancedUI.ViewModel
         private void Clear()
         {
             if (interactedBlock == null)
+            {
                 return;
+            }
 
             lock (blocks)
             {
-                foreach (var block in blocks.Values)
+                foreach (BlockViewModel? block in blocks.Values)
                 {
                     block.Dispose();
                 }
@@ -96,16 +105,20 @@ namespace EnhancedUI.ViewModel
                 blocks.Clear();
 
                 if (interactedBlock == null || !IsConnected)
-                    return;
-
-                var version = GetNextVersion();
-                foreach (var block in interactedBlock.CubeGrid.GridSystems.TerminalSystem.Blocks)
                 {
-                    var blockViewModel = new BlockViewModel(this, block, version);
+                    return;
+                }
+
+                long version = GetNextVersion();
+                foreach (MyTerminalBlock? block in interactedBlock.CubeGrid.GridSystems.TerminalSystem.Blocks)
+                {
+                    BlockViewModel? blockViewModel = new BlockViewModel(this, block, version);
                     blocks[blockViewModel.Id] = blockViewModel;
 
                     if (block == interactedBlock)
+                    {
                         interactedBlockId = blockViewModel.Id;
+                    }
                 }
             }
         }
@@ -113,13 +126,17 @@ namespace EnhancedUI.ViewModel
         internal void NotifyGameModifiedBlock(long blockId)
         {
             if (blocks.ContainsKey(blockId))
+            {
                 blocksModifiedByGame.Add(blockId);
+            }
         }
 
         internal void NotifyUserModifiedBlock(long blockId)
         {
             if (blocks.ContainsKey(blockId))
+            {
                 blocksModifiedByUser.Add(blockId);
+            }
         }
 
         // Called on game updates
@@ -149,11 +166,13 @@ namespace EnhancedUI.ViewModel
 
         private void ApplyUserModifications()
         {
-            using var context = blocksModifiedByUser.Process();
-            foreach (var blockId in context.Items)
+            using Tracker<long>.Context? context = blocksModifiedByUser.Process();
+            foreach (long blockId in context.Items)
             {
-                if (!blocks.TryGetValue(blockId, out var block))
+                if (!blocks.TryGetValue(blockId, out BlockViewModel? block))
+                {
                     continue;
+                }
 
                 block.Apply();
             }
@@ -161,11 +180,13 @@ namespace EnhancedUI.ViewModel
 
         private void UpdateGameModifiedBlocks()
         {
-            using var context = blocksModifiedByGame.Process();
-            foreach (var blockId in context.Items)
+            using Tracker<long>.Context? context = blocksModifiedByGame.Process();
+            foreach (long blockId in context.Items)
             {
-                if (!blocks.TryGetValue(blockId, out var block))
+                if (!blocks.TryGetValue(blockId, out BlockViewModel? block))
+                {
                     continue;
+                }
 
                 block.Update();
             }
@@ -190,7 +211,7 @@ namespace EnhancedUI.ViewModel
         {
             lock (blocks)
             {
-                var blockIds =blocks.Values.Where(b => b.Version > sinceVersion).Select(b => b.Id).ToList();
+                List<long>? blockIds = blocks.Values.Where(b => b.Version > sinceVersion).Select(b => b.Id).ToList();
                 MyLog.Default.Debug($"EnhancedUI: GetModifiedBlockIds({sinceVersion}) => {blockIds.Count} blocks");
                 return blockIds;
             }
@@ -200,7 +221,7 @@ namespace EnhancedUI.ViewModel
         {
             lock (blocks)
             {
-                var blockViewModel = blocks.GetValueOrDefault(blockId);
+                BlockViewModel? blockViewModel = blocks.GetValueOrDefault(blockId);
                 MyLog.Default.Debug(
                     blockViewModel == null
                         ? $"EnhancedUI: GetBlockState({blockId}) => NOT FOUND"
@@ -213,8 +234,10 @@ namespace EnhancedUI.ViewModel
         {
             lock (blocks)
             {
-                if (!blocks.TryGetValue(blockId, out var block))
+                if (!blocks.TryGetValue(blockId, out BlockViewModel? block))
+                {
                     return;
+                }
 
                 block.SetName(name);
             }
@@ -224,8 +247,10 @@ namespace EnhancedUI.ViewModel
         {
             lock (blocks)
             {
-                if (!blocks.TryGetValue(blockId, out var block))
+                if (!blocks.TryGetValue(blockId, out BlockViewModel? block))
+                {
                     return;
+                }
 
                 block.SetCustomData(customData);
             }
@@ -235,8 +260,10 @@ namespace EnhancedUI.ViewModel
         {
             lock (blocks)
             {
-                if (!blocks.TryGetValue(blockId, out var block))
+                if (!blocks.TryGetValue(blockId, out BlockViewModel? block))
+                {
                     return;
+                }
 
                 block.SetProperty(propertyId, value);
             }

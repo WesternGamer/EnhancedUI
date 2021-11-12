@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using EnhancedUI.Utils;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using VRage.Utils;
 
 namespace EnhancedUI.ViewModel
@@ -21,7 +21,10 @@ namespace EnhancedUI.ViewModel
 
         // Identification
         public long Id { get; }
-        public override int GetHashCode() => Id.GetHashCode();
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
 
         // State version
         // ReSharper disable once MemberCanBePrivate.Global
@@ -75,7 +78,10 @@ namespace EnhancedUI.ViewModel
         // ReSharper disable once UnusedMember.Global
         public int[] Size => block.BlockDefinition.Size.ToArray();
 
-        public override string ToString() => $"BlockViewModel #{Id} at {block.Position} is {SubtypeName} \"{Name}\"";
+        public override string ToString()
+        {
+            return $"BlockViewModel #{Id} at {block.Position} is {SubtypeName} \"{Name}\"";
+        }
 
 #pragma warning disable 8618
         public BlockViewModel(TerminalViewModel terminalViewModel, MyTerminalBlock terminalBlock, long version)
@@ -97,23 +103,26 @@ namespace EnhancedUI.ViewModel
 
         private void UpdateFields(bool changed = false)
         {
-            var isValid = !block.Closed && block.InScene && !block.IsPreview;
+            bool isValid = !block.Closed && block.InScene && !block.IsPreview;
             if (isValid != IsValid)
             {
                 IsValid = isValid;
                 changed = true;
             }
 
-            var isFunctional = block.IsFunctional;
+            bool isFunctional = block.IsFunctional;
             if (isFunctional != IsFunctional)
             {
                 IsFunctional = isFunctional;
                 changed = true;
             }
 
-            var name = block.CustomName.ToString();
+            string? name = block.CustomName.ToString();
             if (name == "")
+            {
                 name = block.DisplayNameText ?? block.DisplayName;
+            }
+
             if (name != Name)
             {
                 Name = name;
@@ -126,7 +135,7 @@ namespace EnhancedUI.ViewModel
                 changed = true;
             }
 
-            var detailedInfo = block.DetailedInfo.ToString();
+            string? detailedInfo = block.DetailedInfo.ToString();
             if (detailedInfo != DetailedInfo)
             {
                 DetailedInfo = detailedInfo;
@@ -134,14 +143,16 @@ namespace EnhancedUI.ViewModel
             }
 
             if (changed)
+            {
                 Version = terminalModel.GetNextVersion();
+            }
         }
 
         private void CreatePropertyModels()
         {
-            var terminalProperties = new List<ITerminalProperty>();
+            List<ITerminalProperty>? terminalProperties = new List<ITerminalProperty>();
             block.GetProperties(terminalProperties);
-            foreach (var terminalProperty in terminalProperties)
+            foreach (ITerminalProperty? terminalProperty in terminalProperties)
             {
                 Properties[terminalProperty.Id] = new PropertyViewModel(block, terminalProperty);
             }
@@ -168,18 +179,22 @@ namespace EnhancedUI.ViewModel
 
         private void UpdateProperties()
         {
-            var changed = false;
-            foreach (var property in Properties.Values)
+            bool changed = false;
+            foreach (PropertyViewModel? property in Properties.Values)
+            {
                 changed = property.Update(block) || changed;
+            }
 
             if (changed)
+            {
                 Version = terminalModel.GetNextVersion();
+            }
         }
 
         // Applies model changes to game state, returns true if anything has changed
         public void Apply()
         {
-            var defaultName = block.DisplayNameText ?? block.DisplayName;
+            string? defaultName = block.DisplayNameText ?? block.DisplayName;
             if (Name != defaultName && Name != block.CustomName.ToString())
             {
                 block.CustomName.Clear();
@@ -191,8 +206,10 @@ namespace EnhancedUI.ViewModel
                 block.CustomData = CustomData;
             }
 
-            foreach (var property in Properties.Values)
+            foreach (PropertyViewModel? property in Properties.Values)
+            {
                 property.Apply(block);
+            }
         }
 
         public void SetName(string name)
@@ -209,8 +226,10 @@ namespace EnhancedUI.ViewModel
 
         public void SetProperty(string propertyId, object? value)
         {
-            if (!Properties.TryGetValue(propertyId, out var property))
+            if (!Properties.TryGetValue(propertyId, out PropertyViewModel? property))
+            {
                 return;
+            }
 
             property.Value = value;
             NotifyChange();

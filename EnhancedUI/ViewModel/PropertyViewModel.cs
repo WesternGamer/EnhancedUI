@@ -1,6 +1,6 @@
-using System.Text;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI.Interfaces;
+using System.Text;
 using VRageMath;
 
 namespace EnhancedUI.ViewModel
@@ -20,7 +20,10 @@ namespace EnhancedUI.ViewModel
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string TypeName => property.TypeName;
 
-        public override int GetHashCode() => Id.GetHashCode();
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
 
         public PropertyViewModel(MyTerminalBlock block, ITerminalProperty terminalProperty)
         {
@@ -31,9 +34,11 @@ namespace EnhancedUI.ViewModel
         // Updates value from in-game property
         public bool Update(MyTerminalBlock block)
         {
-            var value = Read(block, property);
+            object? value = Read(block, property);
             if (value == Value)
+            {
                 return false;
+            }
 
             Value = value;
             return true;
@@ -70,9 +75,11 @@ namespace EnhancedUI.ViewModel
 
         private static void Write(MyTerminalBlock block, ITerminalProperty property, object? value)
         {
-            var currentValue = Read(block, property);
+            object? currentValue = Read(block, property);
             if (value == currentValue)
+            {
                 return;
+            }
 
             switch (property.TypeName)
             {
@@ -112,11 +119,13 @@ namespace EnhancedUI.ViewModel
         private static Color ParseColor(string c)
         {
             if (c.Length != 7 || !c.StartsWith("#"))
+            {
                 return Color.Black;
+            }
 
-            var r = int.Parse(c.Substring(1, 2), System.Globalization.NumberStyles.HexNumber);
-            var g = int.Parse(c.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
-            var b = int.Parse(c.Substring(5, 2), System.Globalization.NumberStyles.HexNumber);
+            int r = int.Parse(c.Substring(1, 2), System.Globalization.NumberStyles.HexNumber);
+            int g = int.Parse(c.Substring(3, 2), System.Globalization.NumberStyles.HexNumber);
+            int b = int.Parse(c.Substring(5, 2), System.Globalization.NumberStyles.HexNumber);
             return new Color(r, g, b);
         }
     }

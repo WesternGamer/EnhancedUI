@@ -1,9 +1,9 @@
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
-using HarmonyLib;
 using VRage.Utils;
 
 namespace EnhancedUI.Gui
@@ -57,12 +57,12 @@ namespace EnhancedUI.Gui
         // ReSharper disable once UnusedMember.Local
         private static bool Prefix(uint id, string videoFile)
         {
-            if (!Players.TryGetValue(videoFile, out var player))
+            if (!Players.TryGetValue(videoFile, out BatchDataPlayer? player))
             {
                 return true;
             }
 
-            var video = GetByIdMethod.Invoke(null, new object[] { id });
+            object? video = GetByIdMethod.Invoke(null, new object[] { id });
             if (video is null)
             {
                 MyLog.Default.Error($"No EnhancedUI video found: videoFile={videoFile}, id={id}");
