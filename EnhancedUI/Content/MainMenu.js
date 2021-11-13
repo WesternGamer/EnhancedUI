@@ -1,10 +1,15 @@
 // Invoked from C#
 // noinspection JSUnusedGlobalSymbols
-function ExitOld() {
-    await WebPageViewModel.Exit();
+function Exit() {
+    window.Exit();
 }
 
-// Invoked from C#
-// noinspection JSUnusedGlobalSymbols
-async function blockStateUpdated(entityId) {
+export const startCefSharp = async () => {
+    console.log("We are bound");
+    await CefSharp.BindObjectAsync("WebPageViewModel");
+    const { WebPageViewModel.Exit() } = window;
 }
+
+let {
+    CefSharp,
+} = window;
