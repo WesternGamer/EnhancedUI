@@ -1,5 +1,7 @@
 # Enhanced UI
 
+NOTE: This branch (`Extra_UI_Menus_Future`) may not follow this project's workflow compared to `master`.
+
 Highly functional Terminal UI based on Web technology.
 
 ## Install the client plugin (Coming Soon)
