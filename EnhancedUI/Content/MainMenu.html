@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color:grey;">
 <head>
     <meta charset="UTF-8">
     <title>Terminal</title>
@@ -10,16 +10,25 @@
 </head>
 <body>
 
-<div class="fullscreen">
+    <button type="button" onclick="alert('Continue Game')">Continue Game</button>
+    <button type="button" onclick="alert('New Game')">New Game</button>
+    <button type="button" onclick="alert('Load Game')">Load Game</button>
+    <button type="button" onclick="alert('Join Game')">Join Game</button>
+    <button type="button" onclick="alert('Options')">Options</button>
+    <button type="button" onclick="alert('Character')">Character</button>
+    <button type="button" onclick="Exit()">Exit</button>
 
-    <h1 class="show">MAIN MENU</h1>
+    <script>
+        //This function gets the text from the input and passes it
+        //into the Show method of the registered .NET object
+        function Exit() {
+            WebPageViewModel.Exit();
+        }
+    </script>
 
-    <p><input value="Test" /></p>
 
-</div>
-
-<script src="common.js"></script>
-<script src="Inventory.js"></script>
+    <script src="common.js"></script>
+    <script src="MainMenu.js"></script>
 
 </body>
 </html>

@@ -31,14 +31,15 @@ namespace EnhancedUI.Gui
             Browser.Paint += BrowserOnPaint;
             Browser.BrowserInitialized += BrowserOnBrowserInitialized;
 
+            //C# to Js implementation
             Browser.JavascriptObjectRepository.ResolveObject += (sender, e) =>
             {
                 IJavascriptObjectRepository? repo = e.ObjectRepository;
-                if (e.ObjectName == "TerminalViewModel")
+                if (e.ObjectName == "WebPageViewModel")
                 {
                     // No CamelCase of Javascript Names
                     repo.NameConverter = null;
-                    repo.Register("TerminalViewModel", TerminalViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
+                    repo.Register("WebPageViewModel", WebPageViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
                 }
             };
         }

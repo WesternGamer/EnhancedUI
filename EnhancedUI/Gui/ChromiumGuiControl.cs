@@ -51,18 +51,12 @@ namespace EnhancedUI.Gui
                 hooksInstalled = true;
             }
 
-            if (TerminalViewModel.Instance != null)
-            {
-                TerminalViewModel.Instance.OnGameStateChanged += OnGameStateChanged;
-            }
+            
         }
 
         ~ChromiumGuiControl()
         {
-            if (TerminalViewModel.Instance != null)
-            {
-                TerminalViewModel.Instance.OnGameStateChanged -= OnGameStateChanged;
-            }
+            
 
             if (hooksInstalled)
             {

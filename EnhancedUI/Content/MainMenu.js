@@ -1,6 +1,7 @@
 // Invoked from C#
 // noinspection JSUnusedGlobalSymbols
-async function stateUpdated() {
+function ExitOld() {
+    await WebPageViewModel.Exit();
 }
 
 // Invoked from C#

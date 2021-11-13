@@ -13,7 +13,7 @@ namespace EnhancedUI
     public class Main : IPlugin
     {
         // Single instance of the view model, reused for all browser instances
-        private readonly TerminalViewModel model = new();
+        private readonly WebPageViewModel model = new();
 
         /// <summary>
         /// Called earlier than Init.
@@ -47,7 +47,7 @@ namespace EnhancedUI
 
         public void Update()
         {
-            model.Update();
+            
         }
     }
 }
