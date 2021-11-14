@@ -1,12 +1,12 @@
 ﻿using CefSharp;
 using CefSharp.OffScreen;
-using EnhancedUI.ViewModel;
+using EnhancedUI.ViewModels.MainMenuViewModel;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using VRageMath;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.Browser
 {
     public class Chromium : IDisposable
     {
@@ -39,7 +39,7 @@ namespace EnhancedUI.Gui
                 {
                     // No CamelCase of Javascript Names
                     repo.NameConverter = null;
-                    repo.Register("WebPageViewModel", WebPageViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
+                    repo.Register("WebPageViewModel", MainMenuViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
                 }
             };
         }

@@ -1,5 +1,6 @@
 using CefSharp;
-using EnhancedUI.ViewModel;
+using EnhancedUI.Gui.Browser;
+using EnhancedUI.Gui.Render;
 using Sandbox.Graphics;
 using Sandbox.Graphics.GUI;
 using System;
@@ -9,7 +10,7 @@ using VRageRender;
 using VRageRender.Messages;
 using Rectangle = VRageMath.Rectangle;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.HtmlGuiControl
 {
     public partial class ChromiumGuiControl : MyGuiControlBase
     {
@@ -26,7 +27,7 @@ namespace EnhancedUI.Gui
         // OnFocusChanged and HasFocus are not reliable, use OnVisibleChanged and Visible of the tab page instead
         private bool IsActive => Visible && Owner?.Visible == true;
 
-        public readonly MyGuiControlRotatingWheel Wheel = new(new Vector2(0f, 0.5f), null, 0.36f)
+        public readonly MyGuiControlRotatingWheel Wheel = new(new Vector2(1.131f, 0.95f), null, 0.25f)
         {
             Visible = false
         };
@@ -50,14 +51,10 @@ namespace EnhancedUI.Gui
                 InstallHooks();
                 hooksInstalled = true;
             }
-
-            
         }
 
         ~ChromiumGuiControl()
         {
-            
-
             if (hooksInstalled)
             {
                 UninstallHooks();
@@ -135,7 +132,7 @@ namespace EnhancedUI.Gui
         {
             if (chromium == null)
             {
-                throw new Exception("This should not happen");
+                throw new NullReferenceException("Chromium instance not initialized.");
             }
 
             Navigate();
@@ -183,7 +180,7 @@ namespace EnhancedUI.Gui
 
             if (chromium == null)
             {
-                throw new Exception("This should not happen");
+                throw new NullReferenceException("Chromium instance not initialized.");
             }
 
             chromium.Draw();

@@ -1,6 +1,6 @@
 using CefSharp;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.Browser
 {
     public class CustomMenuHandler : IContextMenuHandler
     {

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using EnhancedUI.Gui.Menus;
+using HarmonyLib;
 using Sandbox;
 using Sandbox.Engine.Networking;
 using Sandbox.Game;

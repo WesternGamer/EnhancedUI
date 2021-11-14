@@ -8,7 +8,7 @@ using VRageMath;
 using Winook;
 using Control = System.Windows.Forms.Control;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.HtmlGuiControl
 {
     public partial class ChromiumGuiControl
     {

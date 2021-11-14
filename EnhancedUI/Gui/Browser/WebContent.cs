@@ -2,7 +2,7 @@ using EnhancedUI.Utils;
 using System.IO;
 using System.Web;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.Browser
 {
     public class WebContent
     {

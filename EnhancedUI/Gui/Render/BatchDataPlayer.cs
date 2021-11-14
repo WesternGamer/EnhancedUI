@@ -9,7 +9,7 @@ using VRageMath;
 using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.Render
 {
     public class BatchDataPlayer : IVideoPlayer
     {

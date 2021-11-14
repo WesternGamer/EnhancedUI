@@ -1,21 +1,21 @@
-﻿using Sandbox.Graphics.GUI;
+﻿using EnhancedUI.Gui.Browser;
+using EnhancedUI.Gui.HtmlGuiControl;
+using Sandbox.Graphics.GUI;
 using VRageMath;
 
-namespace EnhancedUI.Gui
+namespace EnhancedUI.Gui.Menus
 {
     internal class WebMenu : MyGuiScreenBase
     {
         public override MyGuiControls Controls => base.Controls;
 
-        private const string WebPageName = "MainMenu";
+        private const string WebPageName = "MainMenu\\MainMenu";
 
         private static readonly WebContent Content = new();
 
         public WebMenu() : base(Vector2.Zero)
         {
-            m_isTopMostScreen = true;
             m_closeOnEsc = false;
-            m_drawEvenWithoutFocus = false;
         }
 
         public override string GetFriendlyName()
@@ -33,8 +33,9 @@ namespace EnhancedUI.Gui
 
 
             // Adds the GUI elements to the screen
-            Controls.Add(control);
             Controls.Add(control.Wheel);
+            Controls.Add(control);
+
         }
 
         public override bool RegisterClicks()
