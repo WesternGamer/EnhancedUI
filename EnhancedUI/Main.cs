@@ -30,6 +30,14 @@ namespace EnhancedUI
 
         public void Dispose()
         {
+            if (instances != null)
+            {
+                foreach (IWebPageViewModel type in instances)
+                {
+                    type.Dispose();
+                }
+            }
+
             Cef.Shutdown();
         }
 
