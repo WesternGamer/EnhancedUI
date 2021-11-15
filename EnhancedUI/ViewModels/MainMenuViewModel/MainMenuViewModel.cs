@@ -240,7 +240,7 @@ namespace EnhancedUI.ViewModels.MainMenuViewModel
                     }
                     else
                     {
-                        MyGuiSandbox.AddScreen(MyGuiSandbox.CreateScreen<MyGuiScreenLoadInventory>(new object[2] { false, null }));
+                        MyGuiSandbox.AddScreen(MyGuiSandbox.CreateScreen<MyGuiScreenLoadInventory>(new object[1] { false }));
                     }
                 }
                 else
