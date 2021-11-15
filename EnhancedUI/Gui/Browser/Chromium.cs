@@ -1,6 +1,7 @@
 ﻿using CefSharp;
 using CefSharp.OffScreen;
 using EnhancedUI.ViewModels.MainMenuViewModel;
+using EnhancedUI.ViewModels.NewGameMenuViewModel;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -40,6 +41,12 @@ namespace EnhancedUI.Gui.Browser
                     // No CamelCase of Javascript Names
                     repo.NameConverter = null;
                     repo.Register("WebPageViewModel", MainMenuViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
+                }
+                if (e.ObjectName == "NewGameMenuViewModel")
+                {
+                    // No CamelCase of Javascript Names
+                    repo.NameConverter = null;
+                    repo.Register("NewGameMenuViewModel", NewGameMenuViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
                 }
             };
         }
