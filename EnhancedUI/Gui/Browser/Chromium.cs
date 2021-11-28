@@ -17,7 +17,7 @@ namespace EnhancedUI.Gui.Browser
 
         public readonly ChromiumWebBrowser Browser;
 
-        public Chromium(Vector2I size)
+        public Chromium(Vector2I size, string viewModelName, object viewModel)
         {
             videoData = new byte[size.X * size.Y * 4];
 
@@ -36,17 +36,11 @@ namespace EnhancedUI.Gui.Browser
             Browser.JavascriptObjectRepository.ResolveObject += (sender, e) =>
             {
                 IJavascriptObjectRepository? repo = e.ObjectRepository;
-                if (e.ObjectName == "WebPageViewModel")
+                if (e.ObjectName == viewModelName)
                 {
                     // No CamelCase of Javascript Names
                     repo.NameConverter = null;
-                    repo.Register("WebPageViewModel", MainMenuViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
-                }
-                if (e.ObjectName == "NewGameMenuViewModel")
-                {
-                    // No CamelCase of Javascript Names
-                    repo.NameConverter = null;
-                    repo.Register("NewGameMenuViewModel", NewGameMenuViewModel.Instance, isAsync: true, options: BindingOptions.DefaultBinder);
+                    repo.Register(viewModelName, viewModel, isAsync: true, options: BindingOptions.DefaultBinder);
                 }
             };
         }

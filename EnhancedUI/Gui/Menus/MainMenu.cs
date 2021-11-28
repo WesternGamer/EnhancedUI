@@ -1,11 +1,12 @@
 ﻿using EnhancedUI.Gui.Browser;
 using EnhancedUI.Gui.HtmlGuiControl;
+using EnhancedUI.ViewModels.MainMenuViewModel;
 using Sandbox.Graphics.GUI;
 using VRageMath;
 
 namespace EnhancedUI.Gui.Menus
 {
-    internal class WebMenu : MyGuiScreenBase
+    internal class MainMenu : MyGuiScreenBase
     {
         public override MyGuiControls Controls => base.Controls;
 
@@ -13,7 +14,7 @@ namespace EnhancedUI.Gui.Menus
 
         private static readonly WebContent Content = new();
 
-        public WebMenu() : base(Vector2.Zero)
+        public MainMenu() : base(Vector2.Zero)
         {
             m_closeOnEsc = false;
         }
@@ -25,7 +26,9 @@ namespace EnhancedUI.Gui.Menus
 
         public override void RecreateControls(bool constructor)
         {
-            ChromiumGuiControl control = new ChromiumGuiControl(Content, WebPageName)
+#pragma warning disable CS8604 // Possible null reference argument.
+            ChromiumGuiControl control = new ChromiumGuiControl(Content, WebPageName, "MainMenuViewModel", MainMenuViewModel.Instance)
+#pragma warning restore CS8604 // Possible null reference argument.
             {
                 Position = new Vector2(0.50f, 0.50f),
                 Size = new Vector2(1.331f, 1.0f)

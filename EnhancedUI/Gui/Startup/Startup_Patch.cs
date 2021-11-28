@@ -40,7 +40,7 @@ namespace EnhancedUI.Gui.Startup
                     MyLocalCache.UpdateLastSessionFromCloud();
                 });
             }
-            MyGuiSandbox.AddScreen(new WebMenu());
+            MyGuiSandbox.AddScreen(new MainMenu());
             __result = true;
             return false;
         }

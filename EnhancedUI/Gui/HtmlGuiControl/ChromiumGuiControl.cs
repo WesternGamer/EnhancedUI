@@ -34,13 +34,17 @@ namespace EnhancedUI.Gui.HtmlGuiControl
 
         private readonly WebContent content;
         private readonly string name;
+        private readonly string viewModelName;
+        private readonly object viewModel;
 
         private static bool hooksInstalled;
 
-        public ChromiumGuiControl(WebContent content, string name)
+        public ChromiumGuiControl(WebContent content, string name, string viewModelName, object viewModel)
         {
             this.content = content;
             this.name = name;
+            this.viewModelName = viewModelName;
+            this.viewModel = viewModel;
 
             CanHaveFocus = true;
 
@@ -79,7 +83,7 @@ namespace EnhancedUI.Gui.HtmlGuiControl
             }
 
             Rectangle rect = GetVideoScreenRectangle();
-            chromium = new Chromium(new Vector2I(rect.Width, rect.Height));
+            chromium = new Chromium(new Vector2I(rect.Width, rect.Height), viewModelName, viewModel);
 
             BrowserControls[name] = this;
 

@@ -4,7 +4,7 @@ const {
 
 const startCefSharp = async () => {
     console.log("We are bound");
-    await CefSharp.BindObjectAsync("WebPageViewModel");
+    await CefSharp.BindObjectAsync("MainMenuViewModel");
 }
 
 let continueButton = document.getElementById("continueButton");
@@ -16,12 +16,12 @@ let characterButton = document.getElementById("characterButton");
 let exitButton = document.getElementById("exitButton");
 
 startCefSharp()
-    .then(() => { continueButton.addEventListener("click", (e) => window.WebPageViewModel.ContinueLastGame()) })
-    .then(() => { newGameButton.addEventListener("click", (e) => window.WebPageViewModel.NewGame()) })
-    .then(() => { loadGameButton.addEventListener("click", (e) => window.WebPageViewModel.LoadGame()) })
-    .then(() => { joinGameButton.addEventListener("click", (e) => window.WebPageViewModel.JoinGame()) })
-    .then(() => { optionsButton.addEventListener("click", (e) => window.WebPageViewModel.Options()) })
-    .then(() => { characterButton.addEventListener("click", (e) => window.WebPageViewModel.Character()) })
-    .then(() => { exitButton.addEventListener("click", (e) => window.WebPageViewModel.Exit()) });
+    .then(() => { continueButton.addEventListener("click", (e) => window.MainMenuViewModel.ContinueLastGame()) })
+    .then(() => { newGameButton.addEventListener("click", (e) => window.MainMenuViewModel.NewGame()) })
+    .then(() => { loadGameButton.addEventListener("click", (e) => window.MainMenuViewModel.LoadGame()) })
+    .then(() => { joinGameButton.addEventListener("click", (e) => window.MainMenuViewModel.JoinGame()) })
+    .then(() => { optionsButton.addEventListener("click", (e) => window.MainMenuViewModel.Options()) })
+    .then(() => { characterButton.addEventListener("click", (e) => window.MainMenuViewModel.Character()) })
+    .then(() => { exitButton.addEventListener("click", (e) => window.MainMenuViewModel.Exit()) });
     
     

@@ -1,3 +1,4 @@
+using EnhancedUI.Gui.Menus;
 using ParallelTasks;
 using Sandbox;
 using Sandbox.Engine.Networking;
@@ -154,7 +155,7 @@ namespace EnhancedUI.ViewModels.MainMenuViewModel
 
         public void NewGame()
         {
-            MyGuiSandbox.AddScreen(MyGuiSandbox.CreateScreen<MyGuiScreenNewGame>(new object[3] { true, true, true }));
+            MyGuiSandbox.AddScreen(MyGuiSandbox.CreateScreen(typeof(NewGameMenu)));
         }
 
         public void LoadGame()
