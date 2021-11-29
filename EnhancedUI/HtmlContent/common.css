@@ -6,7 +6,8 @@
 }
 
 html {
-    background: transparent url("checkerboard.png");
+    background: transparent url("background.jpg");
+    background-size: cover;
     font-family: SpaceEngineers, serif;
     color: lightcyan;
     font-size: 1.5vw;

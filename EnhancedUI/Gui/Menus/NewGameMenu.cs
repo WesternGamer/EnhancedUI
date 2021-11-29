@@ -1,6 +1,7 @@
 ﻿using EnhancedUI.Gui.Browser;
 using EnhancedUI.Gui.HtmlGuiControl;
 using EnhancedUI.ViewModels.NewGameMenuViewModel;
+using Sandbox;
 using Sandbox.Graphics.GUI;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,17 @@ namespace EnhancedUI.Gui.Menus
     internal class NewGameMenu : MyGuiScreenBase
     {
         public override MyGuiControls Controls => base.Controls;
-
+#if !DEBUG
         private const string WebPageName = "NewGameMenu\\NewGameMenu";
-
+#else
+        private const string WebPageName = "Debug\\NewGameMenu\\NewGameMenu";
+#endif
         private static readonly WebContent Content = new();
 
         public NewGameMenu() : base(Vector2.Zero)
         {
-            m_closeOnEsc = false;
+            base.EnabledBackgroundFade = true;
+            RecreateControls(true);
         }
 
         public override string GetFriendlyName()
@@ -49,12 +53,6 @@ namespace EnhancedUI.Gui.Menus
         public override bool RegisterClicks()
         {
             return true;
-        }
-
-        public override void LoadContent()
-        {
-            base.LoadContent();
-            RecreateControls(true);
         }
     }
 }

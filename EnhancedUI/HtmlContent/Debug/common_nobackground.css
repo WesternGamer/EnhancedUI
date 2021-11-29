@@ -6,10 +6,8 @@
 }
 
 html {
-    background: transparent url("background.jpg");
-    background-size: cover;
+    background-color: rgba(0,0,0,.5);
     font-family: SpaceEngineers, serif;
-    color: lightcyan;
     font-size: 1.5vw;
     line-height: 1.6vw;
 }

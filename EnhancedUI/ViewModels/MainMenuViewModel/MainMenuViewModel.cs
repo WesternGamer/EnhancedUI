@@ -155,7 +155,7 @@ namespace EnhancedUI.ViewModels.MainMenuViewModel
 
         public void NewGame()
         {
-            MyGuiSandbox.AddScreen(MyGuiSandbox.CreateScreen(typeof(NewGameMenu)));
+            MyGuiSandbox.AddScreen(MyGuiSandbox.CreateScreen<NewGameMenu>(Array.Empty<object>()));
         }
 
         public void LoadGame()
