@@ -1,0 +1,58 @@
+@font-face {
+    font-family: 'SpaceEngineers';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Awesome-Font'), local('Awesome-Font-Regular'), url("space_engineers-webfont.woff") format('woff');
+}
+
+html {
+    background: transparent url("background.jpg");
+    background-size: cover;
+    font-family: SpaceEngineers, serif;
+    color: lightcyan;
+    font-size: 1.5vw;
+    line-height: 1.6vw;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.fullscreen {
+    width: 100vw;
+    height: 100vh;
+}
+
+.show {
+    display: block;
+}
+
+.hide {
+    display: none;
+}
+
+label,
+input[type="checkbox"] {
+    margin-right: 0.5ch;
+}
+
+label:hover {
+    text-decoration: underline;
+}
+
+.block {
+    margin-bottom: 2vh;
+}
+
+.block .property {
+    margin-top: 0.5vh;
+    margin-left: 2vw;
+}
+
+.bottomright {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+    font-size: 18px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
