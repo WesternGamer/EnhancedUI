@@ -118,7 +118,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CefSharp.Common" Version="95.7.141" />
+        <PackageReference Include="CefSharp.Common" Version="98.1.210" />
         <PackageReference Include="CefSharp.OffScreen" Version="95.7.141" />
         <PackageReference Include="Lib.Harmony" Version="2.1.1" />
         <PackageReference Include="WinHook" Version="0.1.1" />
