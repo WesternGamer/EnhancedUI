@@ -25,9 +25,6 @@
         <Reference Include="EmptyKeys.UserInterface.Core">
           <HintPath>..\..\..\Games\steamapps\common\SpaceEngineers\Bin64\EmptyKeys.UserInterface.Core.dll</HintPath>
         </Reference>
-        <Reference Include="EmptyKeys.UserInterface.Debug">
-          <HintPath>..\..\..\Games\steamapps\common\SpaceEngineers\Bin64\EmptyKeys.UserInterface.Debug.dll</HintPath>
-        </Reference>
         <Reference Include="Sandbox.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>$(SolutionDir)GameBinaries\Sandbox.Common.dll</HintPath>
